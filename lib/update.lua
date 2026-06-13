@@ -9,10 +9,11 @@
 -- par dépôt. Puis invite [O/n]. Sur [O], upgrade des dépôts (tout-ou-rien)
 -- via pacman ; le build des paquets AUR arrivera à l'étape suivante.
 
-local util   = require("lib.util")
-local log    = require("lib.log")
 local aur    = require("lib.aur")
+local build  = require("lib.build")
 local color  = require("lib.color")
+local log    = require("lib.log")
+local util   = require("lib.util")
 
 local update = {}
 
@@ -304,12 +305,20 @@ function update.run(config)
         if code ~= 0 then return code end
     end
 
-    -- AUR : détection OK, build à implémenter (prochaine étape du projet).
+    local collect = {}
     if #auras > 0 then
-        print(C.yellow("\n==> " .. #auras .. " paquet(s) AUR à reconstruire — build à venir :"))
         for _, u in ipairs(auras) do
-            print("    " .. u.name .. "  " .. u.oldver .. " " .. C.dim("->") .. " " .. C.green(u.newver))
+            local ok, err = build.one(config, u.name)
+            if not ok then collect[#collect+1] = {name = u.name, error = err} end
         end
+        print(C.green("\n==> " .. #auras-#collect .. " paquet(s) AUR installé(s) avec succès"))
+        if #collect > 0 then
+            print(C.red("==> Échecs (" .. #collect .. ") :"))
+            for _, pkg in ipairs(collect) do
+                print(C.red("\t" .. pkg.name .. " : " .. tostring(pkg.error)))
+            end
+        end
+        return #collect == 0 and 0 or 1
     end
 
     return 0
