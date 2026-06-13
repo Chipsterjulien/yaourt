@@ -1,0 +1,17 @@
+# Binaire luapilot vendu localement (spécifique à l'architecture,
+# à déposer par chacun dans bin/ ; récupéré par archi au packaging).
+/bin/luapilot
+
+# Binaire compilé du projet.
+/yaourt
+
+# Config de développement (locale à chaque dev, ne part pas en production).
+/cfg/
+
+# Divers
+*.tmp
+manual-fr.pdf
+
+# Artefacts de build éventuels
+*.pkg.tar.zst
+*.log

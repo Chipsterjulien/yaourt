@@ -1,0 +1,22 @@
+# Configuration yaourt — copier vers ~/.config/yaourt/config.toml
+# Toutes les clés sont optionnelles ; les valeurs ci-dessous sont les défauts.
+
+# Répertoire de clonage/build des paquets AUR.
+# builddir = "~/.cache/yaourt"
+
+# Commande sudo pour les opérations pacman nécessitant root.
+# sudo = "sudo"
+
+# Éditeur pour la revue de PKGBUILD (étape ultérieure).
+# Par défaut : $EDITOR, sinon $VISUAL, sinon "vi".
+# editor = "vim"
+
+# Couleur dans les affichages de yaourt.
+color = true
+
+# Base de l'AUR (RPC v5 + git).
+# aur_url = "https://aur.archlinux.org"
+
+# Lister tous les paquets AUR installés avec leur statut (à jour, mise à
+# jour disponible, Orphelin, périmé) avant les sections de mise à jour.
+# list_aur = false

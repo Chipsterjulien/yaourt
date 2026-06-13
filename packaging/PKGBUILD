@@ -1,0 +1,41 @@
+# Mainteneur : toi
+# PKGBUILD de départ — binaire unique luapilot + dépendance package-query.
+#
+# Note : construit ici depuis l'arbre de travail local (dev). Pour une vraie
+# distribution, ajouter une source VCS (git+...) et bâtir depuis $srcdir.
+
+pkgname=yaourt
+pkgver=0.1.0.dev
+pkgrel=1
+pkgdesc="Wrapper pacman + assistant AUR (réécriture Lua/luapilot)"
+arch=('x86_64' 'aarch64')
+url="https://example.invalid/yaourt"
+license=('GPL')
+
+# package-query : béquille de départ. Sera rendu optionnel une fois le mode
+# parallèle (RPC AUR direct) généralisé.
+# pacman-contrib : fournit checkupdates (MAJ des dépôts, sans root). On pourra
+# l'internaliser plus tard (base de sync temporaire) pour s'en passer.
+depends=('pacman' 'pacman-contrib' 'package-query' 'git' 'sudo')
+
+# luapilot nécessaire pour empaqueter le binaire.
+#
+# TODO (packaging) : récupérer le binaire luapilot pour $CARCH (x86_64 /
+# aarch64) depuis les releases GitHub au lieu de l'assumer présent :
+#   https://github.com/Chipsterjulien/luapilot_standalone/releases
+# Pour l'instant on travaille avec le bon binaire luapilot directement.
+makedepends=('luapilot')
+
+# Racine du projet (le dossier parent de packaging/).
+_root="$(realpath "$(dirname "$BASH_SOURCE")/..")"
+
+build() {
+  cd "$_root"
+  ./build.sh "$srcdir/$pkgname"
+}
+
+package() {
+  install -Dm755 "$srcdir/$pkgname" "$pkgdir/usr/bin/$pkgname"
+  install -Dm644 "$_root/config.example.toml" \
+    "$pkgdir/usr/share/$pkgname/config.example.toml"
+}

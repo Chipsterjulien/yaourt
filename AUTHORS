@@ -1,0 +1,24 @@
+yaourt — frontend pacman avec support AUR
+=========================================
+
+Ce projet est une réécriture en Lua du yaourt original (archlinuxfr/yaourt),
+poursuivie après que le projet d'origine a cessé d'être maintenu.
+
+Auteurs du yaourt original (archlinuxfr/yaourt)
+-----------------------------------------------
+
+  Julien Mischkowitz <wain@archlinux.fr>
+  Tuxce <tuxce.net@gmail.com>
+
+  ainsi que l'ensemble des contributeurs du projet archlinuxfr/yaourt
+  (voir l'historique du dépôt original : https://github.com/archlinuxfr/yaourt).
+
+
+Réécriture en Lua
+-----------------
+
+  Julien Freyermuth <julien.chipster@gmail.com>
+
+
+Ce programme est distribué sous licence GNU General Public License v3.0 ou
+ultérieure (GPLv3+). Voir le fichier LICENSE pour le texte complet.
