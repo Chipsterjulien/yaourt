@@ -12,25 +12,39 @@ local BUILD_USER = "yaourt"
 
 local build = {}
 
-function build.clean(config, dest)
+function build.clean(config, dest, pkgs)
+    for _, pkg in ipairs(pkgs) do
+        local ok, err = luapilot.remove(pkg)
+        if not ok then log.warn("impossible de supprimer le paquet " .. pkg .. " : " .. tostring(err)) end
+    end
     return true
 end
 
 function build.install(config, dest)
-    local inspect = require("inspect")
     local res, err = util.run({ "runuser", "-u", BUILD_USER, "--", "makepkg", "--packagelist" }, {cwd = dest})
     if not res then
         log.error(err)
-        return false
+        return false, nil
     end
     if res.code ~= 0 then
         log.error(res.stderr)
-        return false
+        return false, nil
     end
 
-    print(inspect(res))
+    local packages_list = luapilot.split(res.stdout, "\n")
+    for i = #packages_list, 1, -1 do
+        if packages_list[i] == "" then
+            table.remove(packages_list, i)
+        end
+    end
 
-    return true
+    local argv = luapilot.mergeTables({"pacman", "-U"}, packages_list)
+    local code = util.passthrough(argv)
+    if code ~= 0 then
+        return false, nil
+    end
+
+    return true, packages_list
 end
 
 function build.make_as_yaourt_user(config, dest)
@@ -44,7 +58,7 @@ function build.make_as_yaourt_user(config, dest)
         return false
     end
 
-    local code = util.passthrough({"runuser", "-u", BUILD_USER, "--", "makepkg"}, dest)
+    local code = util.passthrough({"runuser", "-u", BUILD_USER, "--", "makepkg", "-c"}, dest)
     if code ~= 0 then
         log.error("échec de la compilation (makepkg)")
         return false
@@ -55,11 +69,11 @@ end
 
 -- make(config, name) -> true | false
 -- Compile puis installe via makepkg le paquet
-function build.make(config, dest)
-    if util.is_root() then
+function build.make(config, dest, is_root)
+    if is_root then
         return build.make_as_yaourt_user(config, dest)
     else
-        local code = util.passthrough({"makepkg", "-i"}, dest)
+        local code = util.passthrough({"makepkg", "-i", "-c"}, dest)
         return code == 0
     end
 end
@@ -67,10 +81,15 @@ end
 -- one(config, name) -> (true, nil) | (false, raison)
 -- Prépare puis fait réviser le PKGBUILD. S'arrête après la revue.
 function build.one(config, name)
-    local build_path, err = build.resolve_builddir(config)
+    local is_root = util.is_root()
+    local build_path, err = build.resolve_builddir(config, is_root)
     if err then return false, err end
 
-    local bcfg = luapilot.mergeTables(config, { builddir = build_path })
+    local overrides = { builddir = build_path }
+    if is_root then
+        overrides.build_user = BUILD_USER
+    end
+    local bcfg = luapilot.mergeTables(config, overrides)
 
     local dest, err = build.prepare(bcfg, name)
     if not dest then
@@ -81,17 +100,16 @@ function build.one(config, name)
         return false, name .. " : revue refusée"
     end
 
-    if not build.make(bcfg, dest) then
+    if not build.make(bcfg, dest, is_root) then
         return false, name .. " : échec de la compilation"
     end
 
-    if not build.install(bcfg, dest) then
+    local ok, pkgs = build.install(bcfg, dest)
+    if not ok then
         return false, name .. " : échec de l'installation"
     end
 
-    if not build.clean(bcfg, dest) then
-        return false, name .. " : échec lors du nettoyage"
-    end
+    build.clean(bcfg, dest, pkgs) -- On ne va pas vérifier le retour car on fait déjà une alerte lors du nettoyage
 
     return true, nil
 end
@@ -113,8 +131,8 @@ function build.prepare(config, name)
 end
 
 -- resolve_builddir(config) -> (dossier, nil) | (nil, message)
-function build.resolve_builddir(config)
-    if not util.is_root() then
+function build.resolve_builddir(config, is_root)
+    if not is_root then
         return config.builddir
     end
 

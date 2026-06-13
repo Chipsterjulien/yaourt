@@ -13,20 +13,36 @@ local aur   = require("lib.aur")
 
 local fetch = {}
 
+local function prepare_builddir(config)
+    local ok, err = util.mkdirp(config.builddir)
+    if not ok then return nil, err end
+
+    if config.build_user then
+        local res, err = util.run({ "chown", config.build_user .. ":", config.builddir})
+        if not res then return nil, err end
+        if res.code ~= 0 then return nil, res.stderr end
+    end
+    return true
+end
+
 local function clone_or_update(config, pkgbase)
     local dest = config.builddir .. "/" .. pkgbase
+
+    local ok, err = prepare_builddir(config)
+    if not ok then return nil, err end
+
 
     local is_repo, derr = luapilot.isdir(dest .. "/.git")
     if derr then return nil, derr end
     if is_repo then
         log.info("mise à jour de " .. pkgbase)
-        local res, err = util.run({ "git", "-C", dest, "pull", "--ff-only" })
+        local res, err = util.run_as(config.build_user, { "git", "-C", dest, "pull", "--ff-only" })
         if not res then return nil, err end
         if res.code ~= 0 then return nil, "git pull: " .. res.stderr end
     else
         log.info("clonage de " .. pkgbase)
         local url = (config.aur_url or "https://aur.archlinux.org") .. "/" .. pkgbase .. ".git"
-        local res, err = util.run({ "git", "clone", url, dest })
+        local res, err = util.run_as(config.build_user, { "git", "clone", url, dest })
         if not res then return nil, err end
         if res.code ~= 0 then return nil, "git clone: " .. res.stderr end
     end
