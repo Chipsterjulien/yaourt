@@ -102,6 +102,14 @@ function util.run_as(user, argv, opts)
     return util.run(cmd, opts)
 end
 
+function util.sudo_prefix(config)
+    if util.is_root() then
+        return nil
+    end
+
+    return config.sudo or "sudo"
+end
+
 --------------------------------------------------------------------------
 -- Encodage URL (percent-encoding) pour les requêtes AUR.
 --------------------------------------------------------------------------

@@ -36,7 +36,8 @@ function pacman.passthrough(config, argv)
 
     local cmd = {}
     if needs_root(argv[1] or "") then
-        cmd[#cmd + 1] = config.sudo or "sudo"
+        local p = util.sudo_prefix(config)
+        if p then cmd[#cmd+1] = p end
     end
     cmd[#cmd + 1] = "pacman"
     for _, a in ipairs(argv) do cmd[#cmd + 1] = a end

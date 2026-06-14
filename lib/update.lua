@@ -301,7 +301,13 @@ function update.run(config)
     -- Dépôts : upgrade complet et sûr (tout-ou-rien). pacman gère sa propre
     -- confirmation finale.
     if #repos > 0 then
-        local code = util.passthrough({ config.sudo or "sudo", "pacman", "-Syu" })
+        local cmd = {}
+        local p = util.sudo_prefix(config)
+        if p then cmd[#cmd+1] = p end
+        cmd[#cmd+1] = "pacman"
+        cmd[#cmd+1] = "-Syu"
+
+        local code = util.passthrough(cmd)
         if code ~= 0 then return code end
     end
 
@@ -311,11 +317,13 @@ function update.run(config)
             local ok, err = build.one(config, u.name)
             if not ok then collect[#collect+1] = {name = u.name, error = err} end
         end
-        print(C.green("\n==> " .. #auras-#collect .. " paquet(s) AUR installé(s) avec succès"))
+        print(C.green("\n==> " .. #auras - #collect .. " paquet(s) AUR installé(s) avec succès"))
         if #collect > 0 then
-            print(C.red("==> Échecs (" .. #collect .. ") :"))
+            print(C.red("\n==> Échecs (" .. #collect .. ") :"))
             for _, pkg in ipairs(collect) do
-                print(C.red("\t" .. pkg.name .. " : " .. tostring(pkg.error)))
+                -- pkg.error vaut déjà « <nom> : <raison> » (renvoyé par build.one),
+                -- donc on l'affiche tel quel sans re-préfixer par le nom.
+                print(C.red("    " .. tostring(pkg.error)))
             end
         end
         return #collect == 0 and 0 or 1
