@@ -3,14 +3,15 @@
 -- Stratégie « figuier étrangleur » : ce binaire est la porte d'entrée et,
 -- pour tout ce qui n'est pas encore porté nativement, il délègue à pacman.
 
-local version = require("lib.version")
+local build   = require("lib.build")
 local cfg     = require("lib.config")
+local color   = require("lib.color")
+local fetch   = require("lib.fetch")
 local log     = require("lib.log")
 local pacman  = require("lib.pacman")
-local fetch   = require("lib.fetch")
+local search  = require("lib.search")
 local update  = require("lib.update")
-local build   = require("lib.build")
-local color   = require("lib.color")
+local version = require("lib.version")
 
 -- arg[1..n] = arguments utilisateur (cf. doc luapilot : <=0 ignorés)
 local args    = {}
@@ -28,6 +29,15 @@ USAGE :
   yaourt -h | --help              cette aide
   yaourt -V | --version           version
 ]]):format(version.name, version.version))
+end
+
+-- Recherche (-Ss, -Ssq…) -> notre recherche unifiée dépôts + AUR.
+-- Opération S contenant 's' (search) mais pas 'y'/'u' (refresh/upgrade).
+local function is_search(op)
+    if not op:match("^%-%a*S%a*$") then return false end -- opération courte avec un S
+    if not op:find("s") then return false end          -- doit contenir 's' (search)
+    if op:find("[yu]") then return false end           -- mais ni refresh ni upgrade
+    return true
 end
 
 -- Sysupgrade sans cible (-Syu, -Su, -Syyu…) -> vue unifiée des MAJ.
@@ -91,6 +101,15 @@ local function main()
         local ok, berr = build.one(config, args[2])
         if not ok then log.error(tostring(berr)) end
         return ok and 0 or 1
+    end
+
+    -- Recherche unifiée dépôts + AUR (-Ss)
+    if is_search(first) then
+        if not args[2] then
+            log.error("-Ss attend un terme de recherche")
+            return 1
+        end
+        return search.run(config, args[2])
     end
 
     -- Mise à jour système unifiée (dépôts + AUR).
