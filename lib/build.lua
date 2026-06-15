@@ -4,13 +4,13 @@
 -- review  : montre le PKGBUILD dans l'éditeur et demande validation
 -- one     : orchestre prepare -> review (makepkg à venir)
 
-local fetch = require("lib.fetch")
-local util  = require("lib.util")
-local log   = require("lib.log")
+local fetch      = require("lib.fetch")
+local util       = require("lib.util")
+local log        = require("lib.log")
 
 local BUILD_USER = "yaourt"
 
-local build = {}
+local build      = {}
 
 function build.clean(config, dest, pkgs)
     for _, pkg in ipairs(pkgs) do
@@ -21,7 +21,7 @@ function build.clean(config, dest, pkgs)
 end
 
 function build.install(config, dest)
-    local res, err = util.run({ "runuser", "-u", BUILD_USER, "--", "makepkg", "--packagelist" }, {cwd = dest})
+    local res, err = util.run({ "runuser", "-u", BUILD_USER, "--", "makepkg", "--packagelist" }, { cwd = dest })
     if not res then
         log.error(err)
         return false, nil
@@ -31,24 +31,34 @@ function build.install(config, dest)
         return false, nil
     end
 
-    local packages_list = luapilot.split(res.stdout, "\n")
-    for i = #packages_list, 1, -1 do
-        if packages_list[i] == "" then
-            table.remove(packages_list, i)
+    -- `makepkg --packagelist` liste TOUS les paquets que le PKGBUILD pourrait
+    -- produire, y compris un éventuel paquet -debug. Or ce dernier n'est créé
+    -- que s'il y a des binaires à débugger : pour un paquet de scripts (ex.
+    -- downgrade), le fichier -debug n'existe pas sur le disque. On filtre donc
+    -- pour ne garder que les paquets RÉELLEMENT produits, sinon `pacman -U`
+    -- échoue sur un fichier fantôme.
+    local produced = {}
+    for _, path in ipairs(luapilot.split(res.stdout, "\n")) do
+        if path ~= "" and luapilot.fileExists(path) then
+            produced[#produced + 1] = path
         end
     end
 
-    local argv = luapilot.mergeTables({"pacman", "-U"}, packages_list)
+    if #produced == 0 then
+        return false, nil
+    end
+
+    local argv = luapilot.mergeTables({ "pacman", "-U" }, produced)
     local code = util.passthrough(argv)
     if code ~= 0 then
         return false, nil
     end
 
-    return true, packages_list
+    return true, produced
 end
 
 function build.make_as_yaourt_user(config, dest)
-    local res, err = util.run({"chown", "-R", BUILD_USER .. ":", dest})
+    local res, err = util.run({ "chown", "-R", BUILD_USER .. ":", dest })
     if not res then
         log.error(err)
         return false
@@ -58,7 +68,7 @@ function build.make_as_yaourt_user(config, dest)
         return false
     end
 
-    local code = util.passthrough({"runuser", "-u", BUILD_USER, "--", "makepkg", "-c"}, dest)
+    local code = util.passthrough({ "runuser", "-u", BUILD_USER, "--", "makepkg", "-c" }, dest)
     if code ~= 0 then
         log.error("échec de la compilation (makepkg)")
         return false
@@ -73,7 +83,7 @@ function build.make(config, dest, is_root)
     if is_root then
         return build.make_as_yaourt_user(config, dest)
     else
-        local code = util.passthrough({"makepkg", "-i", "-c"}, dest)
+        local code = util.passthrough({ "makepkg", "-i", "-c" }, dest)
         return code == 0
     end
 end

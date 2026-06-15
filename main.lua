@@ -7,6 +7,7 @@ local build   = require("lib.build")
 local cfg     = require("lib.config")
 local color   = require("lib.color")
 local fetch   = require("lib.fetch")
+local install = require("lib.install")
 local log     = require("lib.log")
 local pacman  = require("lib.pacman")
 local search  = require("lib.search")
@@ -22,7 +23,9 @@ local function usage()
 %s %s — wrapper pacman + assistant AUR
 
 USAGE :
-  yaourt <opérations pacman>      passe la main à pacman (-S, -Q, -R, -Sy…)
+  yaourt <opérations pacman>      passe la main à pacman (-Q, -R, -Sy…)
+  yaourt -S <paquet>...           installe un paquet (dépôts ou AUR)
+  yaourt -Ss <terme>              recherche unifiée dépôts + AUR
   yaourt -G <paquet>...           récupère les fichiers de build AUR (git clone)
   yaourt -Syu | -Su               mise à jour unifiée dépôts + AUR
   yaourt -B <paquet>              (temporaire) test du pipeline de build
@@ -35,8 +38,8 @@ end
 -- Opération S contenant 's' (search) mais pas 'y'/'u' (refresh/upgrade).
 local function is_search(op)
     if not op:match("^%-%a*S%a*$") then return false end -- opération courte avec un S
-    if not op:find("s") then return false end          -- doit contenir 's' (search)
-    if op:find("[yu]") then return false end           -- mais ni refresh ni upgrade
+    if not op:find("s") then return false end            -- doit contenir 's' (search)
+    if op:find("[yu]") then return false end             -- mais ni refresh ni upgrade
     return true
 end
 
@@ -48,6 +51,15 @@ local function is_sysupgrade(a)
     for i = 2, #a do
         if not a[i]:match("^%-") then return false end
     end
+    return true
+end
+
+-- Installation directe (-S nu) -> routage dépôts/AUR.
+-- Opération S sans 's' (search), 'y'/'u' (upgrade), 'i' (info) ni 'l' (list),
+-- qui ont chacun leur propre sémantique.
+local function is_install(op)
+    if not op:match("^%-%a*S%a*$") then return false end
+    if op:find("[syuil]") then return false end
     return true
 end
 
@@ -76,7 +88,8 @@ local function main()
         local C = color.new(config.color)
         print(C.red("L'utilisateur système « yaourt » est introuvable."))
         print("Créez-le (en tant que root) :")
-        print(C.cyan([[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
+        print(C.cyan(
+        [[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
         return 1
     end
 
@@ -115,6 +128,18 @@ local function main()
     -- Mise à jour système unifiée (dépôts + AUR).
     if is_sysupgrade(args) then
         return update.run(config)
+    end
+
+    -- Installation directe (-S <paquet>...) : route chaque paquet vers les
+    -- dépôts (pacman) ou l'AUR (build).
+    if is_install(first) then
+        local names = {}
+        for i = 2, #args do names[#names + 1] = args[i] end
+        if #names == 0 then
+            log.error("-S attend au moins un nom de paquet")
+            return 1
+        end
+        return install.run(config, names)
     end
 
     -- Tout le reste : on délègue à pacman tel quel (avec sudo si nécessaire).
