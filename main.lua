@@ -6,6 +6,7 @@
 local build   = require("lib.build")
 local cfg     = require("lib.config")
 local color   = require("lib.color")
+local deps    = require("lib.deps")
 local fetch   = require("lib.fetch")
 local install = require("lib.install")
 local log     = require("lib.log")
@@ -102,6 +103,26 @@ local function main()
             return 1
         end
         return fetch.get(config, pkgs)
+    end
+
+    -- TEMPORAIRE (debug) : yaourt --debug-deps <paquet>
+    -- Affiche les dépendances AUR directes d'un paquet, sans rien construire.
+    if first == "--debug-deps" then
+        if not args[2] then
+            log.error("--debug-deps attend un nom de paquet")
+            return 1
+        end
+        return deps.show(config, args[2])
+    end
+
+    -- TEMPORAIRE (debug) : yaourt --debug-resolve <paquet>
+    -- Affiche l'ordre de build récursif des dépendances AUR, sans construire.
+    if first == "--debug-resolve" then
+        if not args[2] then
+            log.error("--debug-resolve attend un nom de paquet")
+            return 1
+        end
+        return deps.show_resolve(config, args[2])
     end
 
     -- TEMPORAIRE (test du pipeline de build) : yaourt -B <paquet>
