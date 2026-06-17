@@ -248,9 +248,9 @@ function update.list_aur(config, aurall)
 
     for _, e in ipairs(aurall) do
         if e.in_aur then
-            inaur[#inaur+1] = e
+            inaur[#inaur + 1] = e
         else
-            notinaur[#notinaur+1] = e
+            notinaur[#notinaur + 1] = e
         end
     end
 
@@ -266,7 +266,7 @@ function update.list_aur(config, aurall)
 
         local notinaur_names = {}
         for _, v in ipairs(notinaur) do
-            notinaur_names[#notinaur_names+1] = v.name
+            notinaur_names[#notinaur_names + 1] = v.name
         end
 
         print(C.cyan("==> Paquets non gérés par AUR (" .. #notinaur .. ")"))
@@ -303,9 +303,9 @@ function update.run(config)
     if #repos > 0 then
         local cmd = {}
         local p = util.sudo_prefix(config)
-        if p then cmd[#cmd+1] = p end
-        cmd[#cmd+1] = "pacman"
-        cmd[#cmd+1] = "-Syu"
+        if p then cmd[#cmd + 1] = p end
+        cmd[#cmd + 1] = "pacman"
+        cmd[#cmd + 1] = "-Syu"
 
         local code = util.passthrough(cmd)
         if code ~= 0 then return code end
@@ -313,15 +313,20 @@ function update.run(config)
 
     local collect = {}
     if #auras > 0 then
+        local built = {} -- anti-doublon partagé entre les paquets AUR mis à jour
+        local ok_count = 0
         for _, u in ipairs(auras) do
-            local ok, err = build.one(config, u.name)
-            if not ok then collect[#collect+1] = {name = u.name, error = err} end
+            -- build.aur résout les dépendances AUR récursives et installe les
+            -- dépendances dépôt, comme pour -S (chemin unifié).
+            local ok, err, built_names = build.aur(config, u.name, built)
+            ok_count = ok_count + #(built_names or {})
+            if not ok then collect[#collect + 1] = { name = u.name, error = err } end
         end
-        print(C.green("\n==> " .. #auras - #collect .. " paquet(s) AUR installé(s) avec succès"))
+        print(C.green("\n==> " .. ok_count .. " paquet(s) AUR installé(s)"))
         if #collect > 0 then
             print(C.red("\n==> Échecs (" .. #collect .. ") :"))
             for _, pkg in ipairs(collect) do
-                -- pkg.error vaut déjà « <nom> : <raison> » (renvoyé par build.one),
+                -- pkg.error vaut déjà « <nom> : <raison> » (renvoyé par build.aur),
                 -- donc on l'affiche tel quel sans re-préfixer par le nom.
                 print(C.red("    " .. tostring(pkg.error)))
             end

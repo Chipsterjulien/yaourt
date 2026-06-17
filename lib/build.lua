@@ -7,6 +7,8 @@
 local fetch      = require("lib.fetch")
 local util       = require("lib.util")
 local log        = require("lib.log")
+local deps       = require("lib.deps")
+local pacman     = require("lib.pacman")
 
 local BUILD_USER = "yaourt"
 
@@ -170,6 +172,87 @@ function build.review(config, dest)
         return false
     end
     return true
+end
+
+-- ensure_repo_deps(config, name) -> (true, nil) | (false, raison)
+-- Installe en root les dépendances dépôt manquantes de `name`
+-- (pacman -S --asdeps --needed) AVANT la compilation. Nécessaire car makepkg
+-- tourne en tant que l'utilisateur de build (sans droits pacman) et est appelé
+-- sans -s ; les dépendances dépôt doivent donc déjà être présentes. --asdeps
+-- les marque comme dépendances, --needed évite de réinstaller l'existant.
+local function ensure_repo_deps(config, name)
+    local rdeps, err = deps.repo_deps_of(config, name)
+    if not rdeps then
+        return false, name .. " : échec résolution des dépendances dépôt ("
+            .. tostring(err) .. ")"
+    end
+    if #rdeps == 0 then
+        return true, nil
+    end
+    local argv = luapilot.mergeTables({ "-S", "--asdeps", "--needed" }, rdeps)
+    local code = pacman.passthrough(config, argv)
+    if code ~= 0 then
+        return false, name .. " : échec installation des dépendances dépôt ("
+            .. table.concat(rdeps, ", ") .. ")"
+    end
+    return true, nil
+end
+
+-- build.aur(config, name, built) -> (ok, err, built_names)
+-- Brique HAUT NIVEAU : construit un paquet AUR avec toute sa chaîne de
+-- dépendances. Résout les dépendances AUR (ordre topologique), puis pour
+-- chaque paquet (dépendances AUR d'abord, cible ensuite) installe ses
+-- dépendances dépôt en root et le compile via build.one.
+--   * `built` : ensemble PARTAGÉ {nom = true} des paquets déjà construits dans
+--     la session (anti-doublon entre plusieurs cibles). L'appelant le crée et
+--     le conserve d'un appel à l'autre.
+--   * retour : ok (booléen), err (message si échec), built_names (liste des
+--     paquets effectivement construits lors de cet appel, pour le bilan).
+function build.aur(config, name, built)
+    built = built or {}
+    local built_names = {}
+
+    -- Résolution des dépendances AUR (ordre topologique, cible non incluse).
+    local order, rerr = deps.resolve(config, name)
+    if not order then
+        return false, name .. " : échec de résolution des dépendances ("
+            .. tostring(rerr) .. ")", built_names
+    end
+
+    -- Construit un paquet : dépendances dépôt (root) puis makepkg (build user).
+    local function build_one_full(pkg)
+        local ok, derr = ensure_repo_deps(config, pkg)
+        if not ok then return false, derr end
+        return build.one(config, pkg)
+    end
+
+    -- Dépendances AUR d'abord, dans l'ordre résolu.
+    for _, dep in ipairs(order) do
+        if not built[dep] then
+            local ok, err = build_one_full(dep)
+            built[dep] = true
+            if not ok then
+                -- Une dépendance échoue : inutile de tenter la cible.
+                return false,
+                    (err or (dep .. " : échec")) .. " | "
+                    .. name .. " : abandonné (échec de la dépendance " .. dep .. ")",
+                    built_names
+            end
+            built_names[#built_names + 1] = dep
+        end
+    end
+
+    -- Cible enfin.
+    if not built[name] then
+        local ok, err = build_one_full(name)
+        built[name] = true
+        if not ok then
+            return false, err, built_names
+        end
+        built_names[#built_names + 1] = name
+    end
+
+    return true, nil, built_names
 end
 
 return build
