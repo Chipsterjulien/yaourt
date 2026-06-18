@@ -14,36 +14,17 @@
 -- Couleurs par dépôt et drapeaux (orphelin)/(périmé) sont cohérents avec
 -- l'affichage des mises à jour.
 
-local aur    = require("lib.aur")
-local color  = require("lib.color")
-local log    = require("lib.log")
-local util   = require("lib.util")
+local aur     = require("lib.aur")
+local color   = require("lib.color")
+local log     = require("lib.log")
+local util    = require("lib.util")
+local display = require("lib.display")
 
-local search = {}
+local search  = {}
 
 --------------------------------------------------------------------------
 -- Helpers communs
 --------------------------------------------------------------------------
-
--- Couleur d'un dépôt (identique à update.lua, pour la cohérence visuelle).
-local function repo_color(C, repo)
-    if repo == "core" then
-        return C.red
-    elseif repo == "extra" then
-        return C.green
-    elseif repo == "multilib" then
-        return C.cyan
-    elseif repo == "aur" then
-        return C.magenta
-    else
-        return C.blue
-    end
-end
-
--- Un champ JSON peut être absent (nil) ou explicitement null (sentinelle).
-local function isset(v)
-    return v ~= nil and v ~= luapilot.json.null
-end
 
 -- Map nom -> version installée, via `pacman -Q`. Sert à marquer [installé]
 -- et à repérer une version différente. Renvoie une table (vide si erreur).
@@ -116,11 +97,11 @@ local function aur_search(config, term, inst)
             repo       = "aur",
             name       = e.Name,
             version    = e.Version,
-            desc       = isset(e.Description) and e.Description or "",
+            desc       = util.isset(e.Description) and e.Description or "",
             votes      = e.NumVotes or 0,
             popularity = e.Popularity or 0,
-            orphan     = not isset(e.Maintainer),
-            outofdate  = isset(e.OutOfDate),
+            orphan     = not util.isset(e.Maintainer),
+            outofdate  = util.isset(e.OutOfDate),
             installed  = inst[e.Name] ~= nil,
             inst_ver   = inst[e.Name],
         }
@@ -140,7 +121,7 @@ end
 
 -- Affiche une entrée dépôt : entête colorée + description indentée.
 local function print_repo(C, e)
-    local rc   = repo_color(C, e.repo)
+    local rc   = display.repo_color(C, e.repo)
     local head = "  " .. rc(e.repo .. "/") .. C.bold(e.name) .. " " .. C.green(e.version)
     if e.installed then head = head .. " " .. C.blue("[installé]") end
     print(head)
@@ -149,13 +130,13 @@ end
 
 -- Affiche une entrée AUR : entête + badge votes + détail explicite + statut.
 local function print_aur(C, e)
-    local rc   = repo_color(C, e.repo)
+    local rc   = display.repo_color(C, e.repo)
     local head = "  " .. rc(e.repo .. "/") .. C.bold(e.name) .. " " .. C.green(e.version)
 
     -- Votes + popularité explicites, en cyan pour ressortir sans entrer en
     -- conflit avec les autres couleurs de la ligne (orphelin/installé/version).
     -- Le libellé en toutes lettres lève l'ambiguïté du couple de nombres.
-    head = head .. " " .. C.badge("44", "37",
+    head       = head .. " " .. C.badge("44", "37",
         string.format(" votes : %d, popularité : %.2f ", e.votes, e.popularity))
 
     if e.installed then

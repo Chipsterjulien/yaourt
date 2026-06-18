@@ -1,38 +1,58 @@
 -- update.lua — vue unifiée des mises à jour (dépôts + AUR).
 --
 -- Sources :
---   * dépôts : `checkupdates` (paquet pacman-contrib) — sûr, sans root,
---     rafraîchit une base de sync temporaire (pas d'upgrade partiel).
+--   * dépôts : synchro réelle des bases (`pacman -Sy`, root, visible) puis
+--     `pacman -Qu` pour lister les mises à jour disponibles. L'application se
+--     fait ensuite avec `pacman -Su` (la synchro est déjà faite). Plus de
+--     dépendance à `checkupdates`/pacman-contrib.
 --   * AUR    : `pacman -Qm` (paquets étrangers) -> RPC info -> `vercmp`.
 --
 -- Affichage épuré façon yaourt : `dépôt/nom  ancienne -> nouvelle`, coloré
 -- par dépôt. Puis invite [O/n]. Sur [O], upgrade des dépôts (tout-ou-rien)
--- via pacman ; le build des paquets AUR arrivera à l'étape suivante.
+-- via pacman, puis build des paquets AUR (build.aur).
+--
+-- Note : l'utilisateur tape son mot de passe AVANT l'affichage (le -Sy est
+-- root). S'il refuse à l'invite, les bases ont été synchronisées mais rien
+-- n'est appliqué — comportement assumé pour un -Syu.
 
-local aur    = require("lib.aur")
-local build  = require("lib.build")
-local color  = require("lib.color")
-local log    = require("lib.log")
-local util   = require("lib.util")
+local aur     = require("lib.aur")
+local build   = require("lib.build")
+local color   = require("lib.color")
+local log     = require("lib.log")
+local util    = require("lib.util")
+local display = require("lib.display")
 
-local update = {}
+local update  = {}
 
 --------------------------------------------------------------------------
 -- Collecte
 --------------------------------------------------------------------------
 
--- Mises à jour des dépôts via checkupdates -> { {name, oldver, newver}, … }
-local function repo_updates()
-    if not luapilot.which("checkupdates") then
-        log.warn("checkupdates introuvable (paquet pacman-contrib) — MAJ des dépôts ignorées")
+-- Mises à jour des dépôts via une vraie synchro puis `pacman -Qu`.
+-- Approche « façon yaourt » : on rafraîchit réellement les bases (pacman -Sy,
+-- en root, avec barres de progression visibles), PUIS on liste les paquets
+-- pouvant être mis à jour (pacman -Qu). L'application se fera ensuite avec
+-- `pacman -Su` seul (la synchro est déjà faite) — voir update.run.
+-- Renvoie { {name, oldver, newver}, … }.
+local function repo_updates(config)
+    -- 1) Synchro réelle des bases (root, interactif pour voir la progression).
+    local sync = {}
+    local p = util.sudo_prefix(config)
+    if p then sync[#sync + 1] = p end
+    sync[#sync + 1] = "pacman"
+    sync[#sync + 1] = "-Sy"
+    local code = util.passthrough(sync)
+    if code ~= 0 then
+        log.error("échec de la synchronisation des bases (pacman -Sy)")
         return {}
     end
-    local res, err = util.run({ "checkupdates" })
+
+    -- 2) Détection des MAJ disponibles (pacman -Qu, capturé).
+    -- Format : « nom ancienne -> nouvelle ». Code non nul si aucune MAJ.
+    local res = util.run({ "pacman", "-Qu" })
     if not res then
-        log.error("checkupdates: " .. tostring(err))
         return {}
     end
-    -- code 2 = aucune MAJ (stdout vide) ; sinon lignes "name old -> new".
     local list = {}
     for line in (res.stdout or ""):gmatch("[^\n]+") do
         local name, oldv, newv = line:match("^(%S+)%s+(%S+)%s*%->%s*(%S+)")
@@ -56,10 +76,6 @@ local function repo_map()
     return m
 end
 
--- Un champ JSON peut être absent (nil) ou explicitement null (sentinelle).
-local function isset(v)
-    return v ~= nil and v ~= luapilot.json.null
-end
 
 -- Statut de TOUS les paquets AUR installés (pacman -Qm -> info RPC).
 -- Renvoie une liste triée d'entrées :
@@ -92,8 +108,8 @@ local function aur_status(config)
 
         if entry then
             e.newver     = entry.Version
-            e.orphan     = not isset(entry.Maintainer)
-            e.outofdate  = isset(entry.OutOfDate)
+            e.orphan     = not util.isset(entry.Maintainer)
+            e.outofdate  = util.isset(entry.OutOfDate)
             e.has_update = util.vercmp(installed[name], entry.Version) == -1
         end
         local is_debug_subproduct = not e.in_aur and e.name:match("%-debug$") ~= nil
@@ -110,7 +126,7 @@ end
 --   auras  : paquets AUR à mettre à jour (sous-ensemble de aurall)
 --   aurall : statut de TOUS les paquets AUR installés (pour la liste optionnelle)
 function update.check(config)
-    local repos = repo_updates()
+    local repos = repo_updates(config)
     if #repos > 0 then
         local rmap = repo_map()
         for _, u in ipairs(repos) do u.repo = rmap[u.name] or "repo" end
@@ -133,19 +149,6 @@ end
 -- Affichage
 --------------------------------------------------------------------------
 
-local function repo_color(C, repo)
-    if repo == "core" then
-        return C.red
-    elseif repo == "extra" then
-        return C.green
-    elseif repo == "multilib" then
-        return C.cyan
-    elseif repo == "aur" then
-        return C.magenta
-    else
-        return C.blue
-    end
-end
 
 -- Découpe une version pacman en (partie ver, pkgrel). pkgver ne peut pas
 -- contenir de '-' : on coupe donc au dernier tiret. La « partie ver »
@@ -192,7 +195,7 @@ function update.display(config, repos, auras)
     end
 
     local function line(u)
-        local rc      = repo_color(C, u.repo)
+        local rc      = display.repo_color(C, u.repo)
         local visible = #(u.repo .. "/" .. u.name)
         local label   = rc(u.repo .. "/") .. u.name
         local namepad = string.rep(" ", wname - visible)
@@ -298,14 +301,15 @@ function update.run(config)
     end
     -- [M]anuel : sélection à la carte des paquets AUR -> à venir.
 
-    -- Dépôts : upgrade complet et sûr (tout-ou-rien). pacman gère sa propre
-    -- confirmation finale.
+    -- Dépôts : upgrade complet et sûr (tout-ou-rien). La synchro des bases a
+    -- déjà été faite lors de la détection (pacman -Sy), donc on applique avec
+    -- `pacman -Su` seul — pas de double synchro. pacman gère sa confirmation.
     if #repos > 0 then
         local cmd = {}
         local p = util.sudo_prefix(config)
         if p then cmd[#cmd + 1] = p end
         cmd[#cmd + 1] = "pacman"
-        cmd[#cmd + 1] = "-Syu"
+        cmd[#cmd + 1] = "-Su"
 
         local code = util.passthrough(cmd)
         if code ~= 0 then return code end

@@ -16,7 +16,7 @@ license=('GPL')
 # parallèle (RPC AUR direct) généralisé.
 # pacman-contrib : fournit checkupdates (MAJ des dépôts, sans root). On pourra
 # l'internaliser plus tard (base de sync temporaire) pour s'en passer.
-depends=('pacman' 'pacman-contrib' 'package-query' 'git' 'sudo')
+depends=('pacman' 'package-query' 'git' 'sudo')
 
 # luapilot nécessaire pour empaqueter le binaire.
 #

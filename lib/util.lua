@@ -132,4 +132,10 @@ function util.vercmp(a, b)
     if n < 0 then return -1 elseif n > 0 then return 1 else return 0 end
 end
 
+-- isset(v) : vrai si une valeur JSON décodée est réellement présente.
+-- Un champ absent vaut nil ; un null JSON est décodé en luapilot.json.null.
+function util.isset(v)
+    return v ~= nil and v ~= luapilot.json.null
+end
+
 return util
