@@ -1,14 +1,21 @@
 -- deps.lua — résolution des dépendances AUR.
 --
 -- Un paquet AUR peut dépendre d'autres paquets AUR (et non seulement de
--- paquets des dépôts). makepkg -s ne sait installer QUE les dépendances des
--- dépôts ; les dépendances AUR doivent donc être construites au préalable.
--- Ce module identifie, pour un paquet donné, ses dépendances AUR à construire.
+-- paquets des dépôts). makepkg, appelé sans -s, n'installe rien : les
+-- dépendances dépôt doivent être présentes, et les dépendances AUR construites
+-- au préalable. Ce module identifie, pour un paquet donné, ses dépendances.
 --
--- ROADMAP :
---   * aur_deps_of  : dépendances AUR DIRECTES d'un paquet.            <-- ICI
---   * resolve      : exploration récursive + ordre de build topologique.
---   * provides / contraintes de version : non gérés pour l'instant.
+-- Classification d'une dépendance, en deux tests (la dépendance brute est
+-- passée telle quelle, provides et version étant gérés nativement) :
+--   1. `pacman -T <dep>`  : déjà satisfaite LOCALEMENT (installé) ? -> rien.
+--   2. `pacman -Sp <dep>` : sinon, disponible dans les DÉPÔTS ? -> à installer
+--      en root avant le build (repo_deps_of).
+--   3. ni l'un ni l'autre -> candidate AUR (à construire), confirmée via le RPC.
+-- Important : `pacman -T` ne consulte QUE la base installée, pas les dépôts ;
+-- d'où le second test `-Sp` pour ne pas prendre une dépendance dépôt encore
+-- non installée pour une dépendance AUR.
+-- Le nom n'est nettoyé (strip_version) que pour interroger l'AUR, qui ne
+-- comprend pas les contraintes de version.
 
 local util = require("lib.util")
 local aur  = require("lib.aur")
@@ -17,28 +24,46 @@ local deps = {}
 
 -- strip_version(dep) -> nom nu, sans contrainte de version.
 -- « libalpm.so>=14 » -> « libalpm.so », « foo=1.0 » -> « foo », « git » -> « git ».
--- On coupe au premier caractère de contrainte (<, >, =).
+-- Sert uniquement à interroger l'AUR (le RPC ne gère pas « foo>=1.2 »).
 local function strip_version(dep)
     return dep:match("^[^<>=]+") or dep
 end
 
--- in_repos(name) -> bool : présent dans un dépôt officiel (pacman -Si, code 0).
--- (Dupliqué de install.lua ; à factoriser dans un module partagé plus tard.)
-local function in_repos(name)
-    local res = util.run({ "pacman", "-Si", name })
+-- satisfied_locally(dep) -> bool : la dépendance (BRUTE) est-elle déjà
+-- satisfaite par l'état INSTALLÉ du système ? `pacman -T <dep>` (deptest) ne
+-- consulte QUE la base locale installée (provides et version compris), pas les
+-- dépôts. Code 0 = déjà satisfaite localement.
+local function satisfied_locally(dep)
+    local res = util.run({ "pacman", "-T", dep })
     return res ~= nil and res.code == 0
 end
 
--- is_installed(name) -> bool : déjà installé (pacman -Q, code 0).
-local function is_installed(name)
-    local res = util.run({ "pacman", "-Q", name })
+-- available_in_repos(dep) -> bool : un paquet des DÉPÔTS satisfait-il la
+-- dépendance (BRUTE) ? `pacman -Sp <dep>` résout la cible contre les dépôts en
+-- tenant compte des provides ET de la version, et renvoie 0 (avec l'URL du
+-- paquet) si trouvé. Indispensable en complément de -T, qui ignore les dépôts :
+-- une dépendance repo disponible mais non installée n'est PAS une candidate AUR.
+local function available_in_repos(dep)
+    local res = util.run({ "pacman", "-Sp", dep })
     return res ~= nil and res.code == 0
+end
+
+-- raw_deps(entry) -> liste des dépendances brutes (Depends + MakeDepends).
+local function raw_deps(entry)
+    local raw = {}
+    for _, field in ipairs({ "Depends", "MakeDepends" }) do
+        local arr = entry[field]
+        if type(arr) == "table" then
+            for _, d in ipairs(arr) do raw[#raw + 1] = d end
+        end
+    end
+    return raw
 end
 
 -- aur_deps_of(config, name) -> (liste, nil) | (nil, err)
 -- Dépendances AUR DIRECTES de `name` : on lit Depends + MakeDepends via le RPC,
--- on nettoie les noms, on écarte ce qui est déjà installé ou dans les dépôts,
--- puis un seul aur.info groupé confirme lesquelles existent réellement en AUR.
+-- on écarte celles que pacman sait déjà satisfaire (installées, dépôt, provides,
+-- version), puis un seul aur.info groupé confirme lesquelles existent en AUR.
 function deps.aur_deps_of(config, name)
     local info, err = aur.info(config, { name })
     if not info then return nil, err end
@@ -49,23 +74,16 @@ function deps.aur_deps_of(config, name)
         return {}, nil
     end
 
-    -- Rassembler Depends + MakeDepends (chacun peut être absent).
-    local raw = {}
-    for _, field in ipairs({ "Depends", "MakeDepends" }) do
-        local arr = entry[field]
-        if type(arr) == "table" then
-            for _, d in ipairs(arr) do raw[#raw + 1] = d end
-        end
-    end
-
-    -- Nettoyer + premier filtre local (ni installé, ni dépôt), en dédupliquant.
+    -- Candidates AUR : dépendances ni satisfaites localement, ni disponibles
+    -- dans les dépôts (provides + version testés sur la dépendance brute). On
+    -- retient le nom nettoyé pour interroger l'AUR. Déduplication au passage.
     local seen = {}
     local candidates = {}
-    for _, d in ipairs(raw) do
-        local n = strip_version(d)
-        if n and n ~= "" and not seen[n] then
-            seen[n] = true
-            if not is_installed(n) and not in_repos(n) then
+    for _, d in ipairs(raw_deps(entry)) do
+        if not satisfied_locally(d) and not available_in_repos(d) then
+            local n = strip_version(d)
+            if n and n ~= "" and not seen[n] then
+                seen[n] = true
                 candidates[#candidates + 1] = n
             end
         end
@@ -73,8 +91,8 @@ function deps.aur_deps_of(config, name)
 
     if #candidates == 0 then return {}, nil end
 
-    -- Second filtre : un seul aur.info groupé. Ne survivent que les candidates
-    -- réellement présentes dans l'AUR.
+    -- Confirmation : un seul aur.info groupé. Ne survivent que les candidates
+    -- réellement présentes dans l'AUR (les autres n'existent nulle part).
     local found, ferr = aur.info(config, candidates)
     if not found then return nil, ferr end
 
@@ -86,10 +104,14 @@ function deps.aur_deps_of(config, name)
 end
 
 -- repo_deps_of(config, name) -> (liste, nil) | (nil, err)
--- Dépendances de `name` (Depends + MakeDepends) qui sont dans les DÉPÔTS et
--- NON encore installées. Comme la compilation tourne en tant qu'utilisateur
--- yaourt (sans droits pacman), ces dépendances doivent être installées en root
--- AVANT de lancer makepkg (lequel est appelé sans -s). Renvoie les noms nus.
+-- Dépendances de `name` à installer en root AVANT compilation : celles qui
+-- sont disponibles dans les dépôts (provides/version compris) mais PAS déjà
+-- satisfaites localement. On les passe ensuite à `pacman -S --asdeps --needed`
+-- (le --needed est une sécurité supplémentaire). On renvoie le nom NETTOYÉ ;
+-- pacman résout provides et version au moment de l'installation.
+--
+-- Nécessaire car makepkg tourne en tant qu'utilisateur de build (sans droits
+-- pacman) et est appelé sans -s : les dépendances dépôt doivent déjà être là.
 function deps.repo_deps_of(config, name)
     local info, err = aur.info(config, { name })
     if not info then return nil, err end
@@ -97,22 +119,14 @@ function deps.repo_deps_of(config, name)
     local entry = info[name]
     if not entry then return {}, nil end
 
-    local raw = {}
-    for _, field in ipairs({ "Depends", "MakeDepends" }) do
-        local arr = entry[field]
-        if type(arr) == "table" then
-            for _, d in ipairs(arr) do raw[#raw + 1] = d end
-        end
-    end
-
     local seen = {}
     local result = {}
-    for _, d in ipairs(raw) do
-        local n = strip_version(d)
-        if n and n ~= "" and not seen[n] then
-            seen[n] = true
-            -- On ne garde que ce qui est dans les dépôts et pas déjà installé.
-            if not is_installed(n) and in_repos(n) then
+    for _, d in ipairs(raw_deps(entry)) do
+        -- À installer : disponible en dépôt et pas déjà satisfaite localement.
+        if not satisfied_locally(d) and available_in_repos(d) then
+            local n = strip_version(d)
+            if n and n ~= "" and not seen[n] then
+                seen[n] = true
                 result[#result + 1] = n
             end
         end
@@ -144,11 +158,8 @@ function deps.resolve(config, target)
         for _, d in ipairs(direct) do
             if not visit(d) then return false end
         end
-        -- Post-ordre : on ajoute pkg APRÈS ses dépendances. Chaque visit(d)
-        -- a déjà poussé d (et ses sous-dépendances) dans `order`, donc à ce
-        -- point toutes les dépendances de pkg le précèdent dans la liste.
-        -- On ajoute pkg seulement s'il n'est pas la cible (la cible est
-        -- construite séparément par l'appelant).
+        -- Post-ordre : on ajoute pkg APRÈS ses dépendances. La cible est
+        -- construite séparément par l'appelant, donc on ne l'ajoute pas.
         if pkg ~= target then
             order[#order + 1] = pkg
         end
