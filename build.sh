@@ -14,11 +14,24 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 OUT="${1:-yaourt}"
 
-# luapilot : $LUAPILOT si défini, sinon ./bin/luapilot (binaire local
-# vendu par archi, non versionné), sinon le PATH.
+# luapilot : $LUAPILOT si défini, sinon le binaire propre à l'architecture
+# courante dans bin/. Les binaires y sont nommés selon le motif des releases
+# luapilot : luapilot-<version>-linux-<uname -m> (ex. luapilot-1.8.0-linux-x86_64).
+# On résout par glob sur l'architecture ; à défaut on tente ./bin/luapilot, puis
+# le PATH. Permet de copier le dossier tel quel sur plusieurs machines (les 3
+# binaires dans bin/) : chacune prend automatiquement le sien.
 LUAPILOT="${LUAPILOT:-}"
 if [[ -z "$LUAPILOT" ]]; then
-  if [[ -x "$ROOT/bin/luapilot" ]]; then
+  _arch="$(uname -m)"
+  # Glob des binaires correspondant à l'architecture courante.
+  _matches=( "$ROOT/bin/"luapilot-*-linux-"$_arch" )
+  if [[ -e "${_matches[0]}" ]]; then
+    # S'il y en a plusieurs (versions multiples), on prend le plus récent.
+    LUAPILOT="$(ls -t "${_matches[@]}" 2>/dev/null | head -n1)"
+    # Le binaire vient souvent d'un téléchargement/copie sans bit exécutable :
+    # on le rend exécutable au passage pour éviter un échec silencieux.
+    [[ -x "$LUAPILOT" ]] || chmod +x "$LUAPILOT" 2>/dev/null || true
+  elif [[ -x "$ROOT/bin/luapilot" ]]; then
     LUAPILOT="$ROOT/bin/luapilot"
   else
     LUAPILOT="luapilot"
