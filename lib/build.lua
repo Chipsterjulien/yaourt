@@ -9,6 +9,8 @@ local util       = require("lib.util")
 local log        = require("lib.log")
 local deps       = require("lib.deps")
 local pacman     = require("lib.pacman")
+local color      = require("lib.color")
+local aur        = require("lib.aur")
 
 local BUILD_USER = "yaourt"
 
@@ -93,6 +95,38 @@ end
 -- one(config, name) -> (true, nil) | (false, raison)
 -- Prépare puis fait réviser le PKGBUILD. S'arrête après la revue.
 function build.one(config, name)
+    local C = color.new(config.color)
+
+    -- Annonce visible du paquet en cours de construction (façon yaourt) :
+    -- « ==> Construction de <nom> (ancienne -> nouvelle) », ou
+    -- « ==> Construction de <nom> (nouvelle installation <ver>) » si absent.
+    -- Version installée : pacman -Q (local). Version cible : RPC AUR.
+    local installed
+    do
+        local qres = util.run({ "pacman", "-Q", name })
+        if qres and qres.code == 0 then
+            installed = (qres.stdout or ""):match("^%S+%s+(%S+)")
+        end
+    end
+    local target
+    do
+        local info = aur.info(config, { name })
+        if info and info[name] then target = info[name].Version end
+    end
+
+    local line = C.cyan("==> ") .. C.bold("Construction de ") .. C.magenta(name)
+    if target then
+        if installed then
+            line = line .. " (" .. C.dim(installed) .. " -> " .. C.green(target) .. ")"
+        else
+            line = line .. " (" .. C.green("nouvelle installation " .. target) .. ")"
+        end
+    elseif installed then
+        line = line .. " (" .. C.dim(installed) .. ")"
+    end
+    print("")
+    print(line)
+
     local is_root = util.is_root()
     local build_path, err = build.resolve_builddir(config, is_root)
     if err then return false, err end
@@ -103,12 +137,13 @@ function build.one(config, name)
     end
     local bcfg = luapilot.mergeTables(config, overrides)
 
-    local dest, err = build.prepare(bcfg, name)
-    if not dest then
+    local meta, err = build.prepare(bcfg, name)
+    if not meta then
         return false, err
     end
+    local dest = meta.path
 
-    if not build.review(bcfg, dest) then
+    if not build.review(bcfg, meta) then
         return false, name .. " : revue refusée"
     end
 
@@ -128,18 +163,18 @@ end
 
 -- prepare(config, name) -> (dossier, nil) | (nil, message)
 function build.prepare(config, name)
-    local dest, err = fetch.one(config, name)
+    local meta, err = fetch.one(config, name)
     if err ~= nil then return nil, err end
 
     -- Construire l'emplacement du PKGBUILD
-    local pkgbuild_path = dest .. "/PKGBUILD"
+    local pkgbuild_path = meta.path .. "/PKGBUILD"
 
     -- Tester l'existence du PKGBUILD
     local exists, cerr = luapilot.fileExists(pkgbuild_path)
     if cerr ~= nil then return nil, cerr end
     if not exists then return nil, name .. " : PKGBUILD introuvable" end
 
-    return dest, nil
+    return meta, nil
 end
 
 -- resolve_builddir(config) -> (dossier, nil) | (nil, message)
@@ -156,16 +191,48 @@ function build.resolve_builddir(config, is_root)
 end
 
 -- review(config, dest) -> bool : montre le PKGBUILD et demande validation.
-function build.review(config, dest)
-    local pkgbuild_path = dest .. "/PKGBUILD"
-    local cmd = { config.editor, pkgbuild_path }
-    local result = util.passthrough(cmd)
-    if result ~= 0 then
-        print("Impossible d'ouvrir le PKGBUILD avec '" .. tostring(config.editor) .. "'")
-        return false
+-- build.review(config, meta) -> bool (true = on poursuit, false = refusé)
+-- Selon le contexte de récupération (meta) :
+--   * premier clone      -> review complète : on ouvre le PKGBUILD dans
+--     l'éditeur (rien à comparer, l'utilisateur découvre le paquet) ;
+--   * mise à jour modifiée -> diff git des fichiers entre l'ancien et le
+--     nouveau commit (met en évidence ce qui a changé, .install et patches
+--     compris — ce sont aussi du code exécuté) ;
+--   * mise à jour sans changement -> rien à revoir, on poursuit directement.
+-- Dans les deux premiers cas, on demande confirmation avant de continuer.
+function build.review(config, meta)
+    local C = color.new(config.color)
+    local dest = meta.path
+
+    if meta.first_clone then
+        -- Premier clone : review complète du PKGBUILD dans l'éditeur.
+        local result = util.passthrough({ config.editor, dest .. "/PKGBUILD" })
+        if result ~= 0 then
+            print("Impossible d'ouvrir le PKGBUILD avec '" .. tostring(config.editor) .. "'")
+            return false
+        end
+    elseif meta.updated then
+        -- Mise à jour : diff git de TOUS les fichiers entre les deux commits.
+        print("")
+        print(C.cyan("==> ") .. C.bold("Modifications depuis la dernière version :"))
+        local res = util.run_as(config.build_user, {
+            "git", "-C", dest, "diff", "--color=always",
+            meta.old_commit .. ".." .. meta.new_commit,
+        })
+        if res and res.code == 0 and (res.stdout or "") ~= "" then
+            io.write(res.stdout)
+            if not (res.stdout:match("\n$")) then io.write("\n") end
+        else
+            -- Diff vide ou indisponible (ex. changements hors fichiers suivis).
+            print(C.dim("  (aucune modification de fichier à afficher)"))
+        end
+    else
+        -- Dépôt inchangé depuis la dernière fois : rien à revoir.
+        print(C.dim("==> PKGBUILD inchangé depuis la dernière validation."))
+        return true
     end
 
-    io.write("Voulez-vous continuer ? [O/n] ")
+    io.write("Continuer la construction ? [O/n] ")
     io.flush()
     local ans = (io.read("l") or ""):lower()
     if ans == "n" or ans == "non" then
