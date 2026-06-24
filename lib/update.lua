@@ -282,6 +282,57 @@ end
 -- Orchestration
 --------------------------------------------------------------------------
 
+-- parse_selection(input, max) -> table {indice = true, …}
+-- Analyse une saisie de sélection : numéros isolés et plages, séparés par des
+-- espaces ou des virgules. Ex. « 1 3 5 », « 1-4 », « 1-3, 5 ». Les indices hors
+-- de [1, max] sont ignorés silencieusement. Renvoie l'ensemble des indices
+-- retenus (vide si rien de valide).
+local function parse_selection(input, max)
+    local chosen = {}
+    for token in (input or ""):gmatch("[^%s,]+") do
+        local a, b = token:match("^(%d+)%-(%d+)$")
+        if a then
+            -- Plage a-b (on gère l'ordre inversé par sécurité).
+            a, b = tonumber(a), tonumber(b)
+            if a > b then a, b = b, a end
+            for i = a, b do
+                if i >= 1 and i <= max then chosen[i] = true end
+            end
+        else
+            local n = tonumber(token:match("^(%d+)$"))
+            if n and n >= 1 and n <= max then chosen[n] = true end
+        end
+    end
+    return chosen
+end
+
+-- select_auras(config, auras) -> liste filtrée des paquets AUR à mettre à jour.
+-- Affiche la liste numérotée et lit une sélection par INCLUSION : l'utilisateur
+-- saisit les numéros (et plages) des paquets qu'il veut mettre à jour. Une
+-- saisie vide ne sélectionne rien (cohérent avec une inclusion explicite).
+local function select_auras(config, auras)
+    local C = color.new(config.color)
+    print("")
+    print(C.cyan("==> ") .. C.bold("Sélection des paquets AUR à mettre à jour"))
+    for i, u in ipairs(auras) do
+        local ver = ""
+        if u.oldver and u.newver then
+            ver = "  " .. C.dim(u.oldver) .. " -> " .. C.green(u.newver)
+        end
+        print(string.format("  %2d. %s%s", i, C.magenta(u.name), ver))
+    end
+    io.write(C.cyan("==> ") .. "Numéros à mettre à jour (ex. 1 3 5 ou 1-4) : ")
+    io.flush()
+    local input = io.read("l") or ""
+
+    local chosen = parse_selection(input, #auras)
+    local filtered = {}
+    for i, u in ipairs(auras) do
+        if chosen[i] then filtered[#filtered + 1] = u end
+    end
+    return filtered
+end
+
 function update.run(config)
     local repos, auras, aurall = update.check(config)
     -- Option : lister tous les paquets AUR installés avec leur statut.
@@ -292,14 +343,21 @@ function update.run(config)
     if #repos == 0 and #auras == 0 then return 0 end
 
     local C = color.new(config.color)
-    io.write("\n" .. C.cyan("==> Continuer la mise à jour ? [O/n] "))
+    io.write("\n" .. C.cyan("==> Continuer la mise à jour ? [O/n/M] "))
     io.flush()
     local ans = (io.read("l") or ""):lower()
     if ans == "n" or ans == "non" then
         print("Annulé.")
         return 0
     end
-    -- [M]anuel : sélection à la carte des paquets AUR -> à venir.
+
+    -- [M]anuel : sélection à la carte des paquets AUR (inclusion). Ne concerne
+    -- que l'AUR ; les paquets des dépôts restent gérés par pacman -Su.
+    if ans == "m" then
+        if #auras > 0 then
+            auras = select_auras(config, auras)
+        end
+    end
 
     -- Dépôts : upgrade complet et sûr (tout-ou-rien). La synchro des bases a
     -- déjà été faite lors de la détection (pacman -Sy), donc on applique avec
