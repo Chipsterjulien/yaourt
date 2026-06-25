@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- build.lua — pipeline de construction des paquets AUR.
 --
 -- prepare : récupère le dossier (via fetch) + vérifie le PKGBUILD

@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- update.lua — vue unifiée des mises à jour (dépôts + AUR).
 --
 -- Sources :
@@ -347,7 +350,7 @@ function update.run(config)
     -- sinon on propose simplement [O/n].
     local prompt = (#auras > 0)
         and "==> Continuer la mise à jour ? [O/n/M] "
-        or "==> Continuer la mise à jour ? [O/n] "
+        or  "==> Continuer la mise à jour ? [O/n] "
     io.write("\n" .. C.cyan(prompt))
     io.flush()
     local ans = (io.read("l") or ""):lower()

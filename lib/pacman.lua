@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- pacman.lua — délégation à pacman.
 --
 -- Tant qu'une opération n'est pas portée nativement, on la passe à pacman.

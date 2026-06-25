@@ -14,8 +14,8 @@ Ce projet est une **réécriture en Lua** du yaourt original
 ([archlinuxfr/yaourt](https://github.com/archlinuxfr/yaourt)), aujourd'hui non
 maintenu. L'objectif est d'en reprendre l'esprit — un assistant pacman/AUR
 simple et lisible — sur une base de code moderne, en suivant une approche
-« figuier étrangleur » : tout ce qui n'est pas encore porté nativement est
-délégué à `pacman`, puis remplacé progressivement.
+« Strangler Fig Pattern » (figuier étrangleur) : tout ce qui n'est pas encore
+porté nativement est délégué à `pacman`, puis remplacé progressivement.
 
 Il s'appuie sur [LuaPilot](https://github.com/Chipsterjulien/luapilot_standalone),
 un binaire Lua 5.5 autonome, et se distribue à terme sous forme d'un exécutable

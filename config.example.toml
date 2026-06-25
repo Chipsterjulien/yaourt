@@ -20,3 +20,7 @@ color = true
 # Lister tous les paquets AUR installés avec leur statut (à jour, mise à
 # jour disponible, Orphelin, périmé) avant les sections de mise à jour.
 # list_aur = false
+# Nombre maximal de résultats affichés par section lors d'une recherche (-Ss).
+# AUR et dépôts sont limités chacun à cette valeur (pour l'AUR, ce sont les
+# paquets les mieux notés qui sont conservés). 0 = aucune limite (tout afficher).
+# search_limit = 20

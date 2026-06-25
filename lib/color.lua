@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- color.lua — coloration ANSI, pilotée par la config.
 --
 -- Usage :

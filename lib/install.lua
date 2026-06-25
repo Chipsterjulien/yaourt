@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- install.lua — installation directe de paquets (dépôts ou AUR).
 --
 -- Implémente `-S <paquet>...`. Les paquets sont classés en deux groupes :

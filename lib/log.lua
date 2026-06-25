@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- log.lua — fine couche au-dessus du module `logging` bundlé.
 --
 -- On garde l'API minimale (info/warn/error/debug) et on applique nos

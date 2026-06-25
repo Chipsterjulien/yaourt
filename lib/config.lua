@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- config.lua — chargement de la configuration.
 --
 -- Deux modes :
@@ -18,17 +21,21 @@ local DEV_CONFIG = "cfg/config.toml"
 local function defaults()
     return {
         -- Répertoire de clonage/build des paquets AUR.
-        builddir = util.cache_home() .. "/yaourt",
+        builddir     = util.cache_home() .. "/yaourt",
         -- Commande sudo (pour les opérations pacman nécessitant root).
-        sudo     = "sudo",
+        sudo         = "sudo",
         -- Éditeur pour la revue de PKGBUILD (étape ultérieure).
-        editor   = luapilot.env("EDITOR") or luapilot.env("VISUAL") or "vi",
+        editor       = luapilot.env("EDITOR") or luapilot.env("VISUAL") or "vi",
         -- Couleur dans nos affichages (l'affichage des MAJ viendra plus tard).
-        color    = true,
+        color        = true,
         -- Base de l'AUR (RPC + git).
-        aur_url  = "https://aur.archlinux.org",
+        aur_url      = "https://aur.archlinux.org",
         -- Lister tous les paquets AUR installés (avec statut) avant les MAJ.
-        list_aur = false,
+        list_aur     = false,
+        -- Nombre maximal de résultats affichés par section lors d'une recherche
+        -- (-Ss) : AUR et dépôts limités chacun à cette valeur. 0 = illimité.
+        -- Pour l'AUR, ce sont les mieux notés qui sont conservés.
+        search_limit = 20,
     }
 end
 

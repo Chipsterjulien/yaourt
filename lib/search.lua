@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- search.lua — recherche unifiée AUR + dépôts (pacman).
 --
 -- Implémente `-Ss` : interroge le RPC AUR (aur.search) et `pacman -Ss`,
@@ -169,18 +172,43 @@ function search.run(config, term)
         auras = {}
     end
 
+    -- Limite d'affichage par section (config.search_limit ; 0 = illimité).
+    -- L'AUR est trié par votes croissants (les mieux notés en fin de liste),
+    -- on garde donc la TRANCHE FINALE ; les dépôts gardent l'ordre de pacman,
+    -- on garde la tranche initiale. On mémorise les totaux pour les afficher.
+    local limit = tonumber(config.search_limit) or 0
+    local aur_total, repo_total = #auras, #repos
+    if limit and limit > 0 then
+        if #auras > limit then
+            local sliced = {}
+            for i = #auras - limit + 1, #auras do sliced[#sliced + 1] = auras[i] end
+            auras = sliced
+        end
+        if #repos > limit then
+            local sliced = {}
+            for i = 1, limit do sliced[#sliced + 1] = repos[i] end
+            repos = sliced
+        end
+    end
+
     -- AUR d'abord (mieux notés en bas de section), dépôts ensuite.
-    if #auras > 0 then
-        print(C.cyan("==> AUR (votes, popularité) (" .. #auras .. ")"))
+    if aur_total > 0 then
+        local shown = (#auras < aur_total)
+            and ("==> AUR (votes, popularité) (" .. #auras .. " affichés sur " .. aur_total .. ")")
+            or ("==> AUR (votes, popularité) (" .. aur_total .. ")")
+        print(C.cyan(shown))
         for _, e in ipairs(auras) do print_aur(C, e) end
     end
-    if #repos > 0 then
-        if #auras > 0 then print("") end
-        print(C.cyan("==> Dépôts officiels (" .. #repos .. ")"))
+    if repo_total > 0 then
+        if aur_total > 0 then print("") end
+        local shown = (#repos < repo_total)
+            and ("==> Dépôts officiels (" .. #repos .. " affichés sur " .. repo_total .. ")")
+            or ("==> Dépôts officiels (" .. repo_total .. ")")
+        print(C.cyan(shown))
         for _, e in ipairs(repos) do print_repo(C, e) end
     end
 
-    if #repos == 0 and #auras == 0 then
+    if repo_total == 0 and aur_total == 0 then
         print(":: Aucun paquet trouvé pour « " .. term .. " ».")
         return 1
     end

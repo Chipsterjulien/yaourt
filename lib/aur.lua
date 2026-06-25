@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- aur.lua — client de l'API RPC v5 de l'AUR (http + json).
 --
 -- C'est notre « mode parallèle » sans package-query : pur HTTP, donc

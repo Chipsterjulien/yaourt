@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- deps.lua — résolution des dépendances AUR.
 --
 -- Un paquet AUR peut dépendre d'autres paquets AUR (et non seulement de

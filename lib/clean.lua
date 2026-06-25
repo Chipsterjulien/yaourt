@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- clean.lua — nettoyage du cache de build yaourt.
 --
 -- Deux niveaux, façon yay/pacman :
@@ -16,7 +19,7 @@ local log    = require("lib.log")
 local color  = require("lib.color")
 local pacman = require("lib.pacman")
 
-local clean  = {}
+local clean = {}
 
 -- list_pkg_dirs(builddir) -> liste des chemins des dépôts de paquets.
 -- Renvoie une liste (éventuellement vide). nil si le cache n'existe pas.

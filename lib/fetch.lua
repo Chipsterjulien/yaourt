@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- fetch.lua — récupération des fichiers de build d'un paquet AUR.
 --
 -- Équivalent de `-G`. Pour chaque paquet :

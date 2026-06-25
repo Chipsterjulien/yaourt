@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- util.lua — fonctions utilitaires partagées.
 --
 -- IMPORTANT — tous les appels à `luapilot.exec` passent par util.run().

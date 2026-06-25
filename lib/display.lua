@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- display.lua — helpers d'affichage partagés (couleurs, rendu).
 --
 -- Regroupe les fonctions de présentation communes à plusieurs commandes

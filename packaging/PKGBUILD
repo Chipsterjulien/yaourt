@@ -5,7 +5,7 @@
 # distribution, ajouter une source VCS (git+...) et bâtir depuis $srcdir.
 
 pkgname=yaourt
-pkgver=0.1.0.dev
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="Wrapper pacman + assistant AUR (réécriture Lua/luapilot)"
 arch=('x86_64' 'aarch64')
@@ -14,8 +14,6 @@ license=('GPL')
 
 # package-query : béquille de départ. Sera rendu optionnel une fois le mode
 # parallèle (RPC AUR direct) généralisé.
-# pacman-contrib : fournit checkupdates (MAJ des dépôts, sans root). On pourra
-# l'internaliser plus tard (base de sync temporaire) pour s'en passer.
 depends=('pacman' 'package-query' 'git' 'sudo')
 
 # luapilot nécessaire pour empaqueter le binaire.

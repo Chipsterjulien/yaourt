@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Julien Freyermuth
+--
 -- main.lua — point d'entrée de yaourt (réécriture Lua/luapilot).
 --
 -- Stratégie « figuier étrangleur » : ce binaire est la porte d'entrée et,
@@ -28,9 +31,10 @@ USAGE :
   yaourt <opérations pacman>      passe la main à pacman (-Q, -R, -Sy…)
   yaourt -S <paquet>...           installe un paquet (dépôts ou AUR)
   yaourt -Ss <terme>              recherche unifiée dépôts + AUR
+  yaourt -Syu | -Su               mise à jour unifiée dépôts + AUR ([M] : choix
+                                  manuel des paquets AUR à mettre à jour)
+  yaourt -Sc | -Scc               nettoie le cache de build (doux | complet)
   yaourt -G <paquet>...           récupère les fichiers de build AUR (git clone)
-  yaourt -Syu | -Su               mise à jour unifiée dépôts + AUR
-  yaourt -B <paquet>              (temporaire) test du pipeline de build
   yaourt -h | --help              cette aide
   yaourt -V | --version           version
 ]]):format(version.name, version.version))
@@ -61,7 +65,7 @@ end
 local function clean_kind(op)
     if not op:match("^%-%a*S%a*$") then return nil end
     if op:find("[syuil]") then return nil end
-    local _, n = op:gsub("c", "") -- nombre de 'c'
+    local _, n = op:gsub("c", "")  -- nombre de 'c'
     if n >= 2 then return "full" end
     if n == 1 then return "soft" end
     return nil
@@ -102,7 +106,7 @@ local function main()
         print(C.red("L'utilisateur système « yaourt » est introuvable."))
         print("Créez-le (en tant que root) :")
         print(C.cyan(
-            [[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
+        [[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
         return 1
     end
 
@@ -117,7 +121,8 @@ local function main()
         return fetch.get(config, pkgs)
     end
 
-    -- TEMPORAIRE (debug) : yaourt --debug-deps <paquet>
+    -- Outil interne (non documenté dans -h) : yaourt --debug-deps <paquet>
+    -- Affiche les dépendances AUR directes d'un paquet.
     -- Affiche les dépendances AUR directes d'un paquet, sans rien construire.
     if first == "--debug-deps" then
         if not args[2] then
@@ -127,7 +132,8 @@ local function main()
         return deps.show(config, args[2])
     end
 
-    -- TEMPORAIRE (debug) : yaourt --debug-resolve <paquet>
+    -- Outil interne (non documenté dans -h) : yaourt --debug-resolve <paquet>
+    -- Affiche l'ordre de build récursif des dépendances AUR.
     -- Affiche l'ordre de build récursif des dépendances AUR, sans construire.
     if first == "--debug-resolve" then
         if not args[2] then
@@ -137,7 +143,8 @@ local function main()
         return deps.show_resolve(config, args[2])
     end
 
-    -- TEMPORAIRE (test du pipeline de build) : yaourt -B <paquet>
+    -- Outil interne (non documenté dans -h) : yaourt -B <paquet>
+    -- Construit un seul paquet AUR (test du pipeline de build).
     -- Sera remplacé par l'appel à build.one depuis -Syu une fois le pipeline prêt.
     if first == "-B" then
         if not args[2] then
