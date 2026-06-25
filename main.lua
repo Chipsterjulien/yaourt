@@ -5,6 +5,7 @@
 
 local build   = require("lib.build")
 local cfg     = require("lib.config")
+local clean   = require("lib.clean")
 local color   = require("lib.color")
 local deps    = require("lib.deps")
 local fetch   = require("lib.fetch")
@@ -55,12 +56,23 @@ local function is_sysupgrade(a)
     return true
 end
 
+-- Nettoyage du cache (-Sc doux, -Scc total). Opération S contenant 'c',
+-- sans 's'/'y'/'u'/'i'/'l'. Renvoie nil (pas un nettoyage), "soft" ou "full".
+local function clean_kind(op)
+    if not op:match("^%-%a*S%a*$") then return nil end
+    if op:find("[syuil]") then return nil end
+    local _, n = op:gsub("c", "") -- nombre de 'c'
+    if n >= 2 then return "full" end
+    if n == 1 then return "soft" end
+    return nil
+end
+
 -- Installation directe (-S nu) -> routage dépôts/AUR.
 -- Opération S sans 's' (search), 'y'/'u' (upgrade), 'i' (info) ni 'l' (list),
 -- qui ont chacun leur propre sémantique.
 local function is_install(op)
     if not op:match("^%-%a*S%a*$") then return false end
-    if op:find("[syuil]") then return false end
+    if op:find("[syuilc]") then return false end
     return true
 end
 
@@ -90,7 +102,7 @@ local function main()
         print(C.red("L'utilisateur système « yaourt » est introuvable."))
         print("Créez-le (en tant que root) :")
         print(C.cyan(
-        [[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
+            [[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
         return 1
     end
 
@@ -153,6 +165,15 @@ local function main()
 
     -- Installation directe (-S <paquet>...) : route chaque paquet vers les
     -- dépôts (pacman) ou l'AUR (build).
+    -- Nettoyage du cache (-Sc doux, -Scc total) : à intercepter AVANT
+    -- is_install (sinon -Sc serait pris pour une installation).
+    local ck = clean_kind(first)
+    if ck == "soft" then
+        return clean.soft(config)
+    elseif ck == "full" then
+        return clean.full(config)
+    end
+
     if is_install(first) then
         local names = {}
         for i = 2, #args do names[#names + 1] = args[i] end

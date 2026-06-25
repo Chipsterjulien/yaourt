@@ -343,7 +343,12 @@ function update.run(config)
     if #repos == 0 and #auras == 0 then return 0 end
 
     local C = color.new(config.color)
-    io.write("\n" .. C.cyan("==> Continuer la mise à jour ? [O/n/M] "))
+    -- L'option [M]anuel n'a de sens que s'il y a des paquets AUR à choisir ;
+    -- sinon on propose simplement [O/n].
+    local prompt = (#auras > 0)
+        and "==> Continuer la mise à jour ? [O/n/M] "
+        or "==> Continuer la mise à jour ? [O/n] "
+    io.write("\n" .. C.cyan(prompt))
     io.flush()
     local ans = (io.read("l") or ""):lower()
     if ans == "n" or ans == "non" then
@@ -352,11 +357,10 @@ function update.run(config)
     end
 
     -- [M]anuel : sélection à la carte des paquets AUR (inclusion). Ne concerne
-    -- que l'AUR ; les paquets des dépôts restent gérés par pacman -Su.
-    if ans == "m" then
-        if #auras > 0 then
-            auras = select_auras(config, auras)
-        end
+    -- que l'AUR ; les paquets des dépôts restent gérés par pacman -Su. Ignoré
+    -- s'il n'y a aucun paquet AUR (l'invite ne propose alors pas M).
+    if ans == "m" and #auras > 0 then
+        auras = select_auras(config, auras)
     end
 
     -- Dépôts : upgrade complet et sûr (tout-ou-rien). La synchro des bases a
