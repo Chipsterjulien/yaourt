@@ -3,10 +3,10 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : en développement (`0.1.0-dev`).**
-> Le cœur fonctionne (passthrough pacman, récupération de PKGBUILD, affichage
-> unifié des mises à jour dépôts + AUR, construction de paquets AUR), mais le
-> projet est encore jeune et incomplet.
+> **Statut : jeune mais utilisable au quotidien (`0.2.0`).**
+> La recherche, l'installation (dépôts et AUR avec résolution récursive des
+> dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
+> Le projet reste en évolution.
 
 ## À propos
 
@@ -18,43 +18,80 @@ simple et lisible — sur une base de code moderne, en suivant une approche
 porté nativement est délégué à `pacman`, puis remplacé progressivement.
 
 Il s'appuie sur [LuaPilot](https://github.com/Chipsterjulien/luapilot_standalone),
-un binaire Lua 5.5 autonome, et se distribue à terme sous forme d'un exécutable
-unique.
+un binaire Lua 5.5 autonome, et se distribue sous forme d'un exécutable unique.
 
-## Fonctionnalités actuelles
+## Fonctionnalités
 
-- Délégation transparente à `pacman` pour les opérations standard (`-S`, `-Q`,
-  `-R`, `-Sy`, …).
-- `-G <paquet>` : récupération des fichiers de build AUR (clone/màj git).
-- `-Syu` / `-Su` : affichage unifié des mises à jour (dépôts officiels + AUR),
-  avec détection des révisions, des orphelins et des paquets périmés.
-- Construction de paquets AUR : récupération, revue du PKGBUILD, compilation et
-  installation. La compilation se fait toujours sous un utilisateur
-  non privilégié dédié (`yaourt`), y compris lorsque le programme est lancé en
-  root — `makepkg` n'étant jamais exécuté en root.
+- Délégation transparente à `pacman` pour les opérations standard (`-Q`, `-R`,
+  `-Sy`, …).
+- **`-Ss <terme>`** : recherche unifiée dépôts officiels + AUR, triée par votes,
+  avec un nombre de résultats par section limité et configurable.
+- **`-S <paquet>…`** : installation depuis les dépôts ou l'AUR, avec
+  **résolution récursive des dépendances AUR**, installation automatique des
+  dépendances des dépôts, et prise en charge des paquets virtuels (`provides`)
+  et des contraintes de version.
+- **`-Syu` / `-Su`** : mise à jour unifiée (dépôts + AUR), avec détection des
+  révisions, des orphelins et des paquets périmés. L'option `[M]` permet de
+  choisir à la carte les paquets AUR à mettre à jour.
+- **`-Sc` / `-Scc`** : nettoyage du cache de build (doux : sources et artefacts ;
+  complet : tous les dépôts clonés), en complément du cache pacman.
+- **`-G <paquet>…`** : récupération des fichiers de build AUR (clone/màj git).
+- **Revue avant compilation** : affichage du PKGBUILD au premier clone, et du
+  **diff des modifications** (PKGBUILD, `.install`, patches…) lors d'une mise à
+  jour, avant de construire.
+- La compilation se fait toujours sous un utilisateur non privilégié dédié
+  (`yaourt`), y compris lorsque le programme est lancé en root — `makepkg`
+  n'étant jamais exécuté en root.
 
 ## Prérequis
 
 - [Arch Linux](https://archlinux.org/) (ou dérivé compatible `pacman`).
 - `pacman`, `git`, `base-devel` (pour `makepkg`).
-- `pacman-contrib` (pour `checkupdates`).
 - `package-query` (recherche AUR).
+- `sudo` (opérations pacman lorsqu'il n'est pas lancé en root).
 
 ## Installation
 
-> Le paquet n'est pas encore publié. En attendant, le projet se lance en mode
-> développement avec le binaire LuaPilot placé dans `bin/` :
->
-> ```sh
-> ./bin/luapilot . <opération>
-> ```
+### Binaire précompilé (recommandé)
+
+Téléchargez le binaire de votre architecture depuis la
+[page des releases](https://github.com/Chipsterjulien/yaourt/releases),
+rendez-le exécutable et installez-le :
+
+```sh
+chmod +x yaourt-0.2.0-x86_64
+sudo install -Dm755 yaourt-0.2.0-x86_64 /usr/bin/yaourt
+```
+
+Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
+(runtime LuaPilot embarqué) ; vous pouvez vérifier leur intégrité avec les
+fichiers `.sha256` joints.
+
+#### Utilisateur de build
+
+yaourt compile les paquets AUR sous un utilisateur système dédié `yaourt`.
+S'il n'existe pas encore, créez-le :
+
+```sh
+sudo useradd --system --home-dir /var/cache/yaourt --create-home \
+  --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt
+```
+
+### En mode développement
+
+Avec le binaire LuaPilot placé dans `bin/` :
+
+```sh
+./bin/luapilot . <opération>
+```
 
 ## Configuration
 
 Une configuration est chargée depuis `~/.config/yaourt/config.toml`
-(voir `config.example.toml` pour les options disponibles). En développement,
-un fichier `cfg/config.toml` présent dans le dossier courant est détecté
-automatiquement.
+(voir [`config.example.toml`](config.example.toml) pour les options
+disponibles, dont `search_limit` pour le nombre de résultats de recherche).
+En développement, un fichier `cfg/config.toml` présent dans le dossier courant
+est détecté automatiquement.
 
 ## Crédits et historique
 
