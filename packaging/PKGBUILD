@@ -36,4 +36,12 @@ package() {
   install -Dm755 "$srcdir/$pkgname" "$pkgdir/usr/bin/$pkgname"
   install -Dm644 "$_root/config.example.toml" \
     "$pkgdir/usr/share/$pkgname/config.example.toml"
+
+  # Création automatique de l'utilisateur système de build et de son répertoire.
+  # Les hooks pacman systemd-sysusers / systemd-tmpfiles les appliquent à
+  # l'installation, sans intervention manuelle.
+  install -Dm644 "$_root/packaging/$pkgname.sysusers" \
+    "$pkgdir/usr/lib/sysusers.d/$pkgname.conf"
+  install -Dm644 "$_root/packaging/$pkgname.tmpfiles" \
+    "$pkgdir/usr/lib/tmpfiles.d/$pkgname.conf"
 }

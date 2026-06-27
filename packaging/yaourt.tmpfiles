@@ -1,0 +1,8 @@
+# Répertoire de cache/build appartenant à l'utilisateur yaourt.
+# C'est le home du compte de build ; yaourt y crée ensuite l'arborescence
+# .cache/yaourt/<paquet> en tant qu'utilisateur yaourt.
+# Mode 0750 : accessible au seul propriétaire (et son groupe), pas en lecture
+# pour les autres.
+#
+# Format : d <chemin> <mode> <uid> <gid> <âge>
+d /var/cache/yaourt 0750 yaourt yaourt -

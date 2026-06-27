@@ -69,8 +69,13 @@ fichiers `.sha256` joints.
 
 #### Utilisateur de build
 
-yaourt compile les paquets AUR sous un utilisateur système dédié `yaourt`.
-S'il n'existe pas encore, créez-le :
+yaourt compile les paquets AUR sous un utilisateur système dédié `yaourt`
+(makepkg n'est jamais exécuté en root). **Lors d'une installation par le
+paquet, cet utilisateur et son répertoire de cache sont créés automatiquement**
+(via `sysusers.d` / `tmpfiles.d`), sans intervention.
+
+Pour une installation hors paquet (binaire précompilé déposé à la main),
+créez-le vous-même :
 
 ```sh
 sudo useradd --system --home-dir /var/cache/yaourt --create-home \

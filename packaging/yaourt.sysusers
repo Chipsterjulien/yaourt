@@ -1,0 +1,7 @@
+# Utilisateur système dédié à la compilation des paquets AUR.
+# makepkg n'étant jamais exécuté en root, yaourt construit sous ce compte non
+# privilégié (y compris lorsque le programme est lancé en root).
+# UID laissé au choix de systemd (-) pour éviter toute collision.
+#
+# Format : u <nom> <uid> "<gecos>" <home> <shell>
+u yaourt - "yaourt AUR build user" /var/cache/yaourt /usr/sbin/nologin
