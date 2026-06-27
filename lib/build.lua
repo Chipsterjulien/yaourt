@@ -19,6 +19,29 @@ local BUILD_USER = "yaourt"
 
 local build      = {}
 
+-- build.clean_stale(config, dest) : supprime les paquets déjà construits qui
+-- traînent dans le dossier de build AVANT une nouvelle compilation. Sinon
+-- makepkg refuse de réécrire (« Un paquet a déjà été compilé ») et bloque —
+-- typiquement après une installation interrompue (Ctrl+C) qui a laissé le
+-- .pkg.tar.* sans l'installer. On vise précisément les chemins que le PKGBUILD
+-- produirait (makepkg --packagelist), pas un effacement aveugle du dossier.
+function build.clean_stale(config, dest)
+    local res = util.run({ "runuser", "-u", BUILD_USER, "--", "makepkg", "--packagelist" }, { cwd = dest })
+    if not res or res.code ~= 0 then
+        -- Pas de liste exploitable (ex. PKGBUILD illisible) : on ne fait rien,
+        -- makepkg signalera lui-même le vrai problème.
+        return
+    end
+    for _, path in ipairs(luapilot.split(res.stdout, "\n")) do
+        if path ~= "" and luapilot.fileExists(path) then
+            local ok, err = luapilot.remove(path)
+            if not ok then
+                log.warn("impossible de supprimer le paquet résiduel " .. path .. " : " .. tostring(err))
+            end
+        end
+    end
+end
+
 function build.clean(config, dest, pkgs)
     for _, pkg in ipairs(pkgs) do
         local ok, err = luapilot.remove(pkg)
@@ -64,7 +87,18 @@ function build.install(config, dest)
     return true, produced
 end
 
-function build.make_as_yaourt_user(config, dest)
+-- makepkg_flags(opts) -> liste des options makepkg issues de la commande.
+-- -c (clean) est toujours présent ; -f force la reconstruction même si le
+-- paquet existe déjà ; --needed évite de reconstruire un paquet déjà installé
+-- et à jour. Seuls force et needed sont repris (périmètre prudent côté AUR).
+local function makepkg_flags(opts)
+    local flags = { "-c" }
+    if opts and opts.force then flags[#flags + 1] = "-f" end
+    if opts and opts.needed then flags[#flags + 1] = "--needed" end
+    return flags
+end
+
+function build.make_as_yaourt_user(config, dest, opts)
     local res, err = util.run({ "chown", "-R", BUILD_USER .. ":", dest })
     if not res then
         log.error(err)
@@ -75,7 +109,8 @@ function build.make_as_yaourt_user(config, dest)
         return false
     end
 
-    local code = util.passthrough({ "runuser", "-u", BUILD_USER, "--", "makepkg", "-c" }, dest)
+    local argv = luapilot.mergeTables({ "runuser", "-u", BUILD_USER, "--", "makepkg" }, makepkg_flags(opts))
+    local code = util.passthrough(argv, dest)
     if code ~= 0 then
         log.error("échec de la compilation (makepkg)")
         return false
@@ -86,18 +121,20 @@ end
 
 -- make(config, name) -> true | false
 -- Compile puis installe via makepkg le paquet
-function build.make(config, dest, is_root)
+function build.make(config, dest, is_root, opts)
     if is_root then
-        return build.make_as_yaourt_user(config, dest)
+        return build.make_as_yaourt_user(config, dest, opts)
     else
-        local code = util.passthrough({ "makepkg", "-i", "-c" }, dest)
+        local argv = luapilot.mergeTables({ "makepkg", "-i" }, makepkg_flags(opts))
+        local code = util.passthrough(argv, dest)
         return code == 0
     end
 end
 
 -- one(config, name) -> (true, nil) | (false, raison)
 -- Prépare puis fait réviser le PKGBUILD. S'arrête après la revue.
-function build.one(config, name)
+function build.one(config, name, opts)
+    opts = opts or {}
     local C = color.new(config.color)
 
     -- Annonce visible du paquet en cours de construction (façon yaourt) :
@@ -150,13 +187,20 @@ function build.one(config, name)
         return false, name .. " : revue refusée"
     end
 
-    if not build.make(bcfg, dest, is_root) then
-        return false, name .. " : échec de la compilation"
+    -- Repartir d'un terrain propre : supprimer un éventuel paquet déjà construit
+    -- (résidu d'une compilation/installation précédente interrompue), sinon
+    -- makepkg refuserait de réécrire.
+    build.clean_stale(bcfg, dest)
+
+    if not build.make(bcfg, dest, is_root, opts) then
+        -- On ne peut pas distinguer de façon fiable un vrai échec d'une
+        -- interruption (Ctrl+C) : le code de retour est aplati. Message neutre.
+        return false, name .. " : compilation non terminée (échec ou interruption)"
     end
 
     local ok, pkgs = build.install(bcfg, dest)
     if not ok then
-        return false, name .. " : échec de l'installation"
+        return false, name .. " : installation non terminée (échec ou interruption)"
     end
 
     build.clean(bcfg, dest, pkgs) -- On ne va pas vérifier le retour car on fait déjà une alerte lors du nettoyage
@@ -278,8 +322,9 @@ end
 --     le conserve d'un appel à l'autre.
 --   * retour : ok (booléen), err (message si échec), built_names (liste des
 --     paquets effectivement construits lors de cet appel, pour le bilan).
-function build.aur(config, name, built)
+function build.aur(config, name, built, opts)
     built = built or {}
+    opts = opts or {}
     local built_names = {}
 
     -- Résolution des dépendances AUR (ordre topologique, cible non incluse).
@@ -290,16 +335,18 @@ function build.aur(config, name, built)
     end
 
     -- Construit un paquet : dépendances dépôt (root) puis makepkg (build user).
-    local function build_one_full(pkg)
+    -- `pkg_opts` : force/needed ne s'appliquent qu'à la cible demandée, pas aux
+    -- dépendances tirées automatiquement (on ne force pas tout le graphe).
+    local function build_one_full(pkg, pkg_opts)
         local ok, derr = ensure_repo_deps(config, pkg)
         if not ok then return false, derr end
-        return build.one(config, pkg)
+        return build.one(config, pkg, pkg_opts)
     end
 
-    -- Dépendances AUR d'abord, dans l'ordre résolu.
+    -- Dépendances AUR d'abord, dans l'ordre résolu (sans force/needed).
     for _, dep in ipairs(order) do
         if not built[dep] then
-            local ok, err = build_one_full(dep)
+            local ok, err = build_one_full(dep, nil)
             built[dep] = true
             if not ok then
                 -- Une dépendance échoue : inutile de tenter la cible.
@@ -312,9 +359,9 @@ function build.aur(config, name, built)
         end
     end
 
-    -- Cible enfin.
+    -- Cible enfin (avec les options de la commande : force/needed).
     if not built[name] then
-        local ok, err = build_one_full(name)
+        local ok, err = build_one_full(name, opts)
         built[name] = true
         if not ok then
             return false, err, built_names

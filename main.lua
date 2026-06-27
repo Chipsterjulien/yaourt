@@ -60,12 +60,54 @@ local function is_sysupgrade(a)
     return true
 end
 
+-- parse_install_opts(args) -> (names, opts)
+-- Sépare, pour une commande -S, les noms de paquets des options.
+--   * args[1] est l'opération (ex. -S, -Sf, -Sfw) : les lettres après le S
+--     sont des flags courts collés. 'f' -> force ; les autres -> passthrough
+--     (sous forme -x), transmis à pacman pour les paquets dépôt uniquement.
+--   * args[2..] : un argument commençant par '-' est un flag (--needed -> needed ;
+--     -f/--force -> force ; le reste -> passthrough), sinon c'est un nom de paquet.
+-- opts = { force = bool, needed = bool, passthrough = { … } }.
+local function parse_install_opts(args)
+    local names = {}
+    local opts  = { force = false, needed = false, passthrough = {} }
+
+    -- 1) Flags courts collés à l'opération (args[1]), après le 'S'.
+    local op    = args[1] or ""
+    local tail  = op:match("^%-%a*S(%a*)$") or ""
+    for ch in tail:gmatch("%a") do
+        if ch == "f" then
+            opts.force = true
+        else
+            opts.passthrough[#opts.passthrough + 1] = "-" .. ch
+        end
+    end
+
+    -- 2) Arguments suivants : flags (commencent par '-') ou noms de paquets.
+    for i = 2, #args do
+        local a = args[i]
+        if a:sub(1, 1) == "-" then
+            if a == "--needed" then
+                opts.needed = true
+            elseif a == "-f" or a == "--force" then
+                opts.force = true
+            else
+                opts.passthrough[#opts.passthrough + 1] = a
+            end
+        else
+            names[#names + 1] = a
+        end
+    end
+
+    return names, opts
+end
+
 -- Nettoyage du cache (-Sc doux, -Scc total). Opération S contenant 'c',
 -- sans 's'/'y'/'u'/'i'/'l'. Renvoie nil (pas un nettoyage), "soft" ou "full".
 local function clean_kind(op)
     if not op:match("^%-%a*S%a*$") then return nil end
     if op:find("[syuil]") then return nil end
-    local _, n = op:gsub("c", "")  -- nombre de 'c'
+    local _, n = op:gsub("c", "") -- nombre de 'c'
     if n >= 2 then return "full" end
     if n == 1 then return "soft" end
     return nil
@@ -106,7 +148,7 @@ local function main()
         print(C.red("L'utilisateur système « yaourt » est introuvable."))
         print("Créez-le (en tant que root) :")
         print(C.cyan(
-        [[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
+            [[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
         return 1
     end
 
@@ -182,13 +224,12 @@ local function main()
     end
 
     if is_install(first) then
-        local names = {}
-        for i = 2, #args do names[#names + 1] = args[i] end
+        local names, opts = parse_install_opts(args)
         if #names == 0 then
             log.error("-S attend au moins un nom de paquet")
             return 1
         end
-        return install.run(config, names)
+        return install.run(config, names, opts)
     end
 
     -- Tout le reste : on délègue à pacman tel quel (avec sudo si nécessaire).

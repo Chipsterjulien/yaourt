@@ -350,7 +350,7 @@ function update.run(config)
     -- sinon on propose simplement [O/n].
     local prompt = (#auras > 0)
         and "==> Continuer la mise à jour ? [O/n/M] "
-        or  "==> Continuer la mise à jour ? [O/n] "
+        or "==> Continuer la mise à jour ? [O/n] "
     io.write("\n" .. C.cyan(prompt))
     io.flush()
     local ans = (io.read("l") or ""):lower()
@@ -393,7 +393,7 @@ function update.run(config)
         end
         print(C.green("\n==> " .. ok_count .. " paquet(s) AUR installé(s)"))
         if #collect > 0 then
-            print(C.red("\n==> Échecs (" .. #collect .. ") :"))
+            print(C.red("\n==> Non abouti(s) (" .. #collect .. ") :"))
             for _, pkg in ipairs(collect) do
                 -- pkg.error vaut déjà « <nom> : <raison> » (renvoyé par build.aur),
                 -- donc on l'affiche tel quel sans re-préfixer par le nom.
