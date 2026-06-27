@@ -50,7 +50,7 @@ function build.clean(config, dest, pkgs)
     return true
 end
 
-function build.install(config, dest)
+function build.install(config, dest, as_dep)
     local res, err = util.run({ "runuser", "-u", BUILD_USER, "--", "makepkg", "--packagelist" }, { cwd = dest })
     if not res then
         log.error(err)
@@ -78,7 +78,14 @@ function build.install(config, dest)
         return false, nil
     end
 
-    local argv = luapilot.mergeTables({ "pacman", "-U" }, produced)
+    -- --asdeps : marque le paquet comme dépendance (installé automatiquement)
+    -- et non comme demande explicite. Réservé aux dépendances AUR tirées par la
+    -- résolution ; la cible demandée par l'utilisateur reste explicite, afin
+    -- qu'un `pacman -Rcs <cible>` retire ensuite ses dépendances devenues
+    -- orphelines.
+    local pre = { "pacman", "-U" }
+    if as_dep then pre[#pre + 1] = "--asdeps" end
+    local argv = luapilot.mergeTables(pre, produced)
     local code = util.passthrough(argv)
     if code ~= 0 then
         return false, nil
@@ -133,7 +140,7 @@ end
 
 -- one(config, name) -> (true, nil) | (false, raison)
 -- Prépare puis fait réviser le PKGBUILD. S'arrête après la revue.
-function build.one(config, name, opts)
+function build.one(config, name, opts, as_dep)
     opts = opts or {}
     local C = color.new(config.color)
 
@@ -198,7 +205,7 @@ function build.one(config, name, opts)
         return false, name .. " : compilation non terminée (échec ou interruption)"
     end
 
-    local ok, pkgs = build.install(bcfg, dest)
+    local ok, pkgs = build.install(bcfg, dest, as_dep)
     if not ok then
         return false, name .. " : installation non terminée (échec ou interruption)"
     end
@@ -337,16 +344,18 @@ function build.aur(config, name, built, opts)
     -- Construit un paquet : dépendances dépôt (root) puis makepkg (build user).
     -- `pkg_opts` : force/needed ne s'appliquent qu'à la cible demandée, pas aux
     -- dépendances tirées automatiquement (on ne force pas tout le graphe).
-    local function build_one_full(pkg, pkg_opts)
+    local function build_one_full(pkg, pkg_opts, as_dep)
         local ok, derr = ensure_repo_deps(config, pkg)
         if not ok then return false, derr end
-        return build.one(config, pkg, pkg_opts)
+        return build.one(config, pkg, pkg_opts, as_dep)
     end
 
-    -- Dépendances AUR d'abord, dans l'ordre résolu (sans force/needed).
+    -- Dépendances AUR d'abord, dans l'ordre résolu (sans force/needed, marquées
+    -- --asdeps pour qu'un -Rcs de la cible les retire si elles deviennent
+    -- orphelines).
     for _, dep in ipairs(order) do
         if not built[dep] then
-            local ok, err = build_one_full(dep, nil)
+            local ok, err = build_one_full(dep, nil, true)
             built[dep] = true
             if not ok then
                 -- Une dépendance échoue : inutile de tenter la cible.
@@ -359,9 +368,10 @@ function build.aur(config, name, built, opts)
         end
     end
 
-    -- Cible enfin (avec les options de la commande : force/needed).
+    -- Cible enfin (avec les options de la commande : force/needed ; installée
+    -- explicitement, donc as_dep = false).
     if not built[name] then
-        local ok, err = build_one_full(name, opts)
+        local ok, err = build_one_full(name, opts, false)
         built[name] = true
         if not ok then
             return false, err, built_names
