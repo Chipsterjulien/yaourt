@@ -54,11 +54,11 @@ function build.install(config, dest, as_dep)
     local res, err = util.run({ "runuser", "-u", BUILD_USER, "--", "makepkg", "--packagelist" }, { cwd = dest })
     if not res then
         log.error(err)
-        return false, nil
+        return false, nil, 1
     end
     if res.code ~= 0 then
         log.error(res.stderr)
-        return false, nil
+        return false, nil, 1
     end
 
     -- `makepkg --packagelist` liste TOUS les paquets que le PKGBUILD pourrait
@@ -75,7 +75,7 @@ function build.install(config, dest, as_dep)
     end
 
     if #produced == 0 then
-        return false, nil
+        return false, nil, 1
     end
 
     -- --asdeps : marque le paquet comme dépendance (installé automatiquement)
@@ -88,10 +88,10 @@ function build.install(config, dest, as_dep)
     local argv = luapilot.mergeTables(pre, produced)
     local code = util.passthrough(argv)
     if code ~= 0 then
-        return false, nil
+        return false, nil, code
     end
 
-    return true, produced
+    return true, produced, 0
 end
 
 -- makepkg_flags(opts) -> liste des options makepkg issues de la commande.
@@ -109,21 +109,24 @@ function build.make_as_yaourt_user(config, dest, opts)
     local res, err = util.run({ "chown", "-R", BUILD_USER .. ":", dest })
     if not res then
         log.error(err)
-        return false
+        return false, 1
     end
     if res.code ~= 0 then
         log.error(res.stderr)
-        return false
+        return false, 1
     end
 
     local argv = luapilot.mergeTables({ "runuser", "-u", BUILD_USER, "--", "makepkg" }, makepkg_flags(opts))
     local code = util.passthrough(argv, dest)
     if code ~= 0 then
-        log.error("échec de la compilation (makepkg)")
-        return false
+        -- On ne crie pas « échec » si l'utilisateur a simplement interrompu.
+        if not util.is_interrupted(code) then
+            log.error("échec de la compilation (makepkg)")
+        end
+        return false, code
     end
 
-    return true
+    return true, 0
 end
 
 -- make(config, name) -> true | false
@@ -134,7 +137,7 @@ function build.make(config, dest, is_root, opts)
     else
         local argv = luapilot.mergeTables({ "makepkg", "-i" }, makepkg_flags(opts))
         local code = util.passthrough(argv, dest)
-        return code == 0
+        return code == 0, code
     end
 end
 
@@ -199,15 +202,20 @@ function build.one(config, name, opts, as_dep)
     -- makepkg refuserait de réécrire.
     build.clean_stale(bcfg, dest)
 
-    if not build.make(bcfg, dest, is_root, opts) then
-        -- On ne peut pas distinguer de façon fiable un vrai échec d'une
-        -- interruption (Ctrl+C) : le code de retour est aplati. Message neutre.
-        return false, name .. " : compilation non terminée (échec ou interruption)"
+    local made, make_code = build.make(bcfg, dest, is_root, opts)
+    if not made then
+        if util.is_interrupted(make_code) then
+            return false, name .. " : compilation interrompue (Ctrl+C)", true
+        end
+        return false, name .. " : échec de la compilation"
     end
 
-    local ok, pkgs = build.install(bcfg, dest, as_dep)
+    local ok, pkgs, inst_code = build.install(bcfg, dest, as_dep)
     if not ok then
-        return false, name .. " : installation non terminée (échec ou interruption)"
+        if util.is_interrupted(inst_code) then
+            return false, name .. " : installation interrompue (Ctrl+C)", true
+        end
+        return false, name .. " : échec de l'installation"
     end
 
     build.clean(bcfg, dest, pkgs) -- On ne va pas vérifier le retour car on fait déjà une alerte lors du nettoyage
@@ -355,14 +363,14 @@ function build.aur(config, name, built, opts)
     -- orphelines).
     for _, dep in ipairs(order) do
         if not built[dep] then
-            local ok, err = build_one_full(dep, nil, true)
+            local ok, err, interrupted = build_one_full(dep, nil, true)
             built[dep] = true
             if not ok then
                 -- Une dépendance échoue : inutile de tenter la cible.
                 return false,
                     (err or (dep .. " : échec")) .. " | "
                     .. name .. " : abandonné (échec de la dépendance " .. dep .. ")",
-                    built_names
+                    built_names, interrupted
             end
             built_names[#built_names + 1] = dep
         end
@@ -371,10 +379,10 @@ function build.aur(config, name, built, opts)
     -- Cible enfin (avec les options de la commande : force/needed ; installée
     -- explicitement, donc as_dep = false).
     if not built[name] then
-        local ok, err = build_one_full(name, opts, false)
+        local ok, err, interrupted = build_one_full(name, opts, false)
         built[name] = true
         if not ok then
-            return false, err, built_names
+            return false, err, built_names, interrupted
         end
         built_names[#built_names + 1] = name
     end

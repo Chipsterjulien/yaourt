@@ -77,10 +77,17 @@ function install.run(config, names, opts)
 
     -- 2) AUR : chaque cible via build.aur. Seuls force et needed sont transmis
     -- à makepkg ; les flags passthrough ne concernent que pacman (dépôts).
+    -- Si l'utilisateur interrompt (Ctrl+C), on arrête net : inutile d'enchaîner
+    -- sur les paquets suivants.
+    local interrupted = false
     for _, name in ipairs(auras) do
-        local ok, err, built_names = build.aur(config, name, built, opts)
+        local ok, err, built_names, intr = build.aur(config, name, built, opts)
         for _, b in ipairs(built_names or {}) do ok_names[#ok_names + 1] = b end
         if not ok then collect[#collect + 1] = err end
+        if intr then
+            interrupted = true
+            break
+        end
     end
 
     -- 3) Bilan combiné. Le compte porte sur les paquets DEMANDÉS et les
@@ -97,6 +104,8 @@ function install.run(config, names, opts)
         end
     end
 
+    -- Code de sortie : 130 si interrompu (convention SIGINT), sinon 0/1.
+    if interrupted then return 130 end
     return #collect == 0 and 0 or 1
 end
 

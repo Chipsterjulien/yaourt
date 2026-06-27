@@ -54,6 +54,16 @@ end
 -- barres de progression de pacman fonctionnent). On utilise os.execute
 -- car exec capture la sortie (« limites de sortie » dans le README),
 -- ce qui casserait une session interactive.
+-- Passthrough interactif : rend la main au terminal (sudo, couleurs, barres de
+-- progression de pacman). On utilise os.execute (et non util.run qui capture la
+-- sortie, ce qui casserait l'interactivité).
+--
+-- Convention de retour, alignée sur les shells POSIX :
+--   0           : succès
+--   1..127      : échec normal de la commande (code de sortie)
+--   128 + N     : terminé par le signal N (130 = SIGINT/Ctrl+C)
+-- os.execute (Lua 5.4/5.5) renvoie (true|nil, "exit"|"signal", code) ; on lit la
+-- 2e valeur pour distinguer une mort par signal d'un simple code d'échec.
 function util.passthrough(argv, cwd)
     local parts = {}
     if cwd ~= nil then
@@ -62,9 +72,17 @@ function util.passthrough(argv, cwd)
 
     local size_parts = #parts
     for i, a in ipairs(argv) do parts[size_parts + i] = shquote(a) end
-    local ok, _, code = os.execute(table.concat(parts, " "))
+    local ok, kind, code = os.execute(table.concat(parts, " "))
     if ok == true then return 0 end
+    if kind == "signal" then return 128 + (code or 0) end
     return code or 1
+end
+
+-- is_interrupted(code) : vrai si le code de retour correspond à une interruption
+-- par l'utilisateur (Ctrl+C / SIGINT = 130). Centralisé ici pour que tous les
+-- appelants distinguent une interruption d'un échec applicatif.
+function util.is_interrupted(code)
+    return code == 130
 end
 
 --------------------------------------------------------------------------

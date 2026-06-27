@@ -384,12 +384,17 @@ function update.run(config)
     if #auras > 0 then
         local built = {} -- anti-doublon partagé entre les paquets AUR mis à jour
         local ok_count = 0
+        local interrupted = false
         for _, u in ipairs(auras) do
             -- build.aur résout les dépendances AUR récursives et installe les
             -- dépendances dépôt, comme pour -S (chemin unifié).
-            local ok, err, built_names = build.aur(config, u.name, built)
+            local ok, err, built_names, intr = build.aur(config, u.name, built)
             ok_count = ok_count + #(built_names or {})
             if not ok then collect[#collect + 1] = { name = u.name, error = err } end
+            if intr then
+                interrupted = true
+                break
+            end
         end
         print(C.green("\n==> " .. ok_count .. " paquet(s) AUR installé(s)"))
         if #collect > 0 then
@@ -400,6 +405,7 @@ function update.run(config)
                 print(C.red("    " .. tostring(pkg.error)))
             end
         end
+        if interrupted then return 130 end
         return #collect == 0 and 0 or 1
     end
 
