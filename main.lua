@@ -6,7 +6,6 @@
 -- Stratégie « figuier étrangleur » : ce binaire est la porte d'entrée et,
 -- pour tout ce qui n'est pas encore porté nativement, il délègue à pacman.
 
-local build   = require("lib.build")
 local cfg     = require("lib.config")
 local clean   = require("lib.clean")
 local color   = require("lib.color")
@@ -185,18 +184,6 @@ local function main()
         return deps.show_resolve(config, args[2])
     end
 
-    -- Outil interne (non documenté dans -h) : yaourt -B <paquet>
-    -- Construit un seul paquet AUR (test du pipeline de build).
-    -- Sera remplacé par l'appel à build.one depuis -Syu une fois le pipeline prêt.
-    if first == "-B" then
-        if not args[2] then
-            log.error("-B attend un nom de paquet")
-            return 1
-        end
-        local ok, berr = build.one(config, args[2])
-        if not ok then log.error(tostring(berr)) end
-        return ok and 0 or 1
-    end
 
     -- Recherche unifiée dépôts + AUR (-Ss)
     if is_search(first) then
