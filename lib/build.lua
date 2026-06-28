@@ -19,6 +19,20 @@ local BUILD_USER = "yaourt"
 
 local build      = {}
 
+-- Résultat typé d'une construction de paquet. status ∈ {ok, refused, failed,
+-- install_failed, interrupted}. ok est un raccourci (status == "ok"). name est
+-- le paquet concerné, message un texte lisible pour le bilan.
+function build.result(status, name, message)
+    return {
+        ok      = (status == "ok"),
+        status  = status,
+        name    = name,
+        message = message,
+    }
+end
+
+local result = build.result
+
 -- build.clean_stale(config, dest) : supprime les paquets déjà construits qui
 -- traînent dans le dossier de build AVANT une nouvelle compilation. Sinon
 -- makepkg refuse de réécrire (« Un paquet a déjà été compilé ») et bloque —
@@ -179,7 +193,7 @@ function build.one(config, name, opts, as_dep)
 
     local is_root = util.is_root()
     local build_path, err = build.resolve_builddir(config, is_root)
-    if err then return false, err end
+    if err then return result("failed", name, name .. " : " .. tostring(err)) end
 
     local overrides = { builddir = build_path }
     if is_root then
@@ -189,12 +203,17 @@ function build.one(config, name, opts, as_dep)
 
     local meta, err = build.prepare(bcfg, name)
     if not meta then
-        return false, err
+        return result("failed", name, name .. " : " .. tostring(err))
     end
     local dest = meta.path
 
-    if not build.review(bcfg, meta) then
-        return false, name .. " : revue refusée"
+    local reviewed, why = build.review(bcfg, meta)
+    if not reviewed then
+        if why == "refused" then
+            return result("refused", name, name .. " : revue refusée")
+        end
+        -- why == "review_error" (éditeur indisponible) ou autre : échec technique.
+        return result("failed", name, name .. " : revue impossible")
     end
 
     -- Repartir d'un terrain propre : supprimer un éventuel paquet déjà construit
@@ -205,22 +224,22 @@ function build.one(config, name, opts, as_dep)
     local made, make_code = build.make(bcfg, dest, is_root, opts)
     if not made then
         if util.is_interrupted(make_code) then
-            return false, name .. " : compilation interrompue (Ctrl+C)", true
+            return result("interrupted", name, name .. " : compilation interrompue (Ctrl+C)")
         end
-        return false, name .. " : échec de la compilation"
+        return result("failed", name, name .. " : échec de la compilation")
     end
 
     local ok, pkgs, inst_code = build.install(bcfg, dest, as_dep)
     if not ok then
         if util.is_interrupted(inst_code) then
-            return false, name .. " : installation interrompue (Ctrl+C)", true
+            return result("interrupted", name, name .. " : installation interrompue (Ctrl+C)")
         end
-        return false, name .. " : échec de l'installation"
+        return result("install_failed", name, name .. " : échec de l'installation")
     end
 
     build.clean(bcfg, dest, pkgs) -- On ne va pas vérifier le retour car on fait déjà une alerte lors du nettoyage
 
-    return true, nil
+    return result("ok", name, name .. " : installé")
 end
 
 -- prepare(config, name) -> (dossier, nil) | (nil, message)
@@ -271,7 +290,7 @@ function build.review(config, meta)
         local result = util.passthrough({ config.editor, dest .. "/PKGBUILD" })
         if result ~= 0 then
             print("Impossible d'ouvrir le PKGBUILD avec '" .. tostring(config.editor) .. "'")
-            return false
+            return false, "review_error"
         end
     elseif meta.updated then
         -- Mise à jour : diff git de TOUS les fichiers entre les deux commits.
@@ -298,7 +317,7 @@ function build.review(config, meta)
     io.flush()
     local ans = (io.read("l") or ""):lower()
     if ans == "n" or ans == "non" then
-        return false
+        return false, "refused"
     end
     return true
 end
@@ -337,16 +356,23 @@ end
 --     le conserve d'un appel à l'autre.
 --   * retour : ok (booléen), err (message si échec), built_names (liste des
 --     paquets effectivement construits lors de cet appel, pour le bilan).
+-- build.aur(config, name, built, opts) -> liste de résultats typés.
+-- Construit les dépendances AUR (marquées --asdeps) puis la cible. Chaque
+-- paquet traité produit un résultat (build.result). Si une dépendance échoue
+-- (ou est refusée/interrompue), on s'arrête : la cible n'est pas tentée, et un
+-- résultat « failed » est ajouté pour la cible abandonnée. `built` est l'index
+-- anti-doublon partagé entre les cibles d'une même invocation.
 function build.aur(config, name, built, opts)
     built = built or {}
     opts = opts or {}
-    local built_names = {}
+    local results = {}
 
     -- Résolution des dépendances AUR (ordre topologique, cible non incluse).
     local order, rerr = deps.resolve(config, name)
     if not order then
-        return false, name .. " : échec de résolution des dépendances ("
-            .. tostring(rerr) .. ")", built_names
+        results[#results + 1] = result("failed", name,
+            name .. " : échec de résolution des dépendances (" .. tostring(rerr) .. ")")
+        return results
     end
 
     -- Construit un paquet : dépendances dépôt (root) puis makepkg (build user).
@@ -354,7 +380,9 @@ function build.aur(config, name, built, opts)
     -- dépendances tirées automatiquement (on ne force pas tout le graphe).
     local function build_one_full(pkg, pkg_opts, as_dep)
         local ok, derr = ensure_repo_deps(config, pkg)
-        if not ok then return false, derr end
+        if not ok then
+            return result("failed", pkg, pkg .. " : " .. tostring(derr))
+        end
         return build.one(config, pkg, pkg_opts, as_dep)
     end
 
@@ -363,31 +391,27 @@ function build.aur(config, name, built, opts)
     -- orphelines).
     for _, dep in ipairs(order) do
         if not built[dep] then
-            local ok, err, interrupted = build_one_full(dep, nil, true)
+            local res = build_one_full(dep, nil, true)
             built[dep] = true
-            if not ok then
-                -- Une dépendance échoue : inutile de tenter la cible.
-                return false,
-                    (err or (dep .. " : échec")) .. " | "
-                    .. name .. " : abandonné (échec de la dépendance " .. dep .. ")",
-                    built_names, interrupted
+            results[#results + 1] = res
+            if not res.ok then
+                -- Une dépendance n'a pas abouti : inutile de tenter la cible.
+                results[#results + 1] = result("failed", name,
+                    name .. " : abandonné (dépendance " .. dep .. " non aboutie)")
+                return results
             end
-            built_names[#built_names + 1] = dep
         end
     end
 
     -- Cible enfin (avec les options de la commande : force/needed ; installée
     -- explicitement, donc as_dep = false).
     if not built[name] then
-        local ok, err, interrupted = build_one_full(name, opts, false)
+        local res = build_one_full(name, opts, false)
         built[name] = true
-        if not ok then
-            return false, err, built_names, interrupted
-        end
-        built_names[#built_names + 1] = name
+        results[#results + 1] = res
     end
 
-    return true, nil, built_names
+    return results
 end
 
 return build

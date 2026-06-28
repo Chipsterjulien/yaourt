@@ -19,6 +19,7 @@ local log     = require("lib.log")
 local build   = require("lib.build")
 local pacman  = require("lib.pacman")
 local color   = require("lib.color")
+local display = require("lib.display")
 
 local install = {}
 
@@ -52,8 +53,7 @@ function install.run(config, names, opts)
 
     local repos, auras = classify(names)
 
-    local ok_names     = {} -- noms des paquets installés/construits avec succès
-    local collect      = {} -- messages d'échec
+    local results      = {} -- résultats typés (build.result) pour le bilan
     local built        = {} -- anti-doublon partagé entre les cibles AUR
 
     -- 1) Dépôts : un seul appel pacman pour tout le groupe (atomique).
@@ -65,48 +65,35 @@ function install.run(config, names, opts)
         for _, f in ipairs(opts.passthrough or {}) do argv[#argv + 1] = f end
         argv = luapilot.mergeTables(argv, repos)
         local code = pacman.passthrough(config, argv)
+        local label = "dépôts (" .. table.concat(repos, ", ") .. ")"
         if code == 0 then
-            for _, r in ipairs(repos) do ok_names[#ok_names + 1] = r end
+            for _, r in ipairs(repos) do
+                results[#results + 1] = build.result("ok", r, r .. " : installé")
+            end
+        elseif util.is_interrupted(code) then
+            results[#results + 1] = build.result("interrupted", label,
+                label .. " : installation interrompue (Ctrl+C)")
         else
-            collect[#collect + 1] =
-                "dépôts (" .. table.concat(repos, ", ") .. ") : installation non terminée (échec ou interruption)"
-            print(C.red("\n==> Échec de l'installation des paquets des dépôts ; "
-                .. "poursuite avec l'AUR."))
+            results[#results + 1] = build.result("install_failed", label,
+                label .. " : échec de l'installation")
         end
     end
 
-    -- 2) AUR : chaque cible via build.aur. Seuls force et needed sont transmis
-    -- à makepkg ; les flags passthrough ne concernent que pacman (dépôts).
-    -- Si l'utilisateur interrompt (Ctrl+C), on arrête net : inutile d'enchaîner
-    -- sur les paquets suivants.
-    local interrupted = false
+    -- 2) AUR : chaque cible via build.aur (retourne une liste de résultats, une
+    -- entrée par paquet construit, dépendances comprises). Si une interruption
+    -- (Ctrl+C) survient, on arrête net : inutile d'enchaîner les suivants.
+    local stop = false
     for _, name in ipairs(auras) do
-        local ok, err, built_names, intr = build.aur(config, name, built, opts)
-        for _, b in ipairs(built_names or {}) do ok_names[#ok_names + 1] = b end
-        if not ok then collect[#collect + 1] = err end
-        if intr then
-            interrupted = true
-            break
+        local res_list = build.aur(config, name, built, opts)
+        for _, r in ipairs(res_list) do
+            results[#results + 1] = r
+            if r.status == "interrupted" then stop = true end
         end
+        if stop then break end
     end
 
-    -- 3) Bilan combiné. Le compte porte sur les paquets DEMANDÉS et les
-    -- dépendances AUR construites ; pacman a pu installer en plus des
-    -- dépendances dépôt (--asdeps), déjà affichées par pacman, non comptées.
-    print(C.green("\n==> " .. #ok_names .. " paquet(s) installé(s)"))
-    if #ok_names > 0 then
-        print(C.green("    " .. table.concat(ok_names, ", ")))
-    end
-    if #collect > 0 then
-        print(C.red("\n==> Non abouti(s) (" .. #collect .. ") :"))
-        for _, e in ipairs(collect) do
-            print(C.red("    " .. tostring(e)))
-        end
-    end
-
-    -- Code de sortie : 130 si interrompu (convention SIGINT), sinon 0/1.
-    if interrupted then return 130 end
-    return #collect == 0 and 0 or 1
+    -- 3) Bilan groupé par statut.
+    return display.build_summary(C, results, "installé(s)")
 end
 
 return install

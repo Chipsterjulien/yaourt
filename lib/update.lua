@@ -416,33 +416,22 @@ function update.run(config)
         if code ~= 0 then return code end
     end
 
-    local collect = {}
     if #auras > 0 then
         local built = {} -- anti-doublon partagé entre les paquets AUR mis à jour
-        local ok_count = 0
-        local interrupted = false
+        local results = {}
+        local stop = false
         for _, u in ipairs(auras) do
             -- build.aur résout les dépendances AUR récursives et installe les
-            -- dépendances dépôt, comme pour -S (chemin unifié).
-            local ok, err, built_names, intr = build.aur(config, u.name, built)
-            ok_count = ok_count + #(built_names or {})
-            if not ok then collect[#collect + 1] = { name = u.name, error = err } end
-            if intr then
-                interrupted = true
-                break
+            -- dépendances dépôt, comme pour -S (chemin unifié), et renvoie une
+            -- liste de résultats typés (un par paquet construit).
+            local res_list = build.aur(config, u.name, built)
+            for _, r in ipairs(res_list) do
+                results[#results + 1] = r
+                if r.status == "interrupted" then stop = true end
             end
+            if stop then break end
         end
-        print(C.green("\n==> " .. ok_count .. " paquet(s) AUR installé(s)"))
-        if #collect > 0 then
-            print(C.red("\n==> Non abouti(s) (" .. #collect .. ") :"))
-            for _, pkg in ipairs(collect) do
-                -- pkg.error vaut déjà « <nom> : <raison> » (renvoyé par build.aur),
-                -- donc on l'affiche tel quel sans re-préfixer par le nom.
-                print(C.red("    " .. tostring(pkg.error)))
-            end
-        end
-        if interrupted then return 130 end
-        return #collect == 0 and 0 or 1
+        return display.build_summary(C, results, "AUR mis à jour")
     end
 
     return 0
