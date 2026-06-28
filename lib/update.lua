@@ -290,22 +290,58 @@ end
 -- espaces ou des virgules. Ex. « 1 3 5 », « 1-4 », « 1-3, 5 ». Les indices hors
 -- de [1, max] sont ignorés silencieusement. Renvoie l'ensemble des indices
 -- retenus (vide si rien de valide).
+-- parse_selection(input, max) -> table { [indice] = true } des éléments choisis.
+-- Inclusion : numéros et plages (« 1 3 5 », « 1-4 », « 1-3, 5 »).
+-- Exclusion : préfixe « ^ » pour retirer (« ^4 », « ^1-3 »).
+-- Si la saisie ne contient QUE des exclusions, on part de « tout sélectionné »
+-- puis on retire (ex. « ^4 » = tout sauf 4). Si elle contient au moins une
+-- inclusion, on part de rien, on ajoute, puis on retire les exclusions
+-- (ex. « 1-10 ^5 » = 1 à 10 sauf 5).
 local function parse_selection(input, max)
-    local chosen = {}
-    for token in (input or ""):gmatch("[^%s,]+") do
+    -- applique un token (sans le préfixe ^) à l'ensemble set, avec la valeur
+    -- value (true = ajouter, nil = retirer).
+    local function apply(set, token, value)
         local a, b = token:match("^(%d+)%-(%d+)$")
         if a then
-            -- Plage a-b (on gère l'ordre inversé par sécurité).
             a, b = tonumber(a), tonumber(b)
             if a > b then a, b = b, a end
             for i = a, b do
-                if i >= 1 and i <= max then chosen[i] = true end
+                if i >= 1 and i <= max then set[i] = value end
             end
         else
             local n = tonumber(token:match("^(%d+)$"))
-            if n and n >= 1 and n <= max then chosen[n] = true end
+            if n and n >= 1 and n <= max then set[n] = value end
         end
     end
+
+    -- Première passe : repérer s'il y a des inclusions et/ou des exclusions.
+    local has_include, has_exclude = false, false
+    for token in (input or ""):gmatch("[^%s,]+") do
+        if token:sub(1, 1) == "^" then
+            has_exclude = true
+        else
+            has_include = true
+        end
+    end
+
+    -- Base : « tout sélectionné » uniquement si la saisie comporte des
+    -- exclusions SANS aucune inclusion (ex. « ^4 » = tout sauf 4). Une saisie
+    -- vide ne sélectionne rien : l'utilisateur a choisi le mode manuel, donc on
+    -- ne met rien à jour par défaut plutôt que tout (choix prudent).
+    local chosen = {}
+    if has_exclude and not has_include then
+        for i = 1, max do chosen[i] = true end
+    end
+
+    -- Deuxième passe : inclusions (+) puis exclusions (^ -> retrait).
+    for token in (input or ""):gmatch("[^%s,]+") do
+        if token:sub(1, 1) == "^" then
+            apply(chosen, token:sub(2), nil)
+        else
+            apply(chosen, token, true)
+        end
+    end
+
     return chosen
 end
 
@@ -324,7 +360,7 @@ local function select_auras(config, auras)
         end
         print(string.format("  %2d. %s%s", i, C.magenta(u.name), ver))
     end
-    io.write(C.cyan("==> ") .. "Numéros à mettre à jour (ex. 1 3 5 ou 1-4) : ")
+    io.write(C.cyan("==> ") .. "Numéros à mettre à jour (ex. 1 3 5, 1-4, ^2 pour tout sauf 2) : ")
     io.flush()
     local input = io.read("l") or ""
 
