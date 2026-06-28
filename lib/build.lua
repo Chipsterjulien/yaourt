@@ -286,10 +286,29 @@ function build.review(config, meta)
     local dest = meta.path
 
     if meta.first_clone then
-        -- Premier clone : review complète du PKGBUILD dans l'éditeur.
-        local result = util.passthrough({ config.editor, dest .. "/PKGBUILD" })
+        -- Premier clone : review de TOUS les fichiers versionnés du dépôt
+        -- (PKGBUILD, .install, patches, scripts locaux…), pas seulement le
+        -- PKGBUILD. Un .install s'exécute en root à l'installation et un patch
+        -- modifie les sources : tout doit être visible avant de construire.
+        -- PKGBUILD est placé en tête ; s'il n'y a que lui, comportement inchangé.
+        local files = { "PKGBUILD" }
+        local listed = util.run_as(config.build_user,
+            { "git", "-C", dest, "ls-files" })
+        if listed and listed.code == 0 then
+            for _, f in ipairs(luapilot.split(listed.stdout, "\n")) do
+                if f ~= "" and f ~= "PKGBUILD" then
+                    files[#files + 1] = f
+                end
+            end
+        end
+
+        -- Chemins absolus pour l'éditeur.
+        local argv = { config.editor }
+        for _, f in ipairs(files) do argv[#argv + 1] = dest .. "/" .. f end
+
+        local result = util.passthrough(argv)
         if result ~= 0 then
-            print("Impossible d'ouvrir le PKGBUILD avec '" .. tostring(config.editor) .. "'")
+            print("Impossible d'ouvrir les fichiers de build avec '" .. tostring(config.editor) .. "'")
             return false, "review_error"
         end
     elseif meta.updated then
