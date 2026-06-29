@@ -302,14 +302,26 @@ function build.review(config, meta)
             end
         end
 
-        -- Chemins absolus pour l'éditeur.
-        local argv = { config.editor }
-        for _, f in ipairs(files) do argv[#argv + 1] = dest .. "/" .. f end
-
-        local result = util.passthrough(argv)
-        if result ~= 0 then
-            print("Impossible d'ouvrir les fichiers de build avec '" .. tostring(config.editor) .. "'")
-            return false, "review_error"
+        -- Ouverture SÉQUENTIELLE : un fichier à la fois, dans l'ordre. On évite
+        -- d'ouvrir tous les fichiers d'un coup (ex. « vim f1 … f6 »), qui
+        -- n'affiche que le premier et déroute l'utilisateur (E173 à la
+        -- fermeture). Chaque fichier est ainsi explicitement présenté à la
+        -- revue, quel que soit l'éditeur. Pour un paquet à un seul fichier, le
+        -- comportement est identique à avant.
+        if #files > 1 then
+            print("")
+            print(C.cyan("==> ") .. C.bold(#files .. " fichiers à examiner")
+                .. C.dim(" (ouverts un par un)"))
+        end
+        for i, f in ipairs(files) do
+            if #files > 1 then
+                print(C.cyan("  [" .. i .. "/" .. #files .. "] ") .. f)
+            end
+            local code = util.passthrough({ config.editor, dest .. "/" .. f })
+            if code ~= 0 then
+                print("Impossible d'ouvrir " .. f .. " avec '" .. tostring(config.editor) .. "'")
+                return false, "review_error"
+            end
         end
     elseif meta.updated then
         -- Mise à jour : diff git de TOUS les fichiers entre les deux commits.

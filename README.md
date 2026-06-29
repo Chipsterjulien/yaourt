@@ -32,13 +32,19 @@ un binaire Lua 5.5 autonome, et se distribue sous forme d'un exécutable unique.
   et des contraintes de version.
 - **`-Syu` / `-Su`** : mise à jour unifiée (dépôts + AUR), avec détection des
   révisions, des orphelins et des paquets périmés. L'option `[M]` permet de
-  choisir à la carte les paquets AUR à mettre à jour.
+  choisir à la carte les paquets AUR à mettre à jour : inclusion (`1 3 5`,
+  `1-4`) et exclusion (`^4` pour tout sauf le 4).
 - **`-Sc` / `-Scc`** : nettoyage du cache de build (doux : sources et artefacts ;
   complet : tous les dépôts clonés), en complément du cache pacman.
 - **`-G <paquet>…`** : récupération des fichiers de build AUR (clone/màj git).
-- **Revue avant compilation** : affichage du PKGBUILD au premier clone, et du
-  **diff des modifications** (PKGBUILD, `.install`, patches…) lors d'une mise à
-  jour, avant de construire.
+- **Revue avant compilation** : au premier clone, tous les fichiers versionnés
+  du dépôt (PKGBUILD, `.install`, patches, scripts…) sont présentés un par un
+  dans l'éditeur ; lors d'une mise à jour, c'est le **diff** des modifications
+  depuis la version précédente qui est affiché. Rien n'est construit sans
+  validation.
+- Les dépendances AUR tirées automatiquement sont marquées comme dépendances
+  (`--asdeps`) : un `pacman -Rcs` de la cible les retire si elles deviennent
+  orphelines.
 - La compilation se fait toujours sous un utilisateur non privilégié dédié
   (`yaourt`), y compris lorsque le programme est lancé en root — `makepkg`
   n'étant jamais exécuté en root.
