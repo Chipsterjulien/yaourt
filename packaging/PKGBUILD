@@ -5,11 +5,11 @@
 # distribution, ajouter une source VCS (git+...) et bâtir depuis $srcdir.
 
 pkgname=yaourt
-pkgver=0.2.0
+pkgver=0.3.0
 pkgrel=1
 pkgdesc="Wrapper pacman + assistant AUR (réécriture Lua/luapilot)"
 arch=('x86_64' 'aarch64')
-url="https://example.invalid/yaourt"
+url="https://github.com/Chipsterjulien/yaourt"
 license=('GPL')
 
 # package-query : béquille de départ. Sera rendu optionnel une fois le mode

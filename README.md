@@ -3,7 +3,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.2.0`).**
+> **Statut : jeune mais utilisable au quotidien (`0.3.0`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -65,8 +65,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.2.0-x86_64
-sudo install -Dm755 yaourt-0.2.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.3.0-x86_64
+sudo install -Dm755 yaourt-0.3.0-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
