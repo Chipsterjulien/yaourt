@@ -32,7 +32,7 @@ end
 
 -- argv = tous les arguments utilisateur (le premier est l'opération).
 function pacman.passthrough(config, argv)
-    if not luapilot.which("pacman") then
+    if not babet.which("pacman") then
         log.error("pacman introuvable dans le PATH")
         return 1
     end
@@ -40,7 +40,7 @@ function pacman.passthrough(config, argv)
     local cmd = {}
     if needs_root(argv[1] or "") then
         local p = util.sudo_prefix(config)
-        if p then cmd[#cmd+1] = p end
+        if p then cmd[#cmd + 1] = p end
     end
     cmd[#cmd + 1] = "pacman"
     for _, a in ipairs(argv) do cmd[#cmd + 1] = a end

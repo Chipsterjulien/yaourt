@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: GPL-3.0-or-later
 -- Copyright (C) 2026 Julien Freyermuth
 --
--- main.lua — point d'entrée de yaourt (réécriture Lua/luapilot).
+-- main.lua — point d'entrée de yaourt (réécriture Lua/babet).
 --
 -- Stratégie « figuier étrangleur » : ce binaire est la porte d'entrée et,
 -- pour tout ce qui n'est pas encore porté nativement, il délègue à pacman.
@@ -18,7 +18,7 @@ local search  = require("lib.search")
 local update  = require("lib.update")
 local version = require("lib.version")
 
--- arg[1..n] = arguments utilisateur (cf. doc luapilot : <=0 ignorés)
+-- arg[1..n] = arguments utilisateur (cf. doc babet : <=0 ignorés)
 local args    = {}
 for i = 1, #arg do args[i] = arg[i] end
 
@@ -142,7 +142,7 @@ local function main()
         return 0
     end
 
-    if not luapilot.user.exists("yaourt") then
+    if not babet.user.exists("yaourt") then
         local C = color.new(config.color)
         print(C.red("L'utilisateur système « yaourt » est introuvable."))
         print("Créez-le (en tant que root) :")

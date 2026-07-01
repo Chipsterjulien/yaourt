@@ -1,5 +1,5 @@
 # Mainteneur : toi
-# PKGBUILD de départ — binaire unique luapilot + dépendance package-query.
+# PKGBUILD de départ — binaire unique babet + dépendance package-query.
 #
 # Note : construit ici depuis l'arbre de travail local (dev). Pour une vraie
 # distribution, ajouter une source VCS (git+...) et bâtir depuis $srcdir.
@@ -7,7 +7,7 @@
 pkgname=yaourt
 pkgver=0.3.0
 pkgrel=1
-pkgdesc="Wrapper pacman + assistant AUR (réécriture Lua/luapilot)"
+pkgdesc="Wrapper pacman + assistant AUR (réécriture Lua/babet)"
 arch=('x86_64' 'aarch64')
 url="https://github.com/Chipsterjulien/yaourt"
 license=('GPL')
@@ -16,13 +16,13 @@ license=('GPL')
 # parallèle (RPC AUR direct) généralisé.
 depends=('pacman' 'package-query' 'git' 'sudo')
 
-# luapilot nécessaire pour empaqueter le binaire.
+# babet nécessaire pour empaqueter le binaire.
 #
-# TODO (packaging) : récupérer le binaire luapilot pour $CARCH (x86_64 /
+# TODO (packaging) : récupérer le binaire babet pour $CARCH (x86_64 /
 # aarch64) depuis les releases GitHub au lieu de l'assumer présent :
-#   https://github.com/Chipsterjulien/luapilot_standalone/releases
-# Pour l'instant on travaille avec le bon binaire luapilot directement.
-makedepends=('luapilot')
+#   https://github.com/Chipsterjulien/babet/releases
+# Pour l'instant on travaille avec le bon binaire babet directement.
+makedepends=('babet')
 
 # Racine du projet (le dossier parent de packaging/).
 _root="$(realpath "$(dirname "$BASH_SOURCE")/..")"

@@ -3,7 +3,7 @@
 --
 -- util.lua — fonctions utilitaires partagées.
 --
--- IMPORTANT — tous les appels à `luapilot.exec` passent par util.run().
+-- IMPORTANT — tous les appels à `babet.exec` passent par util.run().
 -- Centralisé ici : si l'API exec bouge, il n'y a QUE ce bloc à toucher.
 
 local util = {}
@@ -13,11 +13,11 @@ local function shquote(s)
 end
 
 function util.cache_home()
-    return luapilot.env("XDG_CACHE_HOME") or (util.home() .. "/.cache")
+    return babet.env("XDG_CACHE_HOME") or (util.home() .. "/.cache")
 end
 
 function util.config_home()
-    return luapilot.env("XDG_CONFIG_HOME") or (util.home() .. "/.config")
+    return babet.env("XDG_CONFIG_HOME") or (util.home() .. "/.config")
 end
 
 -- Remplace un ~ initial par $HOME.
@@ -33,7 +33,7 @@ end
 -- Chemins
 --------------------------------------------------------------------------
 function util.home()
-    return luapilot.env("HOME") or "/root"
+    return babet.env("HOME") or "/root"
 end
 
 function util.is_root()
@@ -42,7 +42,7 @@ function util.is_root()
     return tonumber(res.stdout) == 0
 end
 
--- mkdir -p (luapilot n'expose pas de mkdir ; on délègue).
+-- mkdir -p (babet n'expose pas de mkdir ; on délègue).
 function util.mkdirp(path)
     local res, err = util.run({ "mkdir", "-p", path })
     if not res then return nil, err end
@@ -89,9 +89,9 @@ end
 -- Exécution de processus
 --------------------------------------------------------------------------
 --
--- API luapilot.exec (v1.6.0, confirmée) :
+-- API babet.exec (v1.6.0, confirmée) :
 --
---   local res, err = luapilot.exec(commande, args, opts)
+--   local res, err = babet.exec(commande, args, opts)
 --     commande : string            ("git", "vercmp", …)
 --     args     : table de strings  ({ "clone", url, dest })
 --     opts     : table optionnelle  { cwd=, env=, stdin=, timeout= }
@@ -109,7 +109,7 @@ function util.run(argv, opts)
     end
     local args = {}
     for i = 2, #argv do args[#args + 1] = argv[i] end
-    return luapilot.exec(cmd, args, opts)
+    return babet.exec(cmd, args, opts)
 end
 
 function util.run_as(user, argv, opts)
@@ -117,7 +117,7 @@ function util.run_as(user, argv, opts)
     if not user then
         cmd = argv
     else
-        cmd = luapilot.mergeTables({ "runuser", "-u", user, "--" }, argv)
+        cmd = babet.mergeTables({ "runuser", "-u", user, "--" }, argv)
     end
 
     return util.run(cmd, opts)
@@ -154,9 +154,9 @@ function util.vercmp(a, b)
 end
 
 -- isset(v) : vrai si une valeur JSON décodée est réellement présente.
--- Un champ absent vaut nil ; un null JSON est décodé en luapilot.json.null.
+-- Un champ absent vaut nil ; un null JSON est décodé en babet.json.null.
 function util.isset(v)
-    return v ~= nil and v ~= luapilot.json.null
+    return v ~= nil and v ~= babet.json.null
 end
 
 return util

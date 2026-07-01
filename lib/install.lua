@@ -63,7 +63,7 @@ function install.run(config, names, opts)
         local argv = { "-S" }
         if opts.needed then argv[#argv + 1] = "--needed" end
         for _, f in ipairs(opts.passthrough or {}) do argv[#argv + 1] = f end
-        argv = luapilot.mergeTables(argv, repos)
+        argv = babet.mergeTables(argv, repos)
         local code = pacman.passthrough(config, argv)
         local label = "dépôts (" .. table.concat(repos, ", ") .. ")"
         if code == 0 then

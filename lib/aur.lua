@@ -39,7 +39,7 @@ function aur.info(config, names)
         end
         local body = table.concat(parts, "&")
 
-        local res, err = luapilot.http.post(rpc_base(config) .. "/info", body, {
+        local res, err = babet.http.post(rpc_base(config) .. "/info", body, {
             headers = { ["Content-Type"] = "application/x-www-form-urlencoded" },
             timeout = 15,
         })
@@ -48,7 +48,7 @@ function aur.info(config, names)
             return nil, "aur: HTTP " .. tostring(res.status)
         end
 
-        local data, derr = luapilot.json.decode(res.body)
+        local data, derr = babet.json.decode(res.body)
         if not data then return nil, "aur: json: " .. tostring(derr) end
         if data.type == "error" then
             return nil, "aur: " .. tostring(data.error or "erreur RPC")
@@ -65,14 +65,14 @@ end
 function aur.search(config, term, by)
     by = by or "name-desc"
     local url = rpc_base(config) .. "/search/" .. util.urlencode(term)
-    local res, err = luapilot.http.get(url, {
+    local res, err = babet.http.get(url, {
         query   = { by = by },
         timeout = 15,
     })
     if not res then return nil, "aur: " .. tostring(err) end
     if res.status ~= 200 then return nil, "aur: HTTP " .. tostring(res.status) end
 
-    local data, derr = luapilot.json.decode(res.body)
+    local data, derr = babet.json.decode(res.body)
     if not data then return nil, "aur: json: " .. tostring(derr) end
     if data.type == "error" then
         return nil, "aur: " .. tostring(data.error or "erreur RPC")

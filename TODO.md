@@ -36,7 +36,7 @@
 - [x] Scripts de release (`build.sh` / `release.sh`) avec détection archi/binaire.
 - [x] Deux releases publiées (0.1.0, 0.2.0), x86_64 + aarch64.
 
-## Packaging (prioritaire — en attente du renommage de luapilot)
+## Packaging (prioritaire — runtime babet en place)
 
 - [ ] Deux paquets AUR : `yaourt` (compile tout depuis les sources, y compris
       le runtime) et `yaourt-bin` (récupère le binaire du runtime selon `$CARCH`
@@ -55,7 +55,6 @@
 ## Finitions
 
 - [ ] i18n : externaliser les chaînes, gérer le pluriel.
-- [ ] Saisie mono-touche pour les prompts `[O/n]` (mode terminal raw).
 - [ ] Mode de revue avancé optionnel (ex. onglets vim `-p`) via la config, en
       gardant l'ouverture séquentielle par défaut pour les néophytes.
 - [ ] `-w` / `--downloadonly` côté AUR : sens à définir (sources seules ?

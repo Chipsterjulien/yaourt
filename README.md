@@ -17,7 +17,7 @@ simple et lisible — sur une base de code moderne, en suivant une approche
 « Strangler Fig Pattern » (figuier étrangleur) : tout ce qui n'est pas encore
 porté nativement est délégué à `pacman`, puis remplacé progressivement.
 
-Il s'appuie sur [LuaPilot](https://github.com/Chipsterjulien/luapilot_standalone),
+Il s'appuie sur [Babet](https://github.com/Chipsterjulien/babet),
 un binaire Lua 5.5 autonome, et se distribue sous forme d'un exécutable unique.
 
 ## Fonctionnalités
@@ -70,7 +70,7 @@ sudo install -Dm755 yaourt-0.3.0-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
-(runtime LuaPilot embarqué) ; vous pouvez vérifier leur intégrité avec les
+(runtime Babet embarqué) ; vous pouvez vérifier leur intégrité avec les
 fichiers `.sha256` joints.
 
 #### Utilisateur de build
@@ -90,10 +90,10 @@ sudo useradd --system --home-dir /var/cache/yaourt --create-home \
 
 ### En mode développement
 
-Avec le binaire LuaPilot placé dans `bin/` :
+Avec le binaire Babet placé dans `bin/` :
 
 ```sh
-./bin/luapilot . <opération>
+./bin/babet . <opération>
 ```
 
 ## Configuration

@@ -19,12 +19,12 @@ local log    = require("lib.log")
 local color  = require("lib.color")
 local pacman = require("lib.pacman")
 
-local clean = {}
+local clean  = {}
 
 -- list_pkg_dirs(builddir) -> liste des chemins des dépôts de paquets.
 -- Renvoie une liste (éventuellement vide). nil si le cache n'existe pas.
 local function list_pkg_dirs(builddir)
-    local is_dir = luapilot.isdir(builddir)
+    local is_dir = babet.isdir(builddir)
     if not is_dir then return nil end
     -- `ls -1` capturé : un nom par ligne. On reconstruit les chemins absolus
     -- et on ne garde que les répertoires.
@@ -33,7 +33,7 @@ local function list_pkg_dirs(builddir)
     local dirs = {}
     for name in (res.stdout or ""):gmatch("[^\n]+") do
         local path = builddir .. "/" .. name
-        if luapilot.isdir(path) then
+        if babet.isdir(path) then
             dirs[#dirs + 1] = path
         end
     end
@@ -110,7 +110,7 @@ function clean.full(config)
         if confirm(C, "Confirmer la suppression de tous les dépôts ?") then
             local removed = 0
             for _, dir in ipairs(dirs) do
-                local ok, err = luapilot.remove(dir)
+                local ok, err = babet.remove(dir)
                 if ok then
                     removed = removed + 1
                 else

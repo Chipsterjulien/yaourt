@@ -46,9 +46,9 @@ function build.clean_stale(config, dest)
         -- makepkg signalera lui-même le vrai problème.
         return
     end
-    for _, path in ipairs(luapilot.split(res.stdout, "\n")) do
-        if path ~= "" and luapilot.fileExists(path) then
-            local ok, err = luapilot.remove(path)
+    for _, path in ipairs(babet.split(res.stdout, "\n")) do
+        if path ~= "" and babet.fileExists(path) then
+            local ok, err = babet.remove(path)
             if not ok then
                 log.warn("impossible de supprimer le paquet résiduel " .. path .. " : " .. tostring(err))
             end
@@ -58,7 +58,7 @@ end
 
 function build.clean(config, dest, pkgs)
     for _, pkg in ipairs(pkgs) do
-        local ok, err = luapilot.remove(pkg)
+        local ok, err = babet.remove(pkg)
         if not ok then log.warn("impossible de supprimer le paquet " .. pkg .. " : " .. tostring(err)) end
     end
     return true
@@ -82,8 +82,8 @@ function build.install(config, dest, as_dep)
     -- pour ne garder que les paquets RÉELLEMENT produits, sinon `pacman -U`
     -- échoue sur un fichier fantôme.
     local produced = {}
-    for _, path in ipairs(luapilot.split(res.stdout, "\n")) do
-        if path ~= "" and luapilot.fileExists(path) then
+    for _, path in ipairs(babet.split(res.stdout, "\n")) do
+        if path ~= "" and babet.fileExists(path) then
             produced[#produced + 1] = path
         end
     end
@@ -99,7 +99,7 @@ function build.install(config, dest, as_dep)
     -- orphelines.
     local pre = { "pacman", "-U" }
     if as_dep then pre[#pre + 1] = "--asdeps" end
-    local argv = luapilot.mergeTables(pre, produced)
+    local argv = babet.mergeTables(pre, produced)
     local code = util.passthrough(argv)
     if code ~= 0 then
         return false, nil, code
@@ -130,7 +130,7 @@ function build.make_as_yaourt_user(config, dest, opts)
         return false, 1
     end
 
-    local argv = luapilot.mergeTables({ "runuser", "-u", BUILD_USER, "--", "makepkg" }, makepkg_flags(opts))
+    local argv = babet.mergeTables({ "runuser", "-u", BUILD_USER, "--", "makepkg" }, makepkg_flags(opts))
     local code = util.passthrough(argv, dest)
     if code ~= 0 then
         -- On ne crie pas « échec » si l'utilisateur a simplement interrompu.
@@ -149,7 +149,7 @@ function build.make(config, dest, is_root, opts)
     if is_root then
         return build.make_as_yaourt_user(config, dest, opts)
     else
-        local argv = luapilot.mergeTables({ "makepkg", "-i" }, makepkg_flags(opts))
+        local argv = babet.mergeTables({ "makepkg", "-i" }, makepkg_flags(opts))
         local code = util.passthrough(argv, dest)
         return code == 0, code
     end
@@ -199,7 +199,7 @@ function build.one(config, name, opts, as_dep)
     if is_root then
         overrides.build_user = BUILD_USER
     end
-    local bcfg = luapilot.mergeTables(config, overrides)
+    local bcfg = babet.mergeTables(config, overrides)
 
     local meta, err = build.prepare(bcfg, name)
     if not meta then
@@ -251,7 +251,7 @@ function build.prepare(config, name)
     local pkgbuild_path = meta.path .. "/PKGBUILD"
 
     -- Tester l'existence du PKGBUILD
-    local exists, cerr = luapilot.fileExists(pkgbuild_path)
+    local exists, cerr = babet.fileExists(pkgbuild_path)
     if cerr ~= nil then return nil, cerr end
     if not exists then return nil, name .. " : PKGBUILD introuvable" end
 
@@ -264,11 +264,11 @@ function build.resolve_builddir(config, is_root)
         return config.builddir
     end
 
-    local u, err = luapilot.user.get(BUILD_USER)
+    local u, err = babet.user.get(BUILD_USER)
     if not u then
         return nil, "L'utilisateur " .. BUILD_USER .. " est introuvable : " .. tostring(err)
     end
-    return luapilot.joinPath(u.home, ".cache", BUILD_USER)
+    return babet.joinPath(u.home, ".cache", BUILD_USER)
 end
 
 -- review(config, dest) -> bool : montre le PKGBUILD et demande validation.
@@ -295,7 +295,7 @@ function build.review(config, meta)
         local listed = util.run_as(config.build_user,
             { "git", "-C", dest, "ls-files" })
         if listed and listed.code == 0 then
-            for _, f in ipairs(luapilot.split(listed.stdout, "\n")) do
+            for _, f in ipairs(babet.split(listed.stdout, "\n")) do
                 if f ~= "" and f ~= "PKGBUILD" then
                     files[#files + 1] = f
                 end
@@ -368,7 +368,7 @@ local function ensure_repo_deps(config, name)
     if #rdeps == 0 then
         return true, nil
     end
-    local argv = luapilot.mergeTables({ "-S", "--asdeps", "--needed" }, rdeps)
+    local argv = babet.mergeTables({ "-S", "--asdeps", "--needed" }, rdeps)
     local code = pacman.passthrough(config, argv)
     if code ~= 0 then
         return false, name .. " : échec installation des dépendances dépôt ("

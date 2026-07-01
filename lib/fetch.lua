@@ -67,7 +67,7 @@ local function clone_or_update(config, pkgbase)
         return nil
     end
 
-    local is_repo, derr = luapilot.isdir(dest .. "/.git")
+    local is_repo, derr = babet.isdir(dest .. "/.git")
     if derr then return nil, derr end
 
     if is_repo then
@@ -129,7 +129,7 @@ end
 -- AUR et affiche le dossier obtenu. Continue sur erreur et renvoie un code
 -- global. La création du builddir est gérée par clone_or_update.
 function fetch.get(config, pkgs)
-    if not luapilot.which("git") then
+    if not babet.which("git") then
         log.error("git introuvable dans le PATH")
         return 1
     end

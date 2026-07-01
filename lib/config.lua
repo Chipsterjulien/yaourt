@@ -5,11 +5,11 @@
 --
 -- Deux modes :
 --   * dev        : un fichier ./cfg/config.toml dans le répertoire courant
---                  (là où l'on lance `luapilot .`). Pratique pour tester sans
+--                  (là où l'on lance `babet .`). Pratique pour tester sans
 --                  toucher à sa vraie config utilisateur.
 --   * production : ~/.config/yaourt/config.toml (ou $XDG_CONFIG_HOME/…).
 -- On fusionne le fichier trouvé par-dessus les valeurs par défaut. TOML n'a
--- pas de decode_file : on lit le fichier puis luapilot.toml.decode (cf. README).
+-- pas de decode_file : on lit le fichier puis babet.toml.decode (cf. README).
 
 local util = require("lib.util")
 
@@ -25,7 +25,7 @@ local function defaults()
         -- Commande sudo (pour les opérations pacman nécessitant root).
         sudo         = "sudo",
         -- Éditeur pour la revue de PKGBUILD (étape ultérieure).
-        editor       = luapilot.env("EDITOR") or luapilot.env("VISUAL") or "vi",
+        editor       = babet.env("EDITOR") or babet.env("VISUAL") or "vi",
         -- Couleur dans nos affichages (l'affichage des MAJ viendra plus tard).
         color        = true,
         -- Base de l'AUR (RPC + git).
@@ -42,7 +42,7 @@ end
 -- Renvoie (chemin_config, est_dev). Si un cfg/config.toml existe dans le
 -- répertoire courant, on est en dev ; sinon, emplacement XDG (production).
 local function config_path()
-    if luapilot.fileExists(DEV_CONFIG) then
+    if babet.fileExists(DEV_CONFIG) then
         return DEV_CONFIG, true
     end
     return util.config_home() .. "/yaourt/config.toml", false
@@ -53,17 +53,17 @@ function config.load()
     local conf = defaults()
     local path = config_path()
 
-    if luapilot.fileExists(path) then
+    if babet.fileExists(path) then
         local fh = io.open(path, "r")
         if fh then
             local content = fh:read("a")
             fh:close()
-            local parsed, err = luapilot.toml.decode(content or "")
+            local parsed, err = babet.toml.decode(content or "")
             if not parsed then
                 io.stderr:write("yaourt: config invalide (" .. path .. ") : " .. tostring(err) .. "\n")
             else
                 -- mergeTables : la dernière table gagne -> l'utilisateur écrase les défauts.
-                conf = luapilot.mergeTables(conf, parsed)
+                conf = babet.mergeTables(conf, parsed)
             end
         end
     end

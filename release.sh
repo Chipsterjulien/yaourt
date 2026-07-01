@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # release.sh — prépare les artefacts de release pour l'ARCHITECTURE COURANTE.
 #
-# luapilot --create-exe doit s'EXÉCUTER sur l'architecture cible : on ne peut
+# babet --create-exe doit s'EXÉCUTER sur l'architecture cible : on ne peut
 # donc pas générer un binaire ARM depuis un PC x86_64. Ce script est conçu pour
 # être lancé SUR CHAQUE MACHINE (PC x86_64, RPi4 aarch64, RPi Zero armv6l…).
 # Chacune produit sa part dans dist/ ; on rassemble ensuite tous les dist/ pour
@@ -13,9 +13,9 @@
 #   yaourt-<version>-<arch>.tar.gz       l'archive compressée
 #   yaourt-<version>-<arch>.tar.gz.sha256  la somme de contrôle de l'archive
 #
-# Prérequis : le binaire luapilot de CETTE architecture. build.sh le résout
-# automatiquement via bin/luapilot-<uname -m> (ex. bin/luapilot-x86_64), ou à
-# défaut bin/luapilot, $LUAPILOT, ou le PATH. On peut donc copier le dossier
+# Prérequis : le binaire babet de CETTE architecture. build.sh le résout
+# automatiquement via bin/babet-<uname -m> (ex. bin/babet-x86_64), ou à
+# défaut bin/babet, $BABET, ou le PATH. On peut donc copier le dossier
 # tel quel sur chaque machine (les 3 binaires dans bin/) : chacune prendra le
 # sien.
 
@@ -50,7 +50,7 @@ mkdir -p "$DIST"
 echo "==> Génération de $BASENAME (architecture : $ARCH, version : $VERSION)"
 
 # --- Binaire autonome via build.sh ------------------------------------------
-# build.sh gère la résolution de luapilot ($LUAPILOT / ./bin/luapilot / PATH).
+# build.sh gère la résolution de babet ($BABET / ./bin/babet / PATH).
 "$ROOT/build.sh" "$DIST/$BASENAME"
 
 # --- Sommes de contrôle + archive (chemins RELATIFS dans dist/) -------------
