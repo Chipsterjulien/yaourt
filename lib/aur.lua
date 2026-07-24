@@ -7,41 +7,86 @@
 -- insensible aux mises à jour de libalpm. On l'utilise ici pour résoudre
 -- le PackageBase avant le clone, et plus tard pour l'affichage des MAJ.
 
-local util = require("lib.util")
+local util    = require("lib.util")
+local version = require("lib.version")
 
 local aur = {}
+
+local REQUEST_ATTEMPTS = 3
+local REQUEST_TIMEOUT  = 15
+local RETRY_DELAY_MS   = 250
+local MAX_QUERY_LENGTH = 6000
 
 local function rpc_base(config)
     return (config.aur_url or "https://aur.archlinux.org") .. "/rpc/v5"
 end
 
--- Découpe une liste en tranches de n éléments.
-local function chunks(list, n)
-    local out, cur = {}, {}
-    for _, v in ipairs(list) do
-        cur[#cur + 1] = v
-        if #cur >= n then
-            out[#out + 1] = cur; cur = {}
+local function request_headers()
+    return {
+        ["Accept"]     = "application/json",
+        ["User-Agent"] = version.name .. "/" .. version.version,
+    }
+end
+
+-- Les erreurs de transport sont parfois transitoires (connexion fermée par le
+-- serveur, reset TLS, etc.). On retente aussi les réponses 429 et 5xx, mais
+-- jamais une autre erreur HTTP déterministe.
+local function get_with_retry(url, opts)
+    local last_err
+
+    for attempt = 1, REQUEST_ATTEMPTS do
+        local res, err = babet.http.get(url, opts)
+        if res and res.status ~= 429 and res.status < 500 then
+            return res
+        end
+
+        if res then
+            last_err = "HTTP " .. tostring(res.status)
+        else
+            last_err = tostring(err)
+        end
+
+        if attempt < REQUEST_ATTEMPTS then
+            babet.sleep(RETRY_DELAY_MS, "ms")
         end
     end
-    if #cur > 0 then out[#out + 1] = cur end
+
+    return nil, last_err
+end
+
+-- Construit des query strings bornées pour GET /info. L'API AUR accepte les
+-- paramètres répétés arg[]. Le GET évite le chemin POST qui peut échouer avec
+-- certains couples serveur/client HTTP, tandis que la borne évite les URL
+-- démesurées lorsque beaucoup de paquets étrangers sont installés.
+local function info_queries(names)
+    local out, parts, length = {}, {}, 0
+
+    for _, name in ipairs(names) do
+        local part = "arg%5B%5D=" .. util.urlencode(name)
+        local added = #part + (#parts > 0 and 1 or 0)
+
+        if #parts > 0 and length + added > MAX_QUERY_LENGTH then
+            out[#out + 1] = table.concat(parts, "&")
+            parts, length = {}, 0
+            added = #part
+        end
+
+        parts[#parts + 1] = part
+        length = length + added
+    end
+
+    if #parts > 0 then out[#out + 1] = table.concat(parts, "&") end
     return out
 end
 
 -- info(config, names) -> (map Name->entry, nil) | (nil, err)
--- POST /rpc/v5/info  body: arg[]=a&arg[]=b…  (POST pour gérer beaucoup d'args)
+-- GET /rpc/v5/info?arg[]=a&arg[]=b… avec découpage des URL trop longues.
 function aur.info(config, names)
     local result = {}
-    for _, batch in ipairs(chunks(names, 150)) do
-        local parts = {}
-        for _, n in ipairs(batch) do
-            parts[#parts + 1] = "arg[]=" .. util.urlencode(n)
-        end
-        local body = table.concat(parts, "&")
-
-        local res, err = babet.http.post(rpc_base(config) .. "/info", body, {
-            headers = { ["Content-Type"] = "application/x-www-form-urlencoded" },
-            timeout = 15,
+    for _, query in ipairs(info_queries(names)) do
+        local res, err = get_with_retry(rpc_base(config) .. "/info?" .. query, {
+            headers = request_headers(),
+            timeout = REQUEST_TIMEOUT,
         })
         if not res then return nil, "aur: " .. tostring(err) end
         if res.status ~= 200 then
@@ -65,9 +110,10 @@ end
 function aur.search(config, term, by)
     by = by or "name-desc"
     local url = rpc_base(config) .. "/search/" .. util.urlencode(term)
-    local res, err = babet.http.get(url, {
+    local res, err = get_with_retry(url, {
+        headers = request_headers(),
         query   = { by = by },
-        timeout = 15,
+        timeout = REQUEST_TIMEOUT,
     })
     if not res then return nil, "aur: " .. tostring(err) end
     if res.status ~= 200 then return nil, "aur: HTTP " .. tostring(res.status) end

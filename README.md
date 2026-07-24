@@ -3,7 +3,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.3.0`).**
+> **Statut : jeune mais utilisable au quotidien (`0.4.1`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -17,8 +17,11 @@ simple et lisible — sur une base de code moderne, en suivant une approche
 « Strangler Fig Pattern » (figuier étrangleur) : tout ce qui n'est pas encore
 porté nativement est délégué à `pacman`, puis remplacé progressivement.
 
-Il s'appuie sur [Babet](https://github.com/Chipsterjulien/babet),
+Il s'appuie sur [Babet](https://github.com/Chipsterjulien/babet) **2.9.0 ou
+plus récent**,
 un binaire Lua 5.5 autonome, et se distribue sous forme d'un exécutable unique.
+Au démarrage comme pendant la construction, yaourt vérifie la version du
+runtime et refuse une version antérieure avec un diagnostic explicite.
 
 ## Fonctionnalités
 
@@ -65,8 +68,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.3.0-x86_64
-sudo install -Dm755 yaourt-0.3.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.4.1-x86_64
+sudo install -Dm755 yaourt-0.4.1-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
@@ -90,11 +93,38 @@ sudo useradd --system --home-dir /var/cache/yaourt --create-home \
 
 ### En mode développement
 
-Avec le binaire Babet placé dans `bin/` :
+Avec un binaire Babet 2.9.0 (minimum) placé dans `bin/` :
 
 ```sh
 ./bin/babet . <opération>
 ```
+
+Le script `build.sh` accepte aussi un chemin explicite :
+
+```sh
+BABET=/chemin/vers/babet-2.9.0-linux-x86_64 ./build.sh
+```
+
+## Tests
+
+La suite hors ligne vérifie les helpers de processus et de fichiers avec le
+vrai runtime Babet, puis teste les modes dossier et embarqué et construit le
+binaire final :
+
+```sh
+BABET=/chemin/vers/babet-2.9.0-linux-x86_64 ./run_tests.sh
+```
+
+Un contrôle facultatif du RPC AUR peut être ajouté :
+
+```sh
+YAOURT_NETWORK_TESTS=1 \
+  BABET=/chemin/vers/babet-2.9.0-linux-x86_64 \
+  ./run_tests.sh
+```
+
+Les opérations dépendant d'un système Arch réel (`pacman`, `makepkg`, compte
+de build `yaourt`) restent à valider sur une machine Arch Linux.
 
 ## Configuration
 

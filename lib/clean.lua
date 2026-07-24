@@ -24,19 +24,25 @@ local clean  = {}
 -- list_pkg_dirs(builddir) -> liste des chemins des dépôts de paquets.
 -- Renvoie une liste (éventuellement vide). nil si le cache n'existe pas.
 local function list_pkg_dirs(builddir)
-    local is_dir = babet.isdir(builddir)
-    if not is_dir then return nil end
-    -- `ls -1` capturé : un nom par ligne. On reconstruit les chemins absolus
-    -- et on ne garde que les répertoires.
-    local res = util.run({ "ls", "-1", builddir })
-    if not res or res.code ~= 0 then return {} end
-    local dirs = {}
-    for name in (res.stdout or ""):gmatch("[^\n]+") do
-        local path = builddir .. "/" .. name
-        if babet.isdir(path) then
-            dirs[#dirs + 1] = path
-        end
+    local is_dir, dir_err = babet.isDir(builddir)
+    if is_dir == nil then
+        log.warn("impossible d'inspecter le cache de build : " .. tostring(dir_err))
+        return {}
     end
+    if not is_dir then return nil end
+
+    -- Babet 2.9.0 fournit une recherche bornée et sans shell. Les enfants
+    -- directs de la racine sont à la profondeur 0.
+    local dirs, err = babet.find(builddir, {
+        type = "d",
+        maxdepth = 0,
+    })
+    if not dirs then
+        log.warn("impossible de lister le cache de build : " .. tostring(err))
+        return {}
+    end
+
+    table.sort(dirs)
     return dirs
 end
 

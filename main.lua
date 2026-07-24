@@ -6,6 +6,9 @@
 -- Stratégie « figuier étrangleur » : ce binaire est la porte d'entrée et,
 -- pour tout ce qui n'est pas encore porté nativement, il délègue à pacman.
 
+local runtime = require("lib.runtime")
+runtime.assert_supported()
+
 local cfg     = require("lib.config")
 local clean   = require("lib.clean")
 local color   = require("lib.color")

@@ -9,6 +9,7 @@
 /cfg/
 
 dist/
+tmp/
 
 # Divers
 *.tmp

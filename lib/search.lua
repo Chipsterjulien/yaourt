@@ -168,7 +168,7 @@ function search.run(config, term)
     local repos       = repo_search(term)
     local auras, aerr = aur_search(config, term, inst)
     if not auras then
-        log.warn("AUR: " .. tostring(aerr))
+        log.warn(tostring(aerr))
         auras = {}
     end
 

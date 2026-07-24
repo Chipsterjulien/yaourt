@@ -8,10 +8,6 @@
 
 local util = {}
 
-local function shquote(s)
-    return "'" .. tostring(s):gsub("'", [['\'']]) .. "'"
-end
-
 function util.cache_home()
     return babet.env("XDG_CACHE_HOME") or (util.home() .. "/.cache")
 end
@@ -42,40 +38,46 @@ function util.is_root()
     return tonumber(res.stdout) == 0
 end
 
--- mkdir -p (babet n'expose pas de mkdir ; on délègue).
+-- mkdir -p natif : babet.mkdir est récursif et idempotent.
 function util.mkdirp(path)
-    local res, err = util.run({ "mkdir", "-p", path })
-    if not res then return nil, err end
-    if res.code ~= 0 then return nil, "mkdir: " .. res.stderr end
-    return true
+    return babet.mkdir(path)
 end
 
--- Passthrough interactif : rend la main au terminal (sudo, couleurs,
--- barres de progression de pacman fonctionnent). On utilise os.execute
--- car exec capture la sortie (« limites de sortie » dans le README),
--- ce qui casserait une session interactive.
 -- Passthrough interactif : rend la main au terminal (sudo, couleurs, barres de
--- progression de pacman). On utilise os.execute (et non util.run qui capture la
--- sortie, ce qui casserait l'interactivité).
+-- progression de pacman) grâce aux redirections "inherit" de Babet 2.9.0.
+-- La commande et ses arguments restent séparés : aucun shell implicite, aucun
+-- quoting à reconstruire et aucune interprétation de caractères spéciaux.
 --
 -- Convention de retour, alignée sur les shells POSIX :
 --   0           : succès
 --   1..127      : échec normal de la commande (code de sortie)
 --   128 + N     : terminé par le signal N (130 = SIGINT/Ctrl+C)
--- os.execute (Lua 5.4/5.5) renvoie (true|nil, "exit"|"signal", code) ; on lit la
--- 2e valeur pour distinguer une mort par signal d'un simple code d'échec.
+-- Un second résultat textuel décrit un éventuel échec de lancement/attente.
 function util.passthrough(argv, cwd)
-    local parts = {}
-    if cwd ~= nil then
-        parts = { "cd", shquote(cwd), "&&" }
+    local cmd = argv[1]
+    if type(cmd) ~= "string" then
+        return 1, "util.passthrough: commande manquante"
     end
 
-    local size_parts = #parts
-    for i, a in ipairs(argv) do parts[size_parts + i] = shquote(a) end
-    local ok, kind, code = os.execute(table.concat(parts, " "))
-    if ok == true then return 0 end
-    if kind == "signal" then return 128 + (code or 0) end
-    return code or 1
+    local args = {}
+    for i = 2, #argv do args[#args + 1] = argv[i] end
+
+    local process, err = babet.spawn(cmd, args, {
+        cwd = cwd,
+        stdin = "inherit",
+        stdout = "inherit",
+        stderr = "inherit",
+    })
+    if not process then return 1, err end
+
+    local result, wait_err = process:wait()
+    if not result then
+        process:close()
+        return 1, wait_err
+    end
+
+    process:close()
+    return result.code
 end
 
 -- is_interrupted(code) : vrai si le code de retour correspond à une interruption
@@ -89,13 +91,17 @@ end
 -- Exécution de processus
 --------------------------------------------------------------------------
 --
--- API babet.exec (v1.6.0, confirmée) :
+-- API babet.exec (Babet 2.9.0) :
 --
 --   local res, err = babet.exec(commande, args, opts)
 --     commande : string            ("git", "vercmp", …)
 --     args     : table de strings  ({ "clone", url, dest })
---     opts     : table optionnelle  { cwd=, env=, stdin=, timeout= }
---   res = { code=<int>, stdout=<string>, stderr=<string>, timed_out=<bool> }
+--     opts     : table optionnelle
+--                { cwd=, env=, stdin=, timeout=, max_output= }
+--   res = {
+--     code=<int>, stdout=<string>, stderr=<string>, timed_out=<bool>,
+--     stdout_truncated=<bool>, stderr_truncated=<bool>
+--   }
 --   err : nil sauf échec de LANCEMENT (binaire introuvable, cwd invalide…).
 --   Un code de retour non nul N'EST PAS une erreur (err reste nil).
 --

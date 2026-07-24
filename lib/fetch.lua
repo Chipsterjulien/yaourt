@@ -30,6 +30,10 @@ local fetch = {}
 -- lui appartient — condition nécessaire pour que makepkg et les outils de
 -- build puissent y écrire. En cas A, c'est un simple `mkdir -p`.
 local function prepare_builddir(config)
+    if not config.build_user then
+        return babet.mkdir(config.builddir)
+    end
+
     local res, err = util.run_as(config.build_user, { "mkdir", "-p", config.builddir })
     if not res then return nil, err end
     if res.code ~= 0 then return nil, "mkdir: " .. res.stderr end
@@ -67,7 +71,7 @@ local function clone_or_update(config, pkgbase)
         return nil
     end
 
-    local is_repo, derr = babet.isdir(dest .. "/.git")
+    local is_repo, derr = babet.isDir(dest .. "/.git")
     if derr then return nil, derr end
 
     if is_repo then

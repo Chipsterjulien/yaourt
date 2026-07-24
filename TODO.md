@@ -34,6 +34,8 @@
 - [x] Suppression de `-B` (redondant avec `-S`).
 - [x] Utilisateur de build via `sysusers.d` / `tmpfiles.d` dans le PKGBUILD.
 - [x] Scripts de release (`build.sh` / `release.sh`) avec détection archi/binaire.
+- [x] Migration Babet 2.9.1 : garde de version, API FS canoniques,
+      `babet.spawn` avec flux hérités et tests dossier/embarqué.
 - [x] Deux releases publiées (0.1.0, 0.2.0), x86_64 + aarch64.
 
 ## Packaging (prioritaire — runtime babet en place)

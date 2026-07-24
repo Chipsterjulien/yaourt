@@ -83,7 +83,8 @@ end
 -- Statut de TOUS les paquets AUR installés (pacman -Qm -> info RPC).
 -- Renvoie une liste triée d'entrées :
 --   { name, repo="aur", oldver, in_aur, newver, has_update, orphan, outofdate }
--- On interroge l'AUR une seule fois ; les MAJ ET la liste complète en dérivent.
+-- On interroge l'AUR en une passe groupée ; les MAJ ET la liste complète en
+-- dérivent (le client RPC découpe seulement si l'URL deviendrait trop longue).
 local function aur_status(config)
     local res = util.run({ "pacman", "-Qm" })
     if not res or res.code ~= 0 then return {} end
@@ -100,8 +101,7 @@ local function aur_status(config)
 
     local infos, err = aur.info(config, names)
     if not infos then
-        log.warn("AUR: " .. tostring(err))
-        infos = {}
+        return nil, err
     end
 
     local list = {}
@@ -121,13 +121,15 @@ local function aur_status(config)
         end
     end
     table.sort(list, function(a, b) return a.name < b.name end)
-    return list
+    return list, nil
 end
 
--- check(config) -> (repos[], auras[], aurall[])
+-- check(config) -> (repos[], auras[], aurall[], aurerr)
 --   repos  : MAJ des dépôts (champ .repo renseigné)
 --   auras  : paquets AUR à mettre à jour (sous-ensemble de aurall)
 --   aurall : statut de TOUS les paquets AUR installés (pour la liste optionnelle)
+--   aurerr : erreur RPC éventuelle ; dans ce cas aurall est vide et aucun
+--            paquet n'est faussement déclaré « non géré par AUR ».
 function update.check(config)
     local repos = repo_updates(config)
     if #repos > 0 then
@@ -139,13 +141,14 @@ function update.check(config)
         return a.name < b.name
     end)
 
-    local aurall = aur_status(config)
+    local aurall, aurerr = aur_status(config)
+    aurall = aurall or {}
     local auras = {}
     for _, e in ipairs(aurall) do
         if e.has_update then auras[#auras + 1] = e end
     end
 
-    return repos, auras, aurall
+    return repos, auras, aurall, aurerr
 end
 
 --------------------------------------------------------------------------
@@ -373,7 +376,11 @@ local function select_auras(config, auras)
 end
 
 function update.run(config)
-    local repos, auras, aurall = update.check(config)
+    local repos, auras, aurall, aurerr = update.check(config)
+    if aurerr then
+        log.warn(tostring(aurerr) ..
+            " — vérification des paquets AUR ignorée pour cette exécution")
+    end
     -- Option : lister tous les paquets AUR installés avec leur statut.
     if config.list_aur then
         update.list_aur(config, aurall)

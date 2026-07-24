@@ -5,7 +5,7 @@
 # --create-exe. On passe par un répertoire de staging propre pour
 # n'embarquer QUE les sources Lua (ni build.sh, ni packaging/, ni README).
 #
-# Prérequis : binaire babet accessible (PATH ou variable $BABET).
+# Prérequis : binaire Babet >= 2.9.0 accessible (PATH ou variable $BABET).
 # La récupération de babet selon l'architecture est gérée côté
 # packaging (cf. packaging/PKGBUILD, TODO).
 
@@ -16,7 +16,7 @@ OUT="${1:-yaourt}"
 
 # babet : $BABET si défini, sinon le binaire propre à l'architecture
 # courante dans bin/. Les binaires y sont nommés selon le motif des releases
-# babet : babet-<version>-linux-<uname -m> (ex. babet-1.8.0-linux-x86_64).
+# babet : babet-<version>-linux-<uname -m> (ex. babet-2.9.0-linux-x86_64).
 # On résout par glob sur l'architecture ; à défaut on tente ./bin/babet, puis
 # le PATH. Permet de copier le dossier tel quel sur plusieurs machines (les 3
 # binaires dans bin/) : chacune prend automatiquement le sien.
@@ -40,6 +40,33 @@ fi
 
 if ! command -v "$BABET" >/dev/null 2>&1 && [[ ! -x "$BABET" ]]; then
   echo "Erreur : babet introuvable (PATH ou \$BABET)." >&2
+  exit 1
+fi
+
+BABET_MIN_VERSION="$(
+  sed -n 's/.*babet_min[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' \
+    "$ROOT/lib/version.lua"
+)"
+if [[ ! "$BABET_MIN_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "Erreur : version minimale de Babet invalide dans lib/version.lua." >&2
+  exit 1
+fi
+
+BABET_INFO="$("$BABET" --version 2>/dev/null || true)"
+if [[ ! "$BABET_INFO" =~ ^babet[[:space:]]+([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+  echo "Erreur : impossible d'identifier la version de Babet : $BABET_INFO" >&2
+  exit 1
+fi
+
+BABET_MAJOR="${BASH_REMATCH[1]}"
+BABET_MINOR="${BASH_REMATCH[2]}"
+BABET_PATCH="${BASH_REMATCH[3]}"
+IFS=. read -r MIN_MAJOR MIN_MINOR MIN_PATCH <<< "$BABET_MIN_VERSION"
+if (( BABET_MAJOR < MIN_MAJOR
+   || (BABET_MAJOR == MIN_MAJOR && BABET_MINOR < MIN_MINOR)
+   || (BABET_MAJOR == MIN_MAJOR && BABET_MINOR == MIN_MINOR
+       && BABET_PATCH < MIN_PATCH) )); then
+  echo "Erreur : Babet >= $BABET_MIN_VERSION requis ($BABET_INFO détecté)." >&2
   exit 1
 fi
 
