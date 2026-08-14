@@ -36,7 +36,9 @@
 - [x] Scripts de release (`build.sh` / `release.sh`) avec détection archi/binaire.
 - [x] Migration Babet 2.9.1 : garde de version, API FS canoniques,
       `babet.spawn` avec flux hérités et tests dossier/embarqué.
-- [x] Deux releases publiées (0.1.0, 0.2.0), x86_64 + aarch64.
+- [x] Migration Babet 2.22.2 : contrats API réaudités, correction du nettoyage
+      récursif `-Scc`, intégration HTTP `chunked` locale et test PTY réel.
+- [x] Releases 0.1.0 à 0.4.1 publiées, x86_64 + aarch64.
 
 ## Packaging (prioritaire — runtime babet en place)
 

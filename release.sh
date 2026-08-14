@@ -14,10 +14,10 @@
 #   yaourt-<version>-<arch>.tar.gz.sha256  la somme de contrôle de l'archive
 #
 # Prérequis : le binaire babet de CETTE architecture. build.sh le résout
-# automatiquement via bin/babet-<uname -m> (ex. bin/babet-x86_64), ou à
-# défaut bin/babet, $BABET, ou le PATH. On peut donc copier le dossier
-# tel quel sur chaque machine (les 3 binaires dans bin/) : chacune prendra le
-# sien.
+# automatiquement via bin/babet-<version>-linux-<uname -m> (par exemple
+# bin/babet-2.22.2-linux-x86_64), ou à défaut bin/babet, $BABET ou le PATH.
+# On peut donc copier le dossier tel quel sur chaque machine avec les binaires
+# d'architecture dans bin/ : chacune prendra le sien.
 
 set -euo pipefail
 
@@ -50,7 +50,8 @@ mkdir -p "$DIST"
 echo "==> Génération de $BASENAME (architecture : $ARCH, version : $VERSION)"
 
 # --- Binaire autonome via build.sh ------------------------------------------
-# build.sh gère la résolution de babet ($BABET / ./bin/babet / PATH).
+# build.sh gère la résolution de Babet (binaire versionné dans bin/, $BABET,
+# ./bin/babet ou PATH).
 "$ROOT/build.sh" "$DIST/$BASENAME"
 
 # --- Sommes de contrôle + archive (chemins RELATIFS dans dist/) -------------

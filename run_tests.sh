@@ -1,10 +1,24 @@
 #!/usr/bin/env bash
-# Vérifications hors ligne de la migration vers Babet 2.9.0.
+# Vérifications de la migration vers Babet 2.22.2.
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 BABET="${BABET:-}"
+YAOURT_VERSION="$(
+  sed -n 's/.*version[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' \
+    "$ROOT/lib/version.lua"
+)"
+
+if [[ ! "$YAOURT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "Erreur : version de yaourt invalide dans lib/version.lua." >&2
+  exit 1
+fi
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "Erreur : python3 est requis pour le test interactif sous PTY." >&2
+  exit 1
+fi
 
 if [[ -z "$BABET" ]]; then
   ARCH="$(uname -m)"
@@ -58,6 +72,12 @@ cp -r "$ROOT/lib" "$TEST_STAGE/lib"
 "$BABET" --create-exe "$TEST_STAGE" "$TMP/yaourt-tests"
 "$TMP/yaourt-tests"
 
+echo "=== Intégration HTTP locale AUR ==="
+python3 "$ROOT/tests/test_aur_local.py" "$BABET" "$ROOT"
+
+echo "=== Test interactif sous pseudo-terminal ==="
+python3 "$ROOT/tests/test_interactive_pty.py" "$BABET" "$ROOT"
+
 if [[ "${YAOURT_NETWORK_TESTS:-0}" == "1" ]]; then
   echo "=== Tests réseau AUR ==="
   (
@@ -68,9 +88,13 @@ fi
 
 echo "=== Construction et smoke tests ==="
 BABET="$BABET" "$ROOT/build.sh" "$TMP/yaourt"
-[[ "$("$TMP/yaourt" --version)" == "yaourt 0.4.1" ]]
-"$TMP/yaourt" --help | grep -Fq "yaourt 0.4.1"
+[[ "$("$TMP/yaourt" --version)" == "yaourt $YAOURT_VERSION" ]]
+"$TMP/yaourt" --help | grep -Fq "yaourt $YAOURT_VERSION"
 echo "[PASS] binaire yaourt dossier/embarqué"
 
 echo "=== Résultat ==="
-echo "Tous les tests hors ligne sont passés."
+if [[ "${YAOURT_NETWORK_TESTS:-0}" == "1" ]]; then
+  echo "Tous les tests sont passés."
+else
+  echo "Tous les tests hors ligne sont passés."
+fi

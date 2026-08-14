@@ -31,7 +31,7 @@ local function list_pkg_dirs(builddir)
     end
     if not is_dir then return nil end
 
-    -- Babet 2.9.0 fournit une recherche bornée et sans shell. Les enfants
+    -- Babet 2.22.2 fournit une recherche bornée et sans shell. Les enfants
     -- directs de la racine sont à la profondeur 0.
     local dirs, err = babet.find(builddir, {
         type = "d",
@@ -116,7 +116,7 @@ function clean.full(config)
         if confirm(C, "Confirmer la suppression de tous les dépôts ?") then
             local removed = 0
             for _, dir in ipairs(dirs) do
-                local ok, err = babet.remove(dir)
+                local ok, err = babet.rmdirAll(dir)
                 if ok then
                     removed = removed + 1
                 else

@@ -4,6 +4,6 @@
 -- version.lua — métadonnées du programme.
 return {
     name      = "yaourt",
-    version   = "0.4.1",
-    babet_min = "2.9.0",
+    version   = "0.4.2",
+    babet_min = "2.22.2",
 }

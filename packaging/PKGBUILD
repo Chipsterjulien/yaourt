@@ -5,7 +5,7 @@
 # distribution, ajouter une source VCS (git+...) et bâtir depuis $srcdir.
 
 pkgname=yaourt
-pkgver=0.4.1
+pkgver=0.4.2
 pkgrel=1
 pkgdesc="Wrapper pacman + assistant AUR (réécriture Lua/babet)"
 arch=('x86_64' 'aarch64')
@@ -22,7 +22,7 @@ depends=('pacman' 'package-query' 'git' 'sudo')
 # aarch64) depuis les releases GitHub au lieu de l'assumer présent :
 #   https://github.com/Chipsterjulien/babet/releases
 # Pour l'instant on travaille avec le bon binaire babet directement.
-makedepends=('babet>=2.9.1')
+makedepends=('babet>=2.22.2')
 
 # Racine du projet (le dossier parent de packaging/).
 _root="$(realpath "$(dirname "$BASH_SOURCE")/..")"

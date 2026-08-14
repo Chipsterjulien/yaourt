@@ -226,10 +226,22 @@ function update.display(config, repos, auras)
     end
 end
 
--- Liste complète des paquets AUR installés avec leur statut (option config).
--- Reproduit le « <nom> : à jour / Orphelin / périmé » de yaourt.
+-- Normalise la configuration du récapitulatif AUR :
+--   * "notable" (et toute valeur absente/inconnue) : éléments à surveiller ;
+--   * "all" ou true : liste complète (compatibilité avec l'ancien booléen) ;
+--   * false : aucun récapitulatif.
+local function aur_list_mode(value)
+    if value == false then return "none" end
+    if value == true or value == "all" then return "all" end
+    return "notable"
+end
+
+-- Récapitulatif des paquets AUR installés avec leur statut (option config).
+-- En mode notable, les mises à jour simples ne sont pas répétées ici : elles
+-- figurent déjà dans la liste principale produite par update.display.
 function update.list_aur(config, aurall)
-    if #aurall == 0 then return end
+    local mode = aur_list_mode(config.list_aur)
+    if mode == "none" or #aurall == 0 then return end
     local C = color.new(config.color)
 
     local function line(e, wname)
@@ -247,31 +259,38 @@ function update.list_aur(config, aurall)
         print(string.format("  %s%s : %s%s", C.magenta(e.name), pad, status, flags))
     end
 
-    -- Déterminer le mot le plus long et sauvegarder la taille
-    local wname = 0
-    for _, e in ipairs(aurall) do
-        if #e.name > wname then wname = #e.name end
-    end
-
     local notinaur, inaur = {}, {}
 
     for _, e in ipairs(aurall) do
         if e.in_aur then
-            inaur[#inaur + 1] = e
+            if mode == "all" or e.orphan or e.outofdate then
+                inaur[#inaur + 1] = e
+            end
         else
             notinaur[#notinaur + 1] = e
         end
     end
 
+    local wname = 0
+    for _, e in ipairs(inaur) do
+        if #e.name > wname then wname = #e.name end
+    end
+
+    local printed = false
+
     if #inaur > 0 then
-        print(C.cyan("==> Paquets gérés par AUR (" .. #inaur .. ")"))
+        local title = (mode == "all")
+            and "==> Paquets gérés par AUR ("
+            or "==> Paquets AUR à surveiller ("
+        print(C.cyan(title .. #inaur .. ")"))
         for _, v in ipairs(inaur) do
             line(v, wname)
         end
+        printed = true
     end
 
     if #notinaur > 0 then
-        if #inaur > 0 then print("") end
+        if printed then print("") end
 
         local notinaur_names = {}
         for _, v in ipairs(notinaur) do
@@ -280,8 +299,12 @@ function update.list_aur(config, aurall)
 
         print(C.cyan("==> Paquets non gérés par AUR (" .. #notinaur .. ")"))
         print(C.dim(table.concat(notinaur_names, " ")))
-        print("")
+        printed = true
     end
+
+    -- Sépare toujours le récapitulatif AUR de la liste principale des mises à
+    -- jour, y compris lorsqu'il n'existe aucun paquet non géré par l'AUR.
+    if printed then print("") end
 end
 
 --------------------------------------------------------------------------
@@ -381,8 +404,8 @@ function update.run(config)
         log.warn(tostring(aurerr) ..
             " — vérification des paquets AUR ignorée pour cette exécution")
     end
-    -- Option : lister tous les paquets AUR installés avec leur statut.
-    if config.list_aur then
+    -- Option : afficher les paquets AUR notables ou la liste complète.
+    if aur_list_mode(config.list_aur) ~= "none" then
         update.list_aur(config, aurall)
     end
     update.display(config, repos, auras)

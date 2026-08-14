@@ -44,7 +44,8 @@ function util.mkdirp(path)
 end
 
 -- Passthrough interactif : rend la main au terminal (sudo, couleurs, barres de
--- progression de pacman) grâce aux redirections "inherit" de Babet 2.9.0.
+-- progression de pacman) grâce aux redirections "inherit" de Babet 2.22.2 et
+-- à son transfert/restauration du terminal pour les enfants interactifs.
 -- La commande et ses arguments restent séparés : aucun shell implicite, aucun
 -- quoting à reconstruire et aucune interprétation de caractères spéciaux.
 --
@@ -91,7 +92,7 @@ end
 -- Exécution de processus
 --------------------------------------------------------------------------
 --
--- API babet.exec (Babet 2.9.0) :
+-- API babet.exec (Babet 2.22.2) :
 --
 --   local res, err = babet.exec(commande, args, opts)
 --     commande : string            ("git", "vercmp", …)

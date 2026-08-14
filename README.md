@@ -3,7 +3,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.4.1`).**
+> **Statut : jeune mais utilisable au quotidien (`0.4.2`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -17,11 +17,14 @@ simple et lisible — sur une base de code moderne, en suivant une approche
 « Strangler Fig Pattern » (figuier étrangleur) : tout ce qui n'est pas encore
 porté nativement est délégué à `pacman`, puis remplacé progressivement.
 
-Il s'appuie sur [Babet](https://github.com/Chipsterjulien/babet) **2.9.0 ou
+Il s'appuie sur [Babet](https://github.com/Chipsterjulien/babet) **2.22.2 ou
 plus récent**,
 un binaire Lua 5.5 autonome, et se distribue sous forme d'un exécutable unique.
 Au démarrage comme pendant la construction, yaourt vérifie la version du
 runtime et refuse une version antérieure avec un diagnostic explicite.
+Cette version minimale inclut notamment la lecture fiable des réponses HTTP
+`chunked` de l'AUR et le transfert/restauration du terminal pour les commandes
+interactives lancées avec `babet.spawn`, comme `pacman` et `makepkg`.
 
 ## Fonctionnalités
 
@@ -68,8 +71,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.4.1-x86_64
-sudo install -Dm755 yaourt-0.4.1-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.4.2-x86_64
+sudo install -Dm755 yaourt-0.4.2-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
@@ -93,7 +96,7 @@ sudo useradd --system --home-dir /var/cache/yaourt --create-home \
 
 ### En mode développement
 
-Avec un binaire Babet 2.9.0 (minimum) placé dans `bin/` :
+Avec un binaire Babet 2.22.2 (minimum) placé dans `bin/` :
 
 ```sh
 ./bin/babet . <opération>
@@ -102,24 +105,27 @@ Avec un binaire Babet 2.9.0 (minimum) placé dans `bin/` :
 Le script `build.sh` accepte aussi un chemin explicite :
 
 ```sh
-BABET=/chemin/vers/babet-2.9.0-linux-x86_64 ./build.sh
+BABET=/chemin/vers/babet-2.22.2-linux-x86_64 ./build.sh
 ```
 
 ## Tests
 
 La suite hors ligne vérifie les helpers de processus et de fichiers avec le
-vrai runtime Babet, puis teste les modes dossier et embarqué et construit le
-binaire final :
+vrai runtime Babet, exerce le client AUR sur un serveur HTTP local avec des
+réponses `chunked`, teste la chaîne interactive parent/enfant sous un véritable
+pseudo-terminal, puis contrôle les modes dossier et embarqué et construit le
+binaire final. Les tests d'intégration utilisent uniquement la bibliothèque
+standard de Python 3 :
 
 ```sh
-BABET=/chemin/vers/babet-2.9.0-linux-x86_64 ./run_tests.sh
+BABET=/chemin/vers/babet-2.22.2-linux-x86_64 ./run_tests.sh
 ```
 
 Un contrôle facultatif du RPC AUR peut être ajouté :
 
 ```sh
 YAOURT_NETWORK_TESTS=1 \
-  BABET=/chemin/vers/babet-2.9.0-linux-x86_64 \
+  BABET=/chemin/vers/babet-2.22.2-linux-x86_64 \
   ./run_tests.sh
 ```
 
@@ -130,7 +136,11 @@ de build `yaourt`) restent à valider sur une machine Arch Linux.
 
 Une configuration est chargée depuis `~/.config/yaourt/config.toml`
 (voir [`config.example.toml`](config.example.toml) pour les options
-disponibles, dont `search_limit` pour le nombre de résultats de recherche).
+disponibles). Lors d'un `-Syu`, `list_aur = "notable"` affiche par défaut les
+paquets orphelins, périmés ou non gérés par l'AUR. La valeur `"all"` affiche la
+liste complète et `false` masque le récapitulatif ; l'ancienne valeur `true`
+reste acceptée comme alias de `"all"`. L'option `search_limit` règle le nombre
+de résultats de recherche.
 En développement, un fichier `cfg/config.toml` présent dans le dossier courant
 est détecté automatiquement.
 

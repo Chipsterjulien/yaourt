@@ -5,7 +5,7 @@
 # --create-exe. On passe par un répertoire de staging propre pour
 # n'embarquer QUE les sources Lua (ni build.sh, ni packaging/, ni README).
 #
-# Prérequis : binaire Babet >= 2.9.0 accessible (PATH ou variable $BABET).
+# Prérequis : binaire Babet >= 2.22.2 accessible (PATH ou variable $BABET).
 # La récupération de babet selon l'architecture est gérée côté
 # packaging (cf. packaging/PKGBUILD, TODO).
 
@@ -16,7 +16,7 @@ OUT="${1:-yaourt}"
 
 # babet : $BABET si défini, sinon le binaire propre à l'architecture
 # courante dans bin/. Les binaires y sont nommés selon le motif des releases
-# babet : babet-<version>-linux-<uname -m> (ex. babet-2.9.0-linux-x86_64).
+# babet : babet-<version>-linux-<uname -m> (ex. babet-2.22.2-linux-x86_64).
 # On résout par glob sur l'architecture ; à défaut on tente ./bin/babet, puis
 # le PATH. Permet de copier le dossier tel quel sur plusieurs machines (les 3
 # binaires dans bin/) : chacune prend automatiquement le sien.

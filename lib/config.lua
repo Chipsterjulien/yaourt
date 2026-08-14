@@ -18,20 +18,25 @@ local config = {}
 -- Config de dev : dossier cfg/ avec config.toml dans le répertoire courant.
 local DEV_CONFIG = "cfg/config.toml"
 
-local function defaults()
+-- Valeurs intégrées au programme. Cette fonction reste accessible afin que
+-- les tests puissent verrouiller les choix d'interface par défaut sans
+-- dépendre d'un fichier de configuration local.
+function config.defaults()
     return {
         -- Répertoire de clonage/build des paquets AUR.
         builddir     = util.cache_home() .. "/yaourt",
         -- Commande sudo (pour les opérations pacman nécessitant root).
         sudo         = "sudo",
-        -- Éditeur pour la revue de PKGBUILD (étape ultérieure).
+        -- Éditeur pour la revue de PKGBUILD.
         editor       = babet.env("EDITOR") or babet.env("VISUAL") or "vi",
-        -- Couleur dans nos affichages (l'affichage des MAJ viendra plus tard).
+        -- Couleur dans les affichages.
         color        = true,
         -- Base de l'AUR (RPC + git).
         aur_url      = "https://aur.archlinux.org",
-        -- Lister tous les paquets AUR installés (avec statut) avant les MAJ.
-        list_aur     = false,
+        -- Récapitulatif AUR avant les MAJ : "notable" affiche seulement les
+        -- paquets à surveiller, "all" la liste complète, false masque tout.
+        -- La valeur historique true reste acceptée comme alias de "all".
+        list_aur     = "notable",
         -- Nombre maximal de résultats affichés par section lors d'une recherche
         -- (-Ss) : AUR et dépôts limités chacun à cette valeur. 0 = illimité.
         -- Pour l'AUR, ce sont les mieux notés qui sont conservés.
@@ -50,7 +55,7 @@ end
 
 -- Renvoie la table de config effective (jamais nil).
 function config.load()
-    local conf = defaults()
+    local conf = config.defaults()
     local path = config_path()
 
     if babet.fileExists(path) then
