@@ -1,20 +1,18 @@
 # Mainteneur : toi
-# PKGBUILD de départ — binaire unique babet + dépendance package-query.
+# PKGBUILD de départ — binaire autonome Babet et catalogues gettext.
 #
 # Note : construit ici depuis l'arbre de travail local (dev). Pour une vraie
 # distribution, ajouter une source VCS (git+...) et bâtir depuis $srcdir.
 
 pkgname=yaourt
-pkgver=0.4.2
+pkgver=0.5.0
 pkgrel=1
 pkgdesc="Wrapper pacman + assistant AUR (réécriture Lua/babet)"
 arch=('x86_64' 'aarch64')
 url="https://github.com/Chipsterjulien/yaourt"
 license=('GPL')
 
-# package-query : béquille de départ. Sera rendu optionnel une fois le mode
-# parallèle (RPC AUR direct) généralisé.
-depends=('pacman' 'package-query' 'git' 'sudo')
+depends=('pacman' 'git' 'sudo')
 
 # babet nécessaire pour empaqueter le binaire.
 #
@@ -22,7 +20,7 @@ depends=('pacman' 'package-query' 'git' 'sudo')
 # aarch64) depuis les releases GitHub au lieu de l'assumer présent :
 #   https://github.com/Chipsterjulien/babet/releases
 # Pour l'instant on travaille avec le bon binaire babet directement.
-makedepends=('babet>=2.22.2')
+makedepends=('babet>=2.22.2' 'gettext' 'python')
 
 # Racine du projet (le dossier parent de packaging/).
 _root="$(realpath "$(dirname "$BASH_SOURCE")/..")"
@@ -36,6 +34,20 @@ package() {
   install -Dm755 "$srcdir/$pkgname" "$pkgdir/usr/bin/$pkgname"
   install -Dm644 "$_root/config.example.toml" \
     "$pkgdir/usr/share/$pkgname/config.example.toml"
+  install -Dm644 "$_root/config.example.fr.toml" \
+    "$pkgdir/usr/share/$pkgname/config.example.fr.toml"
+
+  # Catalogues gettext externes. Le binaire contient les mêmes traductions,
+  # mais ces fichiers permettent aux mainteneurs de les actualiser sans
+  # toucher au moteur ni à la logique métier.
+  local po locale
+  for po in "$_root"/po/*.po; do
+    locale="$(basename "${po%.po}")"
+    install -d "$pkgdir/usr/share/locale/$locale/LC_MESSAGES"
+    msgfmt --check --check-format \
+      -o "$pkgdir/usr/share/locale/$locale/LC_MESSAGES/yaourt.mo" \
+      "$po"
+  done
 
   # Création automatique de l'utilisateur système de build et de son répertoire.
   # Les hooks pacman systemd-sysusers / systemd-tmpfiles les appliquent à

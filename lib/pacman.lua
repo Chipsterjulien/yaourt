@@ -8,6 +8,7 @@
 
 local util   = require("lib.util")
 local log    = require("lib.log")
+local i18n   = require("lib.i18n")
 
 local pacman = {}
 
@@ -33,7 +34,7 @@ end
 -- argv = tous les arguments utilisateur (le premier est l'opération).
 function pacman.passthrough(config, argv)
     if not babet.which("pacman") then
-        log.error("pacman introuvable dans le PATH")
+        log.error(i18n.t("command.not_found", { command = "pacman" }))
         return 1
     end
 

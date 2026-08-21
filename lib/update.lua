@@ -24,6 +24,7 @@ local color   = require("lib.color")
 local log     = require("lib.log")
 local util    = require("lib.util")
 local display = require("lib.display")
+local i18n    = require("lib.i18n")
 
 local update  = {}
 
@@ -46,13 +47,13 @@ local function repo_updates(config)
     sync[#sync + 1] = "-Sy"
     local code = util.passthrough(sync)
     if code ~= 0 then
-        log.error("échec de la synchronisation des bases (pacman -Sy)")
+        log.error(i18n.t("update.sync_failed"))
         return {}
     end
 
     -- 2) Détection des MAJ disponibles (pacman -Qu, capturé).
     -- Format : « nom ancienne -> nouvelle ». Code non nul si aucune MAJ.
-    local res = util.run({ "pacman", "-Qu" })
+    local res = util.run({ "pacman", "-Qu" }, { env = { LC_ALL = "C" } })
     if not res then
         return {}
     end
@@ -68,7 +69,7 @@ end
 
 -- Carte nom -> dépôt (pour colorer core/extra/multilib…), via `pacman -Sl`.
 local function repo_map()
-    local res = util.run({ "pacman", "-Sl" })
+    local res = util.run({ "pacman", "-Sl" }, { env = { LC_ALL = "C" } })
     local m = {}
     if res and res.code == 0 then
         for line in (res.stdout or ""):gmatch("[^\n]+") do
@@ -86,7 +87,7 @@ end
 -- On interroge l'AUR en une passe groupée ; les MAJ ET la liste complète en
 -- dérivent (le client RPC découpe seulement si l'URL deviendrait trop longue).
 local function aur_status(config)
-    local res = util.run({ "pacman", "-Qm" })
+    local res = util.run({ "pacman", "-Qm" }, { env = { LC_ALL = "C" } })
     if not res or res.code ~= 0 then return {} end
 
     local installed, names = {}, {}
@@ -176,7 +177,7 @@ function update.display(config, repos, auras)
     for _, u in ipairs(auras) do all[#all + 1] = u end
 
     if #all == 0 then
-        print(":: Le système est à jour.")
+        print(":: " .. i18n.t("update.up_to_date"))
         return
     end
 
@@ -209,19 +210,19 @@ function update.display(config, repos, auras)
         local newpad  = string.rep(" ", wnew - #u.newver)
         -- Drapeaux à droite (AUR uniquement) : bien visibles.
         local flags   = ""
-        if u.orphan then flags = flags .. "  " .. C.yellow("(orphelin)") end
-        if u.outofdate then flags = flags .. "  " .. C.red("(périmé)") end
+        if u.orphan then flags = flags .. "  " .. C.yellow(i18n.t("status.orphan")) end
+        if u.outofdate then flags = flags .. "  " .. C.red(i18n.t("status.out_of_date")) end
         print(string.format("  %s%s  %s%s %s %s%s%s",
             label, namepad, u.oldver, oldpad, C.dim("->"), C.green(u.newver), newpad, flags))
     end
 
     if #revs > 0 then
-        print(C.cyan("==> Nouvelle révision des paquets (" .. #revs .. ") :"))
+        print(C.cyan("==> " .. i18n.n("update.revisions", #revs)))
         for _, u in ipairs(revs) do line(u) end
     end
     if #vers > 0 then
         if #revs > 0 then print("") end
-        print(C.cyan("==> Mise à jour des logiciels (nouvelle version) (" .. #vers .. ") :"))
+        print(C.cyan("==> " .. i18n.n("update.new_versions", #vers)))
         for _, u in ipairs(vers) do line(u) end
     end
 end
@@ -250,11 +251,11 @@ function update.list_aur(config, aurall)
         if e.has_update then
             status = C.green(e.oldver .. " -> " .. e.newver)
         else
-            status = "à jour"
+            status = i18n.t("status.up_to_date")
         end
         local flags = ""
-        if e.orphan then flags = flags .. "  " .. C.yellow("Orphelin") end
-        if e.outofdate then flags = flags .. "  " .. C.red("(périmé)") end
+        if e.orphan then flags = flags .. "  " .. C.yellow(i18n.t("status.orphan_plain")) end
+        if e.outofdate then flags = flags .. "  " .. C.red(i18n.t("status.out_of_date")) end
 
         print(string.format("  %s%s : %s%s", C.magenta(e.name), pad, status, flags))
     end
@@ -279,10 +280,8 @@ function update.list_aur(config, aurall)
     local printed = false
 
     if #inaur > 0 then
-        local title = (mode == "all")
-            and "==> Paquets gérés par AUR ("
-            or "==> Paquets AUR à surveiller ("
-        print(C.cyan(title .. #inaur .. ")"))
+        local key = (mode == "all") and "update.aur_managed" or "update.aur_notable"
+        print(C.cyan("==> " .. i18n.n(key, #inaur)))
         for _, v in ipairs(inaur) do
             line(v, wname)
         end
@@ -297,7 +296,7 @@ function update.list_aur(config, aurall)
             notinaur_names[#notinaur_names + 1] = v.name
         end
 
-        print(C.cyan("==> Paquets non gérés par AUR (" .. #notinaur .. ")"))
+        print(C.cyan("==> " .. i18n.n("update.aur_unmanaged", #notinaur)))
         print(C.dim(table.concat(notinaur_names, " ")))
         printed = true
     end
@@ -378,7 +377,7 @@ end
 local function select_auras(config, auras)
     local C = color.new(config.color)
     print("")
-    print(C.cyan("==> ") .. C.bold("Sélection des paquets AUR à mettre à jour"))
+    print(C.cyan("==> ") .. C.bold(i18n.t("update.select_aur")))
     for i, u in ipairs(auras) do
         local ver = ""
         if u.oldver and u.newver then
@@ -386,7 +385,7 @@ local function select_auras(config, auras)
         end
         print(string.format("  %2d. %s%s", i, C.magenta(u.name), ver))
     end
-    io.write(C.cyan("==> ") .. "Numéros à mettre à jour (ex. 1 3 5, 1-4, ^2 pour tout sauf 2) : ")
+    io.write(C.cyan("==> ") .. i18n.t("update.selection_prompt") .. " ")
     io.flush()
     local input = io.read("l") or ""
 
@@ -401,8 +400,7 @@ end
 function update.run(config)
     local repos, auras, aurall, aurerr = update.check(config)
     if aurerr then
-        log.warn(tostring(aurerr) ..
-            " — vérification des paquets AUR ignorée pour cette exécution")
+        log.warn(i18n.t("update.aur_check_skipped", { error = tostring(aurerr) }))
     end
     -- Option : afficher les paquets AUR notables ou la liste complète.
     if aur_list_mode(config.list_aur) ~= "none" then
@@ -415,20 +413,20 @@ function update.run(config)
     -- L'option [M]anuel n'a de sens que s'il y a des paquets AUR à choisir ;
     -- sinon on propose simplement [O/n].
     local prompt = (#auras > 0)
-        and "==> Continuer la mise à jour ? [O/n/M] "
-        or "==> Continuer la mise à jour ? [O/n] "
-    io.write("\n" .. C.cyan(prompt))
+        and i18n.t("update.continue_manual")
+        or i18n.t("update.continue")
+    io.write("\n" .. C.cyan("==> " .. prompt) .. " ")
     io.flush()
     local ans = (io.read("l") or ""):lower()
-    if ans == "n" or ans == "non" then
-        print("Annulé.")
+    if i18n.is_answer(ans, "no") then
+        print(i18n.t("common.cancelled"))
         return 0
     end
 
     -- [M]anuel : sélection à la carte des paquets AUR (inclusion). Ne concerne
     -- que l'AUR ; les paquets des dépôts restent gérés par pacman -Su. Ignoré
     -- s'il n'y a aucun paquet AUR (l'invite ne propose alors pas M).
-    if ans == "m" and #auras > 0 then
+    if i18n.is_answer(ans, "manual") and #auras > 0 then
         auras = select_auras(config, auras)
     end
 
@@ -461,7 +459,7 @@ function update.run(config)
             end
             if stop then break end
         end
-        return display.build_summary(C, results, "AUR mis à jour")
+        return display.build_summary(C, results, "updated")
     end
 
     return 0

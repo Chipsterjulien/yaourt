@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: hu\n"
+"Language-Team: Magyar\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Yaourt-Yes: i,igen,y,yes\n"
+"X-Yaourt-No: n,nem,no\n"
+"X-Yaourt-Manual: m,manuális,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — pacman-kezelőfelület + AUR-segéd"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "HASZNÁLAT:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "műveletek átadása a pacman programnak (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "csomag telepítése (tárolókból vagy AUR-ból)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "keresés a tárolókban és az AUR-ban"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "tárolók és AUR frissítése ([M]: AUR-csomagok kézi kiválasztása)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "fordítási gyorsítótár törlése (részleges | teljes)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "AUR fordítási fájlok letöltése (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "a súgó megjelenítése"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "a verzió megjelenítése"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "A \"yaourt\" rendszerfelhasználót nem találták."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Készítse meg (mint root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: nem található a AUR-ban"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC hiba"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "A {package} szoftvercsomag összeállítása"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "A {package} szoftvercsomag összeállítása ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "A {package} szoftvercsomag összeállítása (új telepítés {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "A {package} ({version}) szoftvercsomag összeállítása"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "A szoftver összeállítása nem sikerült (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD nem talált"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "nem tudta eltávolítani a {path} szoftvercsomagot: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "Nem tudta eltávolítani a régimódi szoftvercsomagot {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "A {user} felhasználót nem találták: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "A szoftverkészítmények nem találtak cache-t ({path}): nem kell tisztítani."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "nem sikerült tisztítani a {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "A AUR takarítás kihagyott."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "A tisztítási szoftverek építési forrásai ({count} szoftvercsomag)"
+msgstr[1] "A tisztítási szoftverek építési forrásai ({count} szoftvercsomagok)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "A {count} tárolót tisztították."
+msgstr[1] "A {count} tárolókat tisztították."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "A szoftverkészítmények tárolása üres: nincs mit tisztítani a AUR oldalon."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "Nem tudta ellenőrizni a szoftverkészlet tárolást: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "Nem tudott felsorolni a szoftverkészítményt: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman tárolóhely"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman előzetes tárolás (teljes)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Biztosan eltávolítja az összes tárolót?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "nem tudta eltávolítani a {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "A szoftverépítés tárolóhelyének teljes eltávolítása ({count} szoftvercsomag)"
+msgstr[1] "A szoftverépítés tárolóhelyének teljes eltávolítása ({count} szoftvercsomagok)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "A AUR eltávolítása kihagyott."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "A Git által nem nyomon követett fájlok eltávolítása minden adattárból?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Minden klonolt tároló eltávolítható (a következő építésen ismét klonolható)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "A {count} tároló eltávolítása."
+msgstr[1] "A {count} tárolókat eltávolították."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "A {option} legalább egy szoftvercsomag név várható"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "A {option} keresési kifejezést vár"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "A {command} nem talált a PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Lemondtam."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Hibás: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(Nem)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "nem ismert"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: nem érvényes konfiguráció ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: elhagyott (a függőség {dependency} nem teljesült)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: a függetlenségi megoldás nem sikerült ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "A AUR közvetlen függőségei a {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(a AUR függőség nélkül)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "A AUR függetlenségi összeállítási rend a {package} esetében:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: nem telepítettek tárolófüggőségeket ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: nem sikerült megoldani a tárolófüggőségeket ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(cél)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "klonálás {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "a {package} frissítéséről"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "A tárolóhelyek ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: hiányzó parancs"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: váratlan kimenetel: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[I/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: a szoftver összeállítása nem sikerült"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: felfüggesztett építés (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: a telepítés nem sikerült"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: a telepítés megszakadt (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: telepítve"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: a felülvizsgálat nem fejeződött be"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: a felülvizsgálat elutasítása"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Az előző verziótól való változások:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Tovább építünk?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "A {count} fájlt felül kell vizsgálni (egy-egyből kinyitva)"
+msgstr[1] "{count} fájlok áttekintésre (egy-egyből kinyitva)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(a fájlok módosítása nem látható)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Nem lehetett megnyitni a {file}-t a \"{editor}\" címmel"
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "A PKGBUILD az előző felülvizsgálat óta változatlan."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "A {name} a Babet >= {required}-t igényli (az észlelt verzió: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR ( szavazatok, népszerűség) ({count} eredmény)"
+msgstr[1] "AUR (véletlenek, népszerűség) ({count} eredmények)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (véletlenek, népszerűség) ({shown} a {total} eredményből látható)"
+msgstr[1] "AUR ( szavazatok, népszerűség) ({shown} a {total} eredményekből látható)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Nem találtak szoftvercsomagokat a \"{term}\" címre."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Hivatalos adattárak ({count} eredmény)"
+msgstr[1] "Hivatalos adattárak ({count} eredmények)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Hivatalos adattárak ({shown} a {total} eredményből)"
+msgstr[1] "Hivatalos adattárak ({shown} a {total} eredményekből látható)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " szavazatok: {votes}, népszerűség: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[elhelyezett]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[elhelyezett: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(férfi)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Árvák"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(túl idős)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "a mai napig"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "A jármű nem teljesít ({count}):"
+msgstr[1] "Hullámok ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Szünetelt ({count}):"
+msgstr[1] "Késett ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "{count} szoftvercsomag telepítve"
+msgstr[1] "{count} szoftvercsomagok telepítve"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR szoftvercsomag frissítés"
+msgstr[1] "{count} AUR szoftvercsomagok frissítés"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "A felhasználó elutasította ({count}):"
+msgstr[1] "A felhasználó elutasította ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR szoftvercsomag ellenőrzése kihagyott ezen futáson"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "a AUR ({count}) által irányított szoftvercsomag"
+msgstr[1] "a AUR ({count}) által kezelt szoftvercsomagok"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR szoftvercsomag ({count})"
+msgstr[1] "AUR szoftvercsomagok ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "a AUR ({count}) által nem irányított szoftvercsomag"
+msgstr[1] "a AUR ({count}) által nem irányított szoftvercsomagok"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Folytassa a frissítést?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Folytassa a frissítést?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "szoftverfrissítés (új verzió) ({count} szoftvercsomag):"
+msgstr[1] "szoftverfrissítések (új verzió) ({count} szoftvercsomagok):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Új szoftvercsomag felülvizsgálat ({count} szoftvercsomag):"
+msgstr[1] "Az új szoftvercsomagok felülvizsgálatai ({count} szoftvercsomagok):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Válassza a frissítéshez szükséges AUR szoftvercsomagokat"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "A frissítendő számok (pl. 1 3 5, 1-4, ^2 a 2 kivételével):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "Nem szinkronizált adatbázisokat (pacman - Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "A rendszer naprakész."

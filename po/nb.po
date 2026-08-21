@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: nb\n"
+"Language-Team: Norsk bokmål\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Yaourt-Yes: j,ja,y,yes\n"
+"X-Yaourt-No: n,nei,no\n"
+"X-Yaourt-Manual: m,manuelt,manual\n"
+"X-Yaourt-Aliases: no,nb_NO,no_NO\n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — grensesnitt for pacman + AUR-hjelper"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "BRUK:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "videresend operasjoner til pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "installer en pakke (pakkelagre eller AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "søk i pakkelagre og AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "oppdater pakkelagre og AUR ([M]: velg AUR-pakker manuelt)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "tøm byggemellomlageret (delvis | fullstendig)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "hent AUR-byggfiler (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "vis denne hjelpen"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "vis versjonen"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "Brukeren av systemet \"yaourt\" ble ikke funnet."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Skape den (som root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: ikke funnet i AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC feil"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Kompilere programvarepakke {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Kompilere programvarepakke {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Kompilere programvarepakke {package} (ny installasjon {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Kompilere programvarepakke {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Programvareoppstilling mislyktes (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD ikke funnet"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "ikke kunne fjerne programvarepakke {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "ikke kunne fjerne gammeldags programvarepakke {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "{user}-brukeren ble ikke funnet: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Programvarebygging cache ikke funnet ({path}): ingenting å rengjøre."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "ikke klarte {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR rengjøring hoppet."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Rengjøringsprogramvare byggekilder ({count} programvarepakke)"
+msgstr[1] "Rengjøringsprogramvare byggekilder ({count} programvarepakker)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count}-repositoriet rengjort."
+msgstr[1] "{count}-repositorier renset."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Cache er tom: Ingenting å rengjøre på AUR siden."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "ikke kunne inspisere programvarebygget cache: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "ikke kunne oppgi programvarebygget cache: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman cache"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman cache (fullstendig)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Bekreft fjerning av alle repositorier?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "ikke kunne fjerne {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "FULL fjernelse av programvarebygget cache ({count} programvarepakke)"
+msgstr[1] "FULL fjernelse av programvarebygget cache ({count} programvarepakker)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR fjernelse hoppet."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Å fjerne filer som ikke er sporet av Git fra alle repositorier?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Alle klonerte repositorier vil bli fjernet (de vil bli klonert igjen på neste build)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count}-registeret er fjernet."
+msgstr[1] "{count}-repositorier fjernet."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} forventer minst ett programvarepakke navn"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} forventer et søkeord"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} ble ikke funnet i PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Avbøra."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Feil: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(Ingen)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "ukjent"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: ugyldig konfigurasjon ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: forlatt (avhengighet {dependency} ikke fullført)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: avhengighetsløsning mislyktes ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Direkte AUR-avhengigheter av {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(ingen AUR-avhengighet)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR avhengighetskompilationsordn for {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: ikke installert deponeringsavhengighet ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: Det lyktes ikke å løse deponeringsavhengigheter ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(mål)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "kloning {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "oppdatering av {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "arkiver ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: mangler kommando"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: uventet utgang: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[J/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: programvareoppstilling mislyktes"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: oppbygging avbrutt (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: installasjon mislyktes"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: installasjon avbrutt (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: installert"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: vurderingen kunne ikke fullføres"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: anmeldelse avslått"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Endringer siden den forrige versjonen:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Fortsett å bygge?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count}-fil for gjennomgang (åpnet en etter en)"
+msgstr[1] "{count}-filer for gjennomgang (åpnet en etter en)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(ingen filendringer for å vise)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Kan ikke åpne {file} med \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD er uendret siden forrige gjennomgang."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} krever Babet >= {required} (detekterte versjon: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (stemmer, popularitet) ({count} resultat)"
+msgstr[1] "AUR (stemmer, popularitet) ({count} resultater)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (stemmer, popularitet) ({shown} vist ut av {total} resultat)"
+msgstr[1] "AUR (stemmer, popularitet) ({shown} vist fra {total} resultater)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Ingen programvarepakke funnet for \"{term}\"."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Officielle arkiver ({count} resultat)"
+msgstr[1] "Officielle arkiver ({count} resultater)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Officielle repositorier ({shown} viser ut av {total}-resultatet)"
+msgstr[1] "Officielle repositorier ({shown} viser ut av {total}-resultater)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " stemmer: {votes}, popularitet: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[Installert]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[Installert: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(Orphan)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Utrøstet"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(oppdatert)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "Oppdatert"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Fejl ({count}):"
+msgstr[1] "Fejl ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Avbrutt ({count}):"
+msgstr[1] "Avbrutt ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "{count} programvarepakke installert"
+msgstr[1] "{count} programvarepakker installert"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR programvarepakke oppdatert"
+msgstr[1] "{count} AUR programvarepakker oppdatert"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Nektet av brukeren ({count}):"
+msgstr[1] "Nektet av brukeren ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR programvarepakke sjekk hoppet for dette løpet"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "programvarepakke som administreres av AUR ({count})"
+msgstr[1] "programvarepakker som administreres av AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR programvarepakke å se på ({count})"
+msgstr[1] "AUR programvarepakker å se på ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "programvarepakke som ikke administreres av AUR ({count})"
+msgstr[1] "programvarepakker som ikke administreres av AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Fortsette oppdateringen?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Fortsette oppdateringen?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Programvareoppdatering (ny versjon) ({count} programvarepakke):"
+msgstr[1] "Programvareoppdateringer (ny versjon) ({count}-programvarepakker):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Ny programvarepakke revidert ({count} programvarepakke):"
+msgstr[1] "Nye revisjoner av programvarepakkene ({count}-programvarepakker):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Velg AUR programvarepakker for oppdatering"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Nummerer som skal oppdateres (f.eks. 1 3 5, 1-4, ^2 for alle unntatt 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "ikke synkroniserte databaser (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Systemet er oppdatert."

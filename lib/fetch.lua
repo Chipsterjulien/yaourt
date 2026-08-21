@@ -20,6 +20,7 @@
 local util  = require("lib.util")
 local log   = require("lib.log")
 local aur   = require("lib.aur")
+local i18n  = require("lib.i18n")
 
 local fetch = {}
 
@@ -75,7 +76,7 @@ local function clone_or_update(config, pkgbase)
     if derr then return nil, derr end
 
     if is_repo then
-        log.info("mise à jour de " .. pkgbase)
+        log.info(i18n.t("fetch.updating", { package = pkgbase }))
         local old_commit = head_commit()
         local res, rerr = util.run_as(config.build_user, { "git", "-C", dest, "pull", "--ff-only" })
         if not res then return nil, rerr end
@@ -89,7 +90,7 @@ local function clone_or_update(config, pkgbase)
             new_commit  = new_commit,
         }
     else
-        log.info("clonage de " .. pkgbase)
+        log.info(i18n.t("fetch.cloning", { package = pkgbase }))
         local url = (config.aur_url or "https://aur.archlinux.org") .. "/" .. pkgbase .. ".git"
         local res, rerr = util.run_as(config.build_user, { "git", "clone", url, dest })
         if not res then return nil, rerr end
@@ -117,12 +118,12 @@ function fetch.one(config, name)
 
     local entry = infos[name]
     if not entry then
-        return nil, name .. " : introuvable dans l'AUR"
+        return nil, i18n.t("aur.package_not_found", { package = name })
     end
 
     local meta, cerr = clone_or_update(config, entry.PackageBase)
     if not meta then
-        return nil, name .. " : " .. tostring(cerr)
+        return nil, i18n.t("common.named_error", { name = name, error = tostring(cerr) })
     end
 
     return meta, nil
@@ -134,7 +135,7 @@ end
 -- global. La création du builddir est gérée par clone_or_update.
 function fetch.get(config, pkgs)
     if not babet.which("git") then
-        log.error("git introuvable dans le PATH")
+        log.error(i18n.t("command.not_found", { command = "git" }))
         return 1
     end
 
@@ -148,12 +149,12 @@ function fetch.get(config, pkgs)
     for _, name in ipairs(pkgs) do
         local entry = infos[name]
         if not entry then
-            log.warn(name .. " : introuvable dans l'AUR")
+            log.warn(i18n.t("aur.package_not_found", { package = name }))
             failed = failed + 1
         else
             local meta, cerr = clone_or_update(config, entry.PackageBase)
             if not meta then
-                log.error(name .. " : " .. tostring(cerr))
+                log.error(i18n.t("common.named_error", { name = name, error = tostring(cerr) }))
                 failed = failed + 1
             else
                 io.write(meta.path .. "\n")

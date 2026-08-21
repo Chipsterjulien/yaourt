@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: nl_NL\n"
+"Language-Team: Nederlands\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Yaourt-Yes: j,ja,y,yes\n"
+"X-Yaourt-No: n,nee,no\n"
+"X-Yaourt-Manual: m,handmatig,manual\n"
+"X-Yaourt-Aliases: nl\n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — interface voor pacman + AUR-helper"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "GEBRUIK:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "bewerkingen doorgeven aan pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "een pakket installeren (pakketbronnen of AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "pakketbronnen en AUR doorzoeken"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "pakketbronnen en AUR bijwerken ([M]: AUR-pakketten handmatig selecteren)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "bouwcache opschonen (gedeeltelijk | volledig)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "AUR-bouwbestanden ophalen (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "deze hulp weergeven"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "de versie weergeven"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "De gebruiker van het systeem \"yaourt\" kon niet worden gevonden."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Schrijf het (als root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: niet in de AUR te vinden"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC fout"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Compile softwarepakket {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "{package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "{package} (nieuwe installatie {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Compile softwarepakket {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "software-compilatie mislukt (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD niet gevonden"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "niet kon het softwarepakket {path} verwijderen: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "niet kon verouderd softwarepakket {path} verwijderen: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "De gebruiker van {user} kon niet worden gevonden: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Software build cache niet gevonden ({path}): niets te reinigen."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "{path} niet gereinigd"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR schoonmaak is overgeslagen."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Reinigingssoftware bouwbronnen ({count} softwarepakket)"
+msgstr[1] "Reinigingssoftware bouwbronnen ({count} softwarepakketten)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count} opslagplaats schoongemaakt"
+msgstr[1] "{count}-repositories gereinigd."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "De software build cache is leeg: er is niets te reinigen aan de kant van AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "kon de software build cache niet inspecteren: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "kon de softwarebuild cache niet vermelden: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman cache"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman cache (volledig)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Bevestig de verwijdering van alle opslagplaatsen?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "{path}: {error} kon niet worden verwijderd"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "COMPLET verwijdering van de software build cache ({count} softwarepakket)"
+msgstr[1] "VOLGEN verwijdering van de software-build cache ({count}-softwarepakketten)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR verwijdering overgeslagen."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "De bestanden verwijderen die niet door Git worden gevolgd."
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Alle gekloonde repositories worden verwijderd (ze worden opnieuw gekloond bij de volgende build)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count}-repository verwijderd."
+msgstr[1] "{count}-repositories verwijderd."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} verwacht ten minste één softwarepakketnaam"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} verwacht een zoekterm"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} is niet gevonden in PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Afgezegd."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Fout: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "- Geen ."
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "onbekend"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: ongeldige config ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: verlaten (afhankelijkheid {dependency} is niet voltooid)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: afhankelijkheidsresolutie niet gelukt ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "AUR-afhankelijkheden van {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(geen AUR afhankelijkheid)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR afhankelijkheidscompilatieopdracht voor {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: geen opslagplaats afhankelijkheden geïnstalleerd ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: het is niet gelukt om dependency van de opslagplaats op te lossen ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(doelstelling)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "klonen van {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "bijwerking van {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "de opslagplaatsen ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: ontbrekend commando"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: onverwachte output: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[J/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: software-compilatie mislukt"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: bouw is onderbroken (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: installatie is gefaald"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: installatie is onderbroken (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: geïnstalleerd"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: de herziening kon niet worden voltooid"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: herziening geweigerd"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Wijzigingen sinds de vorige versie:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "[J/n]"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count}-bestand te herzien (een voor één geopend)"
+msgstr[1] "{count}-bestanden om te bekijken (een voor één geopend)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(geen bestandwijzigingen weer te geven)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "{file} kon niet worden geopend met \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD onveranderd sinds het vorige onderzoek."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} vereist Babet >= {required} (geïdentificeerde versie: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (stemmen, populariteit) (resultaat {count})"
+msgstr[1] "AUR (stemmen, populariteit) ({count} resultaten)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (stemmen, populariteit) ({shown} getoond uit het resultaat van {total})"
+msgstr[1] "AUR (stemmen, populariteit) ({shown} getoond uit de resultaten van {total})"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Geen softwarepakket gevonden voor \"{term}\"."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Officiële bewaarplaatsen (resultaat {count})"
+msgstr[1] "Officiële bewaarplaatsen ({count} resultaten)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Officiële bewaarplaatsen ({shown} uit het resultaat van {total})"
+msgstr[1] "Officiële bewaarplaatsen ({shown} getoond uit de resultaten van {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " stemmen: {votes}, populariteit: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "- Ja, ik heb het."
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[geïnstalleerd: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(Wees wees)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "We zijn wezen."
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(verouderd)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "tot op heden"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Mislukt ({count}):"
+msgstr[1] "Mislukt ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Onderbroken ({count}):"
+msgstr[1] "Onderbroken ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "{count} softwarepakket geïnstalleerd"
+msgstr[1] "{count} softwarepakketten geïnstalleerd"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR softwarepakket bijgewerkt"
+msgstr[1] "{count} AUR softwarepakketten bijgewerkt"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Gebruiker geweigerd ({count}):"
+msgstr[1] "Gebruiker geweigerd ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR softwarepakketcontrole overgeslagen voor deze run"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "softwarepakket beheerd door de AUR ({count})"
+msgstr[1] "softwarepakketten die worden beheerd door de AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR softwarepakket om te bekijken ({count})"
+msgstr[1] "AUR-softwarepakketten ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "softwarepakket dat niet wordt beheerd door de AUR ({count})"
+msgstr[1] "softwarepakketten die niet worden beheerd door de AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "[J/n]"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "[J/n/M]"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Software-update (nieuwe versie) ({count}-softwarepakket):"
+msgstr[1] "Software-updates (nieuwe versie) ({count}-softwarepakketten):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Nieuwe softwarepakketherziening ({count}-softwarepakket):"
+msgstr[1] "Nieuwe softwarepakketrevisie ({count}-softwarepakketten):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Selecteer de softwarepakketten AUR om te updaten"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Nummers die moeten worden bijgewerkt (bv. 1 3 5, 1-4, ^2 voor alle andere dan 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "Niet gesynchroniseerd databases (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Het systeem is actueel."

@@ -1,5 +1,5 @@
-# Binaire luapilot vendu localement (spécifique à l'architecture,
-# à déposer par chacun dans bin/ ; récupéré par archi au packaging).
+# Runtime Babet local (spécifique à l'architecture, à déposer par chacun dans
+# bin/ ; récupéré selon l'architecture au packaging).
 /bin
 
 # Binaire compilé du projet.
@@ -14,6 +14,8 @@ tmp/
 # Divers
 *.tmp
 manual-fr.pdf
+__pycache__/
+*.py[cod]
 
 # Artefacts de build éventuels
 *.pkg.tar.zst

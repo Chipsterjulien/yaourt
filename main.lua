@@ -6,6 +6,8 @@
 -- Stratégie « figuier étrangleur » : ce binaire est la porte d'entrée et,
 -- pour tout ce qui n'est pas encore porté nativement, il délègue à pacman.
 
+local i18n = require("lib.i18n")
+local help = require("lib.help")
 local runtime = require("lib.runtime")
 runtime.assert_supported()
 
@@ -26,20 +28,7 @@ local args    = {}
 for i = 1, #arg do args[i] = arg[i] end
 
 local function usage()
-    io.write(([[
-%s %s — wrapper pacman + assistant AUR
-
-USAGE :
-  yaourt <opérations pacman>      passe la main à pacman (-Q, -R, -Sy…)
-  yaourt -S <paquet>...           installe un paquet (dépôts ou AUR)
-  yaourt -Ss <terme>              recherche unifiée dépôts + AUR
-  yaourt -Syu | -Su               mise à jour unifiée dépôts + AUR ([M] : choix
-                                  manuel des paquets AUR à mettre à jour)
-  yaourt -Sc | -Scc               nettoie le cache de build (doux | complet)
-  yaourt -G <paquet>...           récupère les fichiers de build AUR (git clone)
-  yaourt -h | --help              cette aide
-  yaourt -V | --version           version
-]]):format(version.name, version.version))
+    io.write(help.render(version.name, version.version))
 end
 
 -- Recherche (-Ss, -Ssq…) -> notre recherche unifiée dépôts + AUR.
@@ -126,6 +115,7 @@ end
 
 local function main()
     local config = cfg.load()
+    i18n.configure(config)
     log.setup(config)
 
     if #args == 0 then
@@ -147,8 +137,8 @@ local function main()
 
     if not babet.user.exists("yaourt") then
         local C = color.new(config.color)
-        print(C.red("L'utilisateur système « yaourt » est introuvable."))
-        print("Créez-le (en tant que root) :")
+        print(C.red(i18n.t("app.system_user_missing")))
+        print(i18n.t("app.system_user_create"))
         print(C.cyan(
             [[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
         return 1
@@ -159,7 +149,7 @@ local function main()
         local pkgs = {}
         for i = 2, #args do pkgs[i - 1] = args[i] end
         if #pkgs == 0 then
-            log.error("-G attend au moins un nom de paquet")
+            log.error(i18n.t("cli.package_required", { option = "-G" }))
             return 1
         end
         return fetch.get(config, pkgs)
@@ -170,7 +160,7 @@ local function main()
     -- Affiche les dépendances AUR directes d'un paquet, sans rien construire.
     if first == "--debug-deps" then
         if not args[2] then
-            log.error("--debug-deps attend un nom de paquet")
+            log.error(i18n.t("cli.package_required", { option = "--debug-deps" }))
             return 1
         end
         return deps.show(config, args[2])
@@ -181,7 +171,7 @@ local function main()
     -- Affiche l'ordre de build récursif des dépendances AUR, sans construire.
     if first == "--debug-resolve" then
         if not args[2] then
-            log.error("--debug-resolve attend un nom de paquet")
+            log.error(i18n.t("cli.package_required", { option = "--debug-resolve" }))
             return 1
         end
         return deps.show_resolve(config, args[2])
@@ -191,7 +181,7 @@ local function main()
     -- Recherche unifiée dépôts + AUR (-Ss)
     if is_search(first) then
         if not args[2] then
-            log.error("-Ss attend un terme de recherche")
+            log.error(i18n.t("cli.search_term_required", { option = "-Ss" }))
             return 1
         end
         return search.run(config, args[2])
@@ -216,7 +206,7 @@ local function main()
     if is_install(first) then
         local names, opts = parse_install_opts(args)
         if #names == 0 then
-            log.error("-S attend au moins un nom de paquet")
+            log.error(i18n.t("cli.package_required", { option = "-S" }))
             return 1
         end
         return install.run(config, names, opts)

@@ -14,6 +14,12 @@ package.path = table.concat({
 
 local runtime = require("lib.runtime")
 local util = require("lib.util")
+local i18n = require("lib.i18n")
+local help = require("lib.help")
+
+-- Les tests historiques verrouillent le vocabulaire français actuel. Les
+-- tests i18n dédiés changent explicitement de locale puis la restaurent.
+i18n.set_language("fr")
 
 local passed = 0
 
@@ -47,6 +53,137 @@ end)
 test("configuration : récapitulatif AUR notable par défaut", function()
     local config = require("lib.config")
     assert_equal(config.defaults().list_aur, "notable")
+    assert_equal(config.defaults().language, "auto")
+end)
+
+test("i18n : 43 catalogues complets et découvrables", function()
+    local expected = {
+        "ar", "ast", "bg", "bn", "br", "ca", "cs_CZ", "da", "de", "el",
+        "en", "eo", "es", "es_419", "fa", "fi", "fr", "he", "hi", "hu",
+        "id", "is", "it", "ja", "ko", "lt", "nb", "nl_NL", "pl", "pt",
+        "pt_BR", "ro", "ru", "sk", "sl", "sr", "sv", "th", "tr", "uk",
+        "vi", "zh_CN", "zh_TW",
+    }
+    local available = i18n.available_languages()
+    assert_equal(#available, #expected)
+    assert_equal(table.concat(available, ","), table.concat(expected, ","))
+
+    for _, locale in ipairs(available) do
+        i18n.set_language(locale)
+        local translated = i18n.t("update.up_to_date")
+        assert(translated ~= "" and translated ~= "update.up_to_date")
+        local rendered = i18n.t("config.invalid", { path = "/tmp/config", error = "E" })
+        assert(rendered:find("/tmp/config", 1, true))
+        assert(rendered:find("E", 1, true))
+        assert(not rendered:find("{path}", 1, true))
+        assert(not rendered:find("{error}", 1, true))
+        local plural = i18n.n("summary.failed", 5)
+        assert(plural:find("5", 1, true))
+        assert(not plural:find("{count}", 1, true))
+    end
+    i18n.set_language("fr")
+end)
+
+test("i18n : aide structurée et commandes invariantes", function()
+    local commands = help.commands()
+    local width = 0
+    for _, command in ipairs(commands) do
+        if #command > width then width = #command end
+    end
+
+    for _, locale in ipairs(i18n.available_languages()) do
+        i18n.set_language(locale)
+        local rendered = help.render("yaourt", "0.0.0-test")
+        local lines = {}
+        for line in rendered:gmatch("(.-)\n") do
+            lines[#lines + 1] = line
+        end
+
+        assert_equal(#lines, 3 + #commands)
+        assert(lines[1]:find("yaourt", 1, true))
+        assert(lines[1]:find("0.0.0-test", 1, true))
+        assert_equal(lines[2], "")
+
+        for index, command in ipairs(commands) do
+            local line = lines[index + 3]
+            assert_equal(line:sub(1, 2), "  ")
+            assert_equal(line:sub(3, 2 + #command), command)
+            assert_equal(line:sub(width + 3, width + 4), "  ")
+            assert(line:sub(width + 5) ~= "")
+
+            local first = assert(rendered:find(command, 1, true))
+            assert_equal(rendered:find(command, first + #command, true), nil)
+        end
+    end
+    i18n.set_language("fr")
+end)
+
+test("i18n : aide protégée contre un catalogue externe mal formé", function()
+    local original_t = i18n.t
+    local rendered
+    local ok, err = pcall(function()
+        i18n.t = function(key, variables)
+            if key == "help.search" then
+                return "  description externe\nligne injectée\t  "
+            end
+            return original_t(key, variables)
+        end
+        rendered = help.render("yaourt", "0.0.0-test")
+    end)
+    i18n.t = original_t
+    assert(ok, err)
+
+    assert(rendered:find(
+        "yaourt -Ss <term>           description externe ligne injectée",
+        1,
+        true
+    ))
+    assert(not rendered:find("\nligne injectée", 1, true))
+end)
+
+test("i18n : normalisation, alias et repli déterministe", function()
+    i18n.set_language("pt-BR.UTF-8")
+    assert_equal(i18n.language(), "pt_BR")
+    assert_equal(table.concat(i18n.fallback_chain(), ","), "pt_BR,pt,en")
+
+    i18n.set_language("cs")
+    assert_equal(i18n.language(), "cs_CZ")
+    i18n.set_language("zh-Hant")
+    assert_equal(i18n.language(), "zh_TW")
+
+    i18n.set_language("xx_YY.UTF-8")
+    assert_equal(table.concat(i18n.fallback_chain(), ","), "xx_YY,xx,en")
+    assert_equal(i18n.t("update.up_to_date"), "The system is up to date.")
+    assert_equal(i18n._normalize("C.UTF-8"), "en")
+    assert_equal(i18n._normalize("../../fr"), nil)
+    assert_equal(i18n._normalize("fr__FR"), nil)
+    i18n.set_language("fr")
+end)
+
+test("i18n : règles de pluriel gettext sûres", function()
+    local plural = i18n._plural_index
+    local arabic = "(n==0) ? 0 : (n==1) ? 1 : (n==2) ? 2 : (n%100>=3 && n%100<=10) ? 3 : (n%100>=11 && n%100<=99) ? 4 : 5"
+    assert_equal(plural(arabic, 0), 0)
+    assert_equal(plural(arabic, 1), 1)
+    assert_equal(plural(arabic, 2), 2)
+    assert_equal(plural(arabic, 3), 3)
+    assert_equal(plural(arabic, 11), 4)
+    assert_equal(plural(arabic, 100), 5)
+
+    local polish = "(n==1) ? 0 : (n%10>=2 && n%10<=4 && (n%100<12 || n%100>14)) ? 1 : 2"
+    assert_equal(plural(polish, 1), 0)
+    assert_equal(plural(polish, 2), 1)
+    assert_equal(plural(polish, 5), 2)
+    assert_equal(plural(polish, 12), 2)
+    assert_equal(plural(polish, 22), 1)
+
+    local breton = "n%10==1 && n%100!=11 && n%100!=71 && n%100!=91 ? 0 : n%10==2 && n%100!=12 && n%100!=72 && n%100!=92 ? 1 : ((n%10==3 || n%10==4 || n%10==9) && (n%100<10 || n%100>19) && (n%100<70 || n%100>79) && (n%100<90 || n%100>99)) ? 2 : n%1000000==0 && n!=0 ? 3 : 4"
+    assert_equal(plural(breton, 1), 0)
+    assert_equal(plural(breton, 2), 1)
+    assert_equal(plural(breton, 3), 2)
+    assert_equal(plural(breton, 1000000), 3)
+    assert_equal(plural(breton, 5), 4)
+    i18n.set_language("fr")
 end)
 
 test("mise à jour : récapitulatif AUR respecté par l'orchestration", function()
@@ -161,7 +298,7 @@ test("affichage : mode AUR notable", function()
     assert(rendered:find("paquet-perime", 1, true))
     assert(rendered:find("Orphelin", 1, true))
     assert(rendered:find("(périmé)", 1, true))
-    assert(rendered:find("Paquets non gérés par AUR", 1, true))
+    assert(rendered:find("Paquet non géré par AUR", 1, true))
     assert(rendered:find("paquet-local", 1, true))
     assert(not rendered:find("paquet-normal", 1, true))
     assert(not rendered:find("mise-a-jour-simple", 1, true))
@@ -338,7 +475,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.4.2")
+        assert_equal(opts.headers["User-Agent"], "yaourt/0.5.0")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then

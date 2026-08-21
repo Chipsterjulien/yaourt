@@ -1,0 +1,459 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: zh_TW\n"
+"Language-Team: 繁體中文\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Yaourt-Yes: y,yes,是,好\n"
+"X-Yaourt-No: n,no,否,不\n"
+"X-Yaourt-Manual: m,manual,手動\n"
+"X-Yaourt-Aliases: zh_Hant\n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — pacman 前端 + AUR 助手"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "用法："
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "將操作交由 pacman 處理（-Q、-R、-Sy…）"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "安裝套件（軟體庫或 AUR）"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "搜尋軟體庫和 AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "更新軟體庫和 AUR（[M]：手動選擇 AUR 套件）"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "清理建置快取（部分 | 完整）"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "取得 AUR 建置檔案（git clone）"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "顯示此說明"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "顯示版本"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "沒有找到\"yaourt\"系統使用者."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "建立它 (作為 root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}:沒有在 AUR中找到"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "沒有任何問題"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "编译软件包 {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "編輯軟體包 {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "編輯軟件包 {package} (新安裝 {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "編制軟件包 {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "軟體編輯失敗 (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}:沒有找到 PKGBUILD"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "無法移除軟件包 {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "沒有辦法移除舊軟體包 {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "沒有找到 {user} 的使用者: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "沒有找到軟體建立缓存 ({path}):沒有任何清理."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "沒有清理{path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "沒有清理的 AUR."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "清理軟件的建立源 ({count}軟件包)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "清理了{count}資料庫."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "建置快取是空的：AUR 端沒有需要清理的內容。"
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "不能檢查軟體建立預存器: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "不能列出軟件建立預存器: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "預存器: pacman"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "預存 pacman (完整)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "確認所有資料庫被移除?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "沒有辦法移除 {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "完全移除軟體建立預存庫 ({count}軟體包)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "沒有使用 AUR."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "取消所有資料庫中未被Git追蹤的檔案?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "所有克隆存儲將被移除 (他們將在下一次建立中再次克隆)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "取消了{count}存儲庫."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} 預期至少有一份軟體包名稱"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} 預期搜尋單位"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "在 {command} 中沒有找到 PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "取消了."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "錯誤: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "沒有任何任何問題: {error} {name}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "沒有任何問題"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "不知名"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt:無效的設定 ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}:已被放弃 ({dependency}的依賴性未完成)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}:依賴性解決失敗 ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "直接 AUR 的 {package} 的依賴:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(沒有 AUR 的依賴)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "關於 AUR的依賴性編輯序列: {package}"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}:未能安裝儲存依賴 ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}:未能解決儲存依賴性 ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "沒有任何問題."
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "克隆 {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "更新{package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "存儲資料庫 ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "沒有命令: {function_name}"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "沒有任何預期的輸出: {command} {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "沒有任何問題"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}:軟體編輯失敗"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: 打造中斷 (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}:安裝失敗"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}:安裝中斷 (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}:安裝"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}:未能完成審核"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}:審核被拒絕"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "自以前版本的變更:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "如何繼續建造?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "該審查的{count}檔案 (一一打開)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(沒有顯示檔案變更)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "無法使用\"{file}\"打開{editor}"
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD自上一次審查以來沒有變化."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name}需要 Babet >= {required} (檢測版本: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (投票,人氣) ({count} 的結果)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (投票,人氣) ({shown} 在 {total} 的結果中顯示)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "沒有找到\"{term}\"的軟體包."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "官方資料庫 ({count}結果)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "官方資料庫 ({shown} 在 {total} 的結果中表示)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " 票數: {votes}, 人氣: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "沒有任何樓盤符合您的搜尋"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[安裝: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "沒有任何問題."
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "孤兒"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(過期)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "已更新"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "失效 ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "暫停 ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "已安裝{count}軟體包"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "更新的 {count} AUR軟體包"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "使用者拒絕 ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "無法檢查 AUR 更新（{error}）；已略過 AUR 摘要。"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "由 AUR ({count}) 管理的軟體包"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "該觀看的AUR軟體包 ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "沒有 AUR ({count}) 管理的軟體包"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "繼續更新嗎?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "繼續更新嗎?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "軟體更新 (新版本) ({count}軟體包):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "新的軟體包修訂 ({count}軟體包):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "選擇要更新的 AUR 軟體包"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "必須更新的數字 (例如1 3 5,1-4, ^2除 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "沒有同步資料庫 (pacman - Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "該系統是最新的."

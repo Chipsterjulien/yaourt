@@ -20,6 +20,7 @@ local build   = require("lib.build")
 local pacman  = require("lib.pacman")
 local color   = require("lib.color")
 local display = require("lib.display")
+local i18n    = require("lib.i18n")
 
 local install = {}
 
@@ -65,17 +66,18 @@ function install.run(config, names, opts)
         for _, f in ipairs(opts.passthrough or {}) do argv[#argv + 1] = f end
         argv = babet.mergeTables(argv, repos)
         local code = pacman.passthrough(config, argv)
-        local label = "dépôts (" .. table.concat(repos, ", ") .. ")"
+        local label = i18n.t("install.repositories", { packages = table.concat(repos, ", ") })
         if code == 0 then
             for _, r in ipairs(repos) do
-                results[#results + 1] = build.result("ok", r, r .. " : installé")
+                results[#results + 1] = build.result("ok", r,
+                    i18n.t("result.installed", { package = r }))
             end
         elseif util.is_interrupted(code) then
             results[#results + 1] = build.result("interrupted", label,
-                label .. " : installation interrompue (Ctrl+C)")
+                i18n.t("result.install_interrupted", { package = label }))
         else
             results[#results + 1] = build.result("install_failed", label,
-                label .. " : échec de l'installation")
+                i18n.t("result.install_failed", { package = label }))
         end
     end
 
@@ -93,7 +95,7 @@ function install.run(config, names, opts)
     end
 
     -- 3) Bilan groupé par statut.
-    return display.build_summary(C, results, "installé(s)")
+    return display.build_summary(C, results, "installed")
 end
 
 return install

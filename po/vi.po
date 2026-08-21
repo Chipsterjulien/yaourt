@@ -1,0 +1,459 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: vi\n"
+"Language-Team: Tiếng Việt\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Yaourt-Yes: c,có,y,yes\n"
+"X-Yaourt-No: k,không,n,no\n"
+"X-Yaourt-Manual: t,thủ công,m,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — giao diện pacman + trợ lý AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "CÁCH DÙNG:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "chuyển thao tác cho pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "cài đặt gói (kho phần mềm hoặc AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "tìm kiếm trong kho phần mềm và AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "cập nhật kho phần mềm và AUR ([M]: chọn thủ công các gói AUR)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "dọn bộ nhớ đệm bản dựng (một phần | toàn bộ)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "lấy tệp bản dựng AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "hiển thị trợ giúp này"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "hiển thị phiên bản"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "Người dùng hệ thống \"yaourt\" không thể được tìm thấy."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Tạo nó (như root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: không có trong AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "lỗi RPC"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Sắp xếp gói phần mềm {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Chuẩn bị gói phần mềm {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Thiết lập gói phần mềm {package} (trình cài đặt mới {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Sắp ráp gói phần mềm {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Việc biên soạn phần mềm thất bại (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD không tìm thấy"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "không thể xóa gói phần mềm {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "không thể loại bỏ gói phần mềm cũ {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "Người dùng {user} không thể tìm thấy: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Phần mềm xây dựng cache không tìm thấy ({path}): không có gì để làm sạch."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "không làm sạch {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "Việc dọn dẹp AUR bị bỏ qua."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Các nguồn xây dựng phần mềm làm sạch ({count} gói phần mềm)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "Các kho lưu trữ {count} được dọn sạch."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Cache xây dựng phần mềm là trống rỗng: không có gì để làm sạch trên phía AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "không thể kiểm tra bộ nhớ cache xây dựng phần mềm: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "không thể liệt kê cache xây dựng phần mềm: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman cache"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman cache (bọn)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Tiếp tục xóa tất cả các kho lưu trữ?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "không thể loại bỏ {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "Lưu trữ bộ nhớ cache xây dựng phần mềm ({count} gói phần mềm)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "Việc loại bỏ AUR bị bỏ qua."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Xóa các tệp không được theo dõi bởi Git từ mọi kho lưu trữ?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Tất cả các kho lưu trữ được sao chép sẽ được loại bỏ (bạn sẽ được sao chép lại trong xây dựng tiếp theo)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "Các kho lưu trữ {count} bị xóa."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} mong đợi ít nhất một tên gói phần mềm"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} mong đợi một thuật ngữ tìm kiếm"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} không được tìm thấy trong PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Hủy đi."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Trận lỗi: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(không có)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "không biết"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: cấu hình không hợp lệ ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: bị bỏ rơi (tự phụ thuộc {dependency} không hoàn thành)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: giải pháp phụ thuộc thất bại ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Các phụ thuộc trực tiếp của AUR của {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(không có sự phụ thuộc của AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "Đơn lệnh biên soạn phụ thuộc AUR cho {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: không cài đặt phụ thuộc kho ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: không giải quyết các phụ thuộc kho ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(của mục tiêu)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "Klon hóa {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "cập nhật {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "kho lưu trữ ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: lệnh thiếu"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: đầu ra bất ngờ: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[C/k]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: biên soạn phần mềm thất bại"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: xây dựng bị gián đoạn (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: cài đặt thất bại"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: cài đặt bị gián đoạn (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: được cài đặt"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: việc xem xét không thể hoàn thành"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: đánh giá bị từ chối"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Thay đổi kể từ phiên bản trước:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Cứ tiếp tục xây dựng?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "Các tệp {count} để xem xét (được mở một một)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(không có thay đổi tập tin để hiển thị)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Không thể mở {file} bằng \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD không thay đổi kể từ cuộc xem xét trước đó."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} yêu cầu Babet >= {required} (khả năng phát hiện: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (sự bầu cử, sự phổ biến) ({count} kết quả)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (sự bỏ phiếu, sự phổ biến) ({shown} được hiển thị từ kết quả {total})"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Không có gói phần mềm nào được tìm thấy cho \"{term}\"."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Các kho lưu trữ chính thức (hậu quả {count})"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Các kho lưu trữ chính thức ({shown} được hiển thị trong kết quả {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " phiếu: {votes}, phổ biến: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[được cài đặt]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[được cài đặt: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(các đứa trẻ mồ côi)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Trẻ mồ côi"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(đã lỗi thời)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "cập nhật"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Các lỗi ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Đứt ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "Các gói phần mềm {count} được cài đặt"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "Các gói phần mềm {count} AUR được cập nhật"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Người dùng từ chối ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR kiểm tra gói phần mềm bỏ qua cho cuộc chạy này"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "Các gói phần mềm được quản lý bởi AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "Các gói phần mềm AUR để xem ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "Các gói phần mềm không được quản lý bởi AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Cứ tiếp tục cập nhật?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Cứ tiếp tục cập nhật?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Các bản cập nhật phần mềm ( phiên bản mới) (chúng gói phần mềm {count}):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Các gói phần mềm mới được sửa đổi ({count}):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Chọn các gói phần mềm AUR để cập nhật"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Số để cập nhật (ví dụ: 1 3 5, 1-4, ^2 cho tất cả ngoại trừ 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "không đồng bộ hóa cơ sở dữ liệu (pacman - Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Hệ thống đang cập nhật."

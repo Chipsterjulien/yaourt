@@ -1,0 +1,497 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: pl\n"
+"Language-Team: Polski\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n%10>=2 && n%10<=4 && (n%100<12 || n%100>14)) ? 1 : 2;\n"
+"X-Yaourt-Yes: t,tak,y,yes\n"
+"X-Yaourt-No: n,nie,no\n"
+"X-Yaourt-Manual: m,ręcznie,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — interfejs pacman + pomocnik AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "UŻYCIE:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "przekaż operacje programowi pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "zainstaluj pakiet (repozytoria lub AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "przeszukaj repozytoria i AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "zaktualizuj repozytoria i AUR ([M]: ręcznie wybierz pakiety AUR)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "wyczyść pamięć podręczną kompilacji (częściowo | całkowicie)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "pobierz pliki kompilacji AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "wyświetl tę pomoc"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "wyświetl wersję"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "Użytkownik systemu \"yaourt\" nie został znaleziony."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Tworzyć go (jak root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: nie występuje w AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC błąd"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Kompilacja pakietu oprogramowania {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Kompilacja pakietu oprogramowania {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Kompilacja pakietu oprogramowania {package} (nowa instalacja {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Kompilacja pakietu oprogramowania {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "uszkodzona kompilacja oprogramowania (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD nie znaleziono"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "nie udało się usunąć pakietu oprogramowania {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "nie udało się usunąć przestarzałego pakietu oprogramowania {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "Użytkownik {user} nie można znaleźć: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Nie znaleziono pamięci podręcznej oprogramowania do budowy oprogramowania ({path}): nic do czyszczenia."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "nie udało się oczyścić {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR wyczystanie pominięto."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Oprogramowanie do czyszczenia źródeł budowy (paket oprogramowania {count})"
+msgstr[1] "Źródła budowy oprogramowania do czyszczenia (pakety oprogramowania {count})"
+msgstr[2] "Źródła budowania oprogramowania do czyszczenia (pakety oprogramowania {count})"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "Rezerwatorium {count} zostało wyczystone."
+msgstr[1] "Repozytory {count} zostały wyczyszczone."
+msgstr[2] "Repozytory {count} zostały wyczyszczone."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Cache budowania oprogramowania jest puste: nic do czyszczenia na stronie AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "nie udało się sprawdzić pamięci podręcznej oprogramowania: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "nie udało się wypełnić pamięci podręcznej budowy oprogramowania: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman pamięci podręcznej"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman pamięci podręcznej (pełna)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Potwierdziłeś usunięcie wszystkich magazynów?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "nie udało się usunąć {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "CZŁOŚĆ usunięcie pamięci podręcznej budowy oprogramowania (paket oprogramowania {count})"
+msgstr[1] "CZELKIE usunięcie pamięci podręcznej budowy oprogramowania (pakety oprogramowania {count})"
+msgstr[2] "CZŁOŚĆ usunięcie pamięci podręcznej budowy oprogramowania (pakety oprogramowania {count})"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR usunięto."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Usunięcie plików nie śledzonych przez Git z każdego repozytorium?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Wszystkie sklonowane repozytory zostaną usunięte (zostaną ponownie sklonowane w następnej budowie)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "Rezerwatorium {count} usunięto."
+msgstr[1] "{count} usunięte repozytory."
+msgstr[2] "Rejestry {count} usunięte."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} oczekuje przynajmniej jednego nazwy pakietu oprogramowania"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} oczekuje wyszukiwania"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} nie znaleziono w PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Odwołano."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Błąd: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "- Nie ."
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "nieznane"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: nieprawidłowa konfiguracja ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: opuszczony (zależność {dependency} nie została zakończona)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: niepowodzone rozwiązanie zależności ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Bezpośrednie zależności AUR z {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(bez uzależnienia od AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "Rozkaz zestawienia zależności AUR dla {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: nie zainstalowano zależności repozytoryjnych ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: nie udało się rozwiązać zależności od repozytorium ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(cel)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "klonowanie {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "aktualizacja {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "rejestry ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: brakuje polecenia"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: nieoczekiwana wydajność: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[T/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: nie udało się skompilować oprogramowania"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: budowa przerwana (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: uszkodzona instalacja"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: przerwana instalacja (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: zainstalowany"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: przegląd nie mógł zostać zakończony"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: odmowa przeglądu"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Zmiany od poprzedniej wersji:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Kontynuuj budowę?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "Plik {count} do przeglądu (otwiera się jeden po drugim)"
+msgstr[1] "Pliki {count} do przeglądu (otwierają się po jednym)"
+msgstr[2] "Pliki {count} do przeglądu (otwarte po jednym)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(bez zmian plików do wyświetlania)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Nie udało się otworzyć {file} za pomocą \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD niezmieniona od poprzedniego przeglądu."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} wymaga Babet >= {required} (odkryta wersja: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (głosy, popularność) (rezultat {count})"
+msgstr[1] "AUR (głosy, popularność) (z wyników {count})"
+msgstr[2] "AUR (głosy, popularność) (zyski {count})"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (głosy, popularność) ({shown} wyświetlane z wyniku {total})"
+msgstr[1] "AUR (głosy, popularność) ({shown} wyświetlane z wyników {total})"
+msgstr[2] "AUR (głosy, popularność) ({shown} wyświetlane z wyników {total})"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Żaden pakiet oprogramowania nie znaleziono dla \"{term}\"."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Oficjalne repozytory (zysk {count})"
+msgstr[1] "Oficjalne repozytory (zyski {count})"
+msgstr[2] "Oficjalne repozytory (zyski {count})"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Oficjalne repozytory ({shown} wyświetlane z wyniku {total})"
+msgstr[1] "Oficjalne repozytory ({shown} wyświetlane z wyników {total})"
+msgstr[2] "Oficjalne repozytory ({shown} wyświetlane z wyników {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " głosy: {votes}, popularność: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[instalacja]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[instalowany: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(sieroc)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Sierocinko"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(wykroczone)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "/przed datą"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Złama ({count}):"
+msgstr[1] "Nieprawidłowości ({count}):"
+msgstr[2] "Nieprawidłowości ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Przerwa ({count}):"
+msgstr[1] "Przerwa ({count}):"
+msgstr[2] "Przerwa ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "Zainstalowany pakiet oprogramowania {count}"
+msgstr[1] "Zainstalowane pakiety oprogramowania {count}"
+msgstr[2] "Zainstalowane pakiety oprogramowania {count}"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "Zaktualizowany pakiet oprogramowania {count} AUR"
+msgstr[1] "Zaktualizowane pakiety oprogramowania {count} AUR"
+msgstr[2] "Zaktualizowane pakiety oprogramowania {count} AUR"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Odmowa użytkownika ({count}):"
+msgstr[1] "Odmowa użytkownika ({count}):"
+msgstr[2] "Odmowa użytkownika ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR przegląd pakietu oprogramowania pominięty w tym wyścigu"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "pakiet oprogramowania zarządzany przez AUR ({count})"
+msgstr[1] "pakiety oprogramowania zarządzane przez AUR ({count})"
+msgstr[2] "pakiety oprogramowania zarządzane przez AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "Pakiet oprogramowania AUR do obejrzenia ({count})"
+msgstr[1] "pakiety oprogramowania AUR do oglądania ({count})"
+msgstr[2] "pakiety oprogramowania AUR do oglądania ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "pakiet oprogramowania nie zarządzany przez AUR ({count})"
+msgstr[1] "pakiety oprogramowania nie zarządzane przez AUR ({count})"
+msgstr[2] "pakiety oprogramowania nie zarządzane przez AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Kontynuuj aktualizację?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "- Czy kontynuujemy aktualizację?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Aktualizacja oprogramowania (nowa wersja) (paket oprogramowania {count}):"
+msgstr[1] "Aktualizacje oprogramowania (nowa wersja) (pakety oprogramowania {count}):"
+msgstr[2] "Aktualizacje oprogramowania (nowa wersja) (pakety oprogramowania {count}):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Nowy pakiet oprogramowania (paket oprogramowania {count}):"
+msgstr[1] "Nowe wersje pakietu oprogramowania (pakety oprogramowania {count}):"
+msgstr[2] "Nowe wersje pakietu oprogramowania (pakety oprogramowania {count}):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Wybierz pakiety oprogramowania AUR do aktualizacji"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Numery do aktualizacji (np. 1 3 5, 1-4, ^2 dla wszystkich z wyjątkiem 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "nie udało się zsynchronizować baz danych (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "System jest aktualny."

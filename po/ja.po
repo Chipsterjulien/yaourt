@@ -1,0 +1,459 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: ja\n"
+"Language-Team: 日本語\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Yaourt-Yes: y,yes,はい\n"
+"X-Yaourt-No: n,no,いいえ\n"
+"X-Yaourt-Manual: m,manual,手動\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — pacman フロントエンド + AUR ヘルパー"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "使用法:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "操作を pacman に委任する (-Q、-R、-Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "パッケージをインストールする (リポジトリまたは AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "リポジトリと AUR を検索する"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "リポジトリと AUR を更新する ([M]: AUR パッケージを手動選択)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "ビルドキャッシュを消去する (部分 | 完全)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "AUR ビルドファイルを取得する (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "このヘルプを表示する"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "バージョンを表示する"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "\"yaourt\"システムユーザは見つかりませんでした."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "作成する (rootとして):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: AURに含まれていない"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC エラー"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "ソフトウェアパッケージ {package}をコンパイルする"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "{package} ({old_version} -> {new_version}) のソフトウェアパッケージをまとめ"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "{package} (新しいインストール {version}) のソフトウェアパッケージをコンパイルする"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "{package} ({version}) のソフトウェアパッケージをコンパイルする"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "ソフトウェアのコンパイルが失敗した (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILDが見つかりませんでした"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "ソフトウェアパッケージ {path}: {error} を削除できなかった"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "古いソフトウェアパッケージ {path} を削除できませんでした: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "{user}ユーザが見つかりませんでした: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "ソフトウェア・ビルドキャッシュが見つかりませんでした ({path}): 掃除するものはありません."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "{path}を清掃できなかった"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AURの清掃は逃げた"
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "清掃ソフトウェアのビルドソース ({count}ソフトウェアパッケージ)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count}の資料庫が清掃されました"
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "AUR側では掃除するものはありません."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "ソフトウェアビルドキャッシュを検査できなかった: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "ソフトウェアビルドキャッシュをリストできない: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacmanキャッシュ"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacmanキャッシュ (完全)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "資料庫の削除を確認?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "{path}: {error} を削除できなかった"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "ソフトウェアビルドキャッシュを完全に削除する ({count}ソフトウェアパッケージ)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AURの除去は逃れました"
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Gitが追跡していないファイルをすべてのリポジトリから削除する?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "クローンされたすべてのリポジトリは削除されます (次回のビルドで再びクローンされます)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count}のリポジトリが削除された."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option}は少なくとも1つのソフトウェアパッケージの名称を期待する"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option}は検索を期待しています"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} は PATH で見つかりませんでした"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "キャンセルした"
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "エラー: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(誰もいない)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "未知"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt:無効な設定 ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}:放棄された ({dependency}の依存性は完了していない)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}:依存性解が失敗 ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "AURの直接依存関係: {package}"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(AUR依存症がない)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AURの依存性コンパイル命令: {package}"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}:リポジトリ依存をインストールできなかった ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}:リポジトリ依存性を解決できなかった ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(ターゲット)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "クローニング {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "{package}を更新する"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "レポジトリ ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: 欠けているコマンド"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}:予想外の出力: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[Y/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}:ソフトウェアのコンパイルが失敗"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}:ビルド中断 (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}:設置失敗"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}:設置中断 (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: 設置されている"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: 審査が完了できませんでした"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}:審査拒否"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "前バージョンからの変更:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "建設を続けるか?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count}ファイルをレビューする (一つずつ開いている)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(ファイル変更が表示されない)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "{file} を\"{editor}\"で開けられなかった."
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILDは,以前のレビュー以来変わらない."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name}は Babet >= {required} (検出バージョン: {current}) を要求する"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (投票,人気) ({count}の結果)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (投票,人気) ({shown}は {total}の結果から示されています)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "\"{term}\"のソフトウェアパッケージが見つかりませんでした"
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "公式資料庫 ({count}結果)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "公式資料庫 ({shown} の結果から示された {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " 投票: {votes},人気: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[インストール]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[インストール: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(孤児)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "孤児"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(時代遅れ)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "更新日"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "失敗 ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "中断 ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "{count}ソフトウェアパッケージがインストールされている"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AURソフトウェアパッケージが更新されました"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "ユーザが拒否した ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR ソフトウェアパッケージチェックはこの実行にスキップされました"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "AUR ({count}) によって管理されているソフトウェアパッケージ"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AURソフトウェアパッケージを監視する ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "AUR ({count}) によって管理されていないソフトウェアパッケージ"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "[Y/n] 更新を続けるか?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "[Y/n/M] 更新を続けるか?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "ソフトウェア更新 (新しいバージョン) ({count}ソフトウェアパッケージ):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "新しいソフトウェアパッケージ修正 ({count}ソフトウェアパッケージ):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "更新するAURソフトウェアパッケージを選択する"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "更新する番号 (例: 1 3 5, 1-4, ^2 2 を除くすべて):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "データベースを同期することができなかった (pacman - Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "システムは最新です"

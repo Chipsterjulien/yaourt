@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: ca\n"
+"Language-Team: Català\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Yaourt-Yes: s,sí,si,y,yes\n"
+"X-Yaourt-No: n,no\n"
+"X-Yaourt-Manual: m,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — interfície per a pacman + assistent d’AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "ÚS:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "delega les operacions a pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "instal·la un paquet (repositoris o AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "cerca als repositoris i a AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "actualitza els repositoris i AUR ([M]: selecciona manualment els paquets AUR)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "neteja la memòria cau de compilació (parcial | completa)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "obté els fitxers de compilació d’AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "mostra aquesta ajuda"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "mostra la versió"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "L'usuari del sistema \"yaourt\" no es va trobar."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Crear-lo (com a root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: no es troba en la AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "Error RPC"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Compilació del paquet de programari {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Compilació del paquet de programari {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Compilació del paquet de programari {package} (nova instal·lació {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Compilació del paquet de programari {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Compilació de programari fallida (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD no es troba"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "no ha pogut eliminar el paquet de programari {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "no va poder eliminar el paquet de programari obsolet {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "No es va trobar l'usuari de {user}: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "No es troba la caixera del programari de construcció ({path}): res per netejar."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "no ha pogut netejar {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "La neteja de AUR es va saltar."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Fonts de construcció de programari de neteja (paquet de programari {count})"
+msgstr[1] "Fonts de construcció de programari de neteja (paquet de programari {count})"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "Repositori {count} netat."
+msgstr[1] "Els repositorios de {count} es van netejar."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "La caixera del programari està buida: no hi ha res a netejar al costat de AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "no va poder inspeccionar el cache del programari: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "no va poder enumerar el cache de la construcció del programari: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "Cache pacman"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman cache (completa)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Confirma la retirada de tots els repositorios?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "no ha pogut eliminar {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "L'eliminació completa de la memòria caché de la construcció del programari (paquet de programari {count})"
+msgstr[1] "L'eliminació completa de la caché de la construcció del programari (paquet de programari {count})"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "L'eliminació de AUR es va saltar."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Eliminar arxius no rastrejats per Git de tots els repositorios?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Tots els repositorios clonats seran eliminats (que seran clonats de nou en la següent construcció)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "Es va eliminar el repositori {count}."
+msgstr[1] "S'han eliminat els repositorios de {count}."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} espera almenys un nom de paquet de programari"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} espera un terme de cerca"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} no es va trobar en PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Cancel·la."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Error: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(ni un)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "desconegut"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: configuració invalid ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: abandonat (la dependència de {dependency} no s'ha completat)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: Resolució de dependència fallida ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Dependències directes de AUR de {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(No hi ha dependència de AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "L'ordre de compilació de dependències AUR per a {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: no s'ha instal·lat la dependència del repositori ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: no s'han resolt les dependències del repositori ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(Objecte)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "clonació {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "actualització de {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "Repositòries ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: falta comandament"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: sortida inesperada: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[S/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: compilació de programari fallida"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: construcció interrompuda (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: instal·lació fallida"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: instal·lació interrompuda (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: instal·lat"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: no es va poder completar la revisió"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: Refutació rebutjada"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Canvis des de la versió anterior:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Continuar amb la construcció?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "Arxiu {count} a revisar (obert un a un)"
+msgstr[1] "Dossiers {count} per revisar (obert un a un)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(no hi ha modificacions de fitxer a mostrar)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "No va poder obrir {file} amb \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD sense canvis des de la revisió anterior."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} requereix Babet >= {required} (versió detectada: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (vots, popularitat) (resultat {count})"
+msgstr[1] "AUR (vots, popularitat) ({count} resultats)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (vots, popularitat) ({shown} mostrat en el resultat de {total})"
+msgstr[1] "AUR (vots, popularitat) ({shown} mostrat dels resultats de {total})"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "No s'ha trobat cap paquet de programari per a \"{term}\"."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Repositòries oficials (resultat {count})"
+msgstr[1] "Repositòries oficials (resultats {count})"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Repositòries oficials ({shown} mostrat en el resultat de {total})"
+msgstr[1] "Repositòries oficials ({shown} mostrats en els resultats de {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " Votes: {votes}, popularitat: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[instal·lat]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[instal·lat: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(orfan)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Orfanes"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(desactualitzada)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "actualització"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Fallida ({count}):"
+msgstr[1] "Falses ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Interrupts ({count}):"
+msgstr[1] "Interrupts ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "Instalat paquet de programari {count}"
+msgstr[1] "Installats paquets de programari {count}"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR paquet de programari actualitzat"
+msgstr[1] "{count} AUR paquets de programari actualitzats"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Recusat per l'usuari ({count}):"
+msgstr[1] "Recusat per l'usuari ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR verificació del paquet de programari es va saltar per a aquesta carrera"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "Paquet de programari gestionat per la AUR ({count})"
+msgstr[1] "Paquets de programari gestionats per la AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "Paquet de programari AUR per veure ({count})"
+msgstr[1] "Paquets de programari AUR a veure ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "Paquet de programari no gestionat per la AUR ({count})"
+msgstr[1] "Paquets de programari no gestionats per la AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Continuar amb l'actualització?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Continuar amb l'actualització?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Actualització del programari (nova versió) (paquet de programari {count}):"
+msgstr[1] "Actualitzacions del programari (nova versió) (paquet de programari {count}):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Nova revisió del paquet de programari (paquet de programari {count}):"
+msgstr[1] "Noves revisions del paquet de programari (paquet de programari {count}):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Seleccioneu els paquets de programari AUR per actualitzar"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Números per actualitzar (p. ex. 1 3 5, 1-4, ^2 per a tots excepte 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "no ha sincronizat bases de dades (pacman - Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "El sistema està actualitzat."

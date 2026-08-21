@@ -58,6 +58,62 @@ if grep -REn --include='*.lua' 'babet\.isdir|babet\.isfile|os\.execute' \
 fi
 echo "[PASS] aucune API dépréciée ciblée"
 
+echo "=== Catalogues i18n ==="
+if ! command -v msgfmt >/dev/null 2>&1; then
+  echo "Erreur : gettext (msgfmt) est requis pour valider les traductions." >&2
+  exit 1
+fi
+python3 "$ROOT/tools/compile_catalogs.py" \
+  --po-dir "$ROOT/po" \
+  --output "$TMP/i18n_catalogs.lua" \
+  --pot "$TMP/yaourt.pot"
+cmp "$TMP/i18n_catalogs.lua" "$ROOT/lib/i18n_catalogs.lua"
+cmp "$TMP/yaourt.pot" "$ROOT/po/yaourt.pot"
+PO_COUNT=0
+for po in "$ROOT"/po/*.po; do
+  PO_COUNT=$((PO_COUNT + 1))
+  msgfmt --check --check-format -o "$TMP/$(basename "${po%.po}").mo" "$po"
+done
+if [[ "$PO_COUNT" -ne 43 ]]; then
+  echo "Erreur : 43 catalogues attendus, $PO_COUNT trouvés." >&2
+  exit 1
+fi
+echo "[PASS] 43 catalogues complets et reproductibles"
+
+INVALID_PO_DIR="$TMP/po-invalid"
+cp -r "$ROOT/po" "$INVALID_PO_DIR"
+sed -i 's/(parziale | completa)/(parziale completa)/' "$INVALID_PO_DIR/it.po"
+if python3 "$ROOT/tools/compile_catalogs.py" \
+    --po-dir "$INVALID_PO_DIR" --check > "$TMP/invalid-po.log" 2>&1; then
+  echo "Erreur : un marqueur structurel manquant a été accepté." >&2
+  exit 1
+fi
+grep -Fq "structural marker '|' is missing" "$TMP/invalid-po.log"
+echo "[PASS] garde-fou des marqueurs structurels de l’aide"
+
+echo "=== Catalogue gettext externe ==="
+EXTERNAL_LOCALE="$TMP/locale/zz/LC_MESSAGES"
+mkdir -p "$EXTERNAL_LOCALE"
+msgfmt --check --check-format \
+  -o "$EXTERNAL_LOCALE/yaourt.mo" \
+  "$ROOT/tests/fixtures/i18n/zz.po"
+EXTERNAL_FR_LOCALE="$TMP/locale/fr/LC_MESSAGES"
+mkdir -p "$EXTERNAL_FR_LOCALE"
+msgfmt --check --check-format \
+  -o "$EXTERNAL_FR_LOCALE/yaourt.mo" \
+  "$ROOT/tests/fixtures/i18n/fr.po"
+(
+  cd "$ROOT"
+  YAOURT_LOCALEDIR="$TMP/locale" LANGUAGE=zz "$BABET" tests/i18n_external
+)
+I18N_STAGE="$TMP/i18n-stage"
+mkdir -p "$I18N_STAGE"
+cp "$ROOT/tests/i18n_external/main.lua" "$I18N_STAGE/main.lua"
+cp -r "$ROOT/lib" "$I18N_STAGE/lib"
+"$BABET" --create-exe "$I18N_STAGE" "$TMP/yaourt-i18n-tests"
+YAOURT_LOCALEDIR="$TMP/locale" LANGUAGE=zz "$TMP/yaourt-i18n-tests"
+echo "[PASS] catalogue .mo externe en modes dossier et embarqué"
+
 echo "=== Tests en mode dossier ==="
 (
   cd "$ROOT"
@@ -89,7 +145,11 @@ fi
 echo "=== Construction et smoke tests ==="
 BABET="$BABET" "$ROOT/build.sh" "$TMP/yaourt"
 [[ "$("$TMP/yaourt" --version)" == "yaourt $YAOURT_VERSION" ]]
-"$TMP/yaourt" --help | grep -Fq "yaourt $YAOURT_VERSION"
+HELP_OUTPUT="$TMP/help-en.txt"
+XDG_CONFIG_HOME="$TMP/config" LANGUAGE=en "$TMP/yaourt" --help > "$HELP_OUTPUT"
+grep -Fq "yaourt $YAOURT_VERSION" "$HELP_OUTPUT"
+grep -Fq "  yaourt -Ss <term>" "$HELP_OUTPUT"
+grep -Fq "  yaourt -G <package>..." "$HELP_OUTPUT"
 echo "[PASS] binaire yaourt dossier/embarqué"
 
 echo "=== Résultat ==="

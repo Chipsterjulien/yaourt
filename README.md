@@ -6,7 +6,7 @@ A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
 [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
 in Lua.
 
-> **Status: young, but suitable for daily use (`0.4.2`).**
+> **Status: young, but suitable for daily use (`0.5.0`).**
 > Search, installation (official repositories and AUR with recursive dependency
 > resolution), unified upgrades, and cache cleanup are functional. The project
 > is still evolving.
@@ -57,6 +57,9 @@ started with `babet.spawn`, such as `pacman` and `makepkg`.
 - AUR packages are always built as a dedicated, unprivileged `yaourt` user,
   even when the program itself is started as root. `makepkg` is never run as
   root.
+- **Internationalized interface:** 43 built-in locales, automatic POSIX locale
+  detection, regional fallback, safe plural rules, and external GNU gettext
+  catalogues without language-specific branches in the business code.
 
 ### AUR file security review
 
@@ -88,8 +91,9 @@ before starting the build.
 
 - [Arch Linux](https://archlinux.org/) or a compatible pacman-based derivative.
 - `pacman`, `git`, and `base-devel` (for `makepkg`).
-- `package-query` (AUR search).
 - `sudo` (for pacman operations when yaourt is not started as root).
+- Python 3 to build from source; GNU gettext to validate or install external
+  translation catalogues. Neither is required by the standalone binary.
 
 ## Installation
 
@@ -100,8 +104,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-0.4.2-x86_64
-sudo install -Dm755 yaourt-0.4.2-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.5.0-x86_64
+sudo install -Dm755 yaourt-0.5.0-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
@@ -142,7 +146,8 @@ The offline suite exercises process and filesystem helpers against the real
 Babet runtime, tests the AUR client against a local HTTP server using `chunked`
 responses, validates the interactive parent/child chain under a real
 pseudo-terminal, checks both directory and embedded modes, and builds the final
-executable. The integration tests use only the Python 3 standard library:
+executable. The integration tests use the Python 3 standard library and GNU
+gettext (`msgfmt`) to validate every translation catalogue:
 
 ```sh
 BABET=/path/to/babet-2.22.2-linux-x86_64 ./run_tests.sh
@@ -171,6 +176,39 @@ non-AUR-managed packages by default. `"all"` displays the complete list, while
 `false` hides the summary. The legacy value `true` remains accepted as an alias
 for `"all"`. The `search_limit` option controls the number of displayed search
 results.
+
+### Interface language
+
+`language = "auto"` is the default. yaourt checks `LANGUAGE`, `LC_ALL`,
+`LC_MESSAGES`, then `LANG`. An explicit locale can be configured instead, for
+example `language = "pt_BR"`. Locale names accept POSIX and BCP 47 forms; a
+regional locale falls back to its base language and finally to English
+(`pt_BR.UTF-8` → `pt_BR` → `pt` → `en`). `C` and `POSIX` select English.
+
+The 43 built-in locales are:
+
+`ar`, `ast`, `bg`, `bn`, `br`, `ca`, `cs_CZ`, `da`, `de`, `el`, `en`, `eo`,
+`es`, `es_419`, `fa`, `fi`, `fr`, `he`, `hi`, `hu`, `id`, `is`, `it`, `ja`,
+`ko`, `lt`, `nb`, `nl_NL`, `pl`, `pt`, `pt_BR`, `ro`, `ru`, `sk`, `sl`, `sr`,
+`sv`, `th`, `tr`, `uk`, `vi`, `zh_CN`, and `zh_TW`.
+
+The English and French catalogues define and preserve the current project's
+terminology. The other catalogues are complete initial translations generated
+locally and are deliberately marked as requiring review by native speakers.
+Structural checks already guarantee complete messages, named variables, and
+the declared plural forms; linguistic review remains welcome.
+
+yaourt also reads external `yaourt.mo` files from the standard gettext layout,
+first under the directories in `YAOURT_LOCALEDIR`, then
+`$XDG_DATA_HOME/locale`, `/usr/local/share/locale`, and `/usr/share/locale`.
+External catalogues override the embedded translation and fall back to the
+embedded catalogue for missing messages. They are parsed as data and never
+executed as Lua code.
+
+To add or review a language without touching business logic, see
+[TRANSLATING.md](TRANSLATING.md). The source of truth is `po/*.po`; running
+`python3 tools/compile_catalogs.py` regenerates the safe embedded module and the
+`po/yaourt.pot` template.
 
 In development mode, a `cfg/config.toml` file in the current directory is
 detected automatically.

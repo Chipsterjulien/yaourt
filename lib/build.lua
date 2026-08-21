@@ -14,6 +14,7 @@ local deps       = require("lib.deps")
 local pacman     = require("lib.pacman")
 local color      = require("lib.color")
 local aur        = require("lib.aur")
+local i18n       = require("lib.i18n")
 
 local BUILD_USER = "yaourt"
 
@@ -50,7 +51,10 @@ function build.clean_stale(config, dest)
         if path ~= "" and babet.fileExists(path) then
             local ok, err = babet.remove(path)
             if not ok then
-                log.warn("impossible de supprimer le paquet résiduel " .. path .. " : " .. tostring(err))
+                log.warn(i18n.t("build.remove_stale_failed", {
+                    path = path,
+                    error = tostring(err),
+                }))
             end
         end
     end
@@ -59,7 +63,12 @@ end
 function build.clean(config, dest, pkgs)
     for _, pkg in ipairs(pkgs) do
         local ok, err = babet.remove(pkg)
-        if not ok then log.warn("impossible de supprimer le paquet " .. pkg .. " : " .. tostring(err)) end
+        if not ok then
+            log.warn(i18n.t("build.remove_package_failed", {
+                path = pkg,
+                error = tostring(err),
+            }))
+        end
     end
     return true
 end
@@ -135,7 +144,7 @@ function build.make_as_yaourt_user(config, dest, opts)
     if code ~= 0 then
         -- On ne crie pas « échec » si l'utilisateur a simplement interrompu.
         if not util.is_interrupted(code) then
-            log.error("échec de la compilation (makepkg)")
+            log.error(i18n.t("build.makepkg_failed"))
         end
         return false, code
     end
@@ -178,22 +187,30 @@ function build.one(config, name, opts, as_dep)
         if info and info[name] then target = info[name].Version end
     end
 
-    local line = C.cyan("==> ") .. C.bold("Construction de ") .. C.magenta(name)
+    local variables = { package = C.magenta(name) }
+    local heading = "build.heading"
     if target then
         if installed then
-            line = line .. " (" .. C.dim(installed) .. " -> " .. C.green(target) .. ")"
+            heading = "build.heading_update"
+            variables.old_version = C.dim(installed)
+            variables.new_version = C.green(target)
         else
-            line = line .. " (" .. C.green("nouvelle installation " .. target) .. ")"
+            heading = "build.heading_new"
+            variables.version = C.green(target)
         end
     elseif installed then
-        line = line .. " (" .. C.dim(installed) .. ")"
+        heading = "build.heading_installed"
+        variables.version = C.dim(installed)
     end
     print("")
-    print(line)
+    print(C.cyan("==> ") .. C.bold(i18n.t(heading, variables)))
 
     local is_root = util.is_root()
     local build_path, err = build.resolve_builddir(config, is_root)
-    if err then return result("failed", name, name .. " : " .. tostring(err)) end
+    if err then
+        return result("failed", name,
+            i18n.t("common.named_error", { name = name, error = tostring(err) }))
+    end
 
     local overrides = { builddir = build_path }
     if is_root then
@@ -203,17 +220,18 @@ function build.one(config, name, opts, as_dep)
 
     local meta, err = build.prepare(bcfg, name)
     if not meta then
-        return result("failed", name, name .. " : " .. tostring(err))
+        return result("failed", name,
+            i18n.t("common.named_error", { name = name, error = tostring(err) }))
     end
     local dest = meta.path
 
     local reviewed, why = build.review(bcfg, meta)
     if not reviewed then
         if why == "refused" then
-            return result("refused", name, name .. " : revue refusée")
+            return result("refused", name, i18n.t("result.review_refused", { package = name }))
         end
         -- why == "review_error" (éditeur indisponible) ou autre : échec technique.
-        return result("failed", name, name .. " : revue impossible")
+        return result("failed", name, i18n.t("result.review_failed", { package = name }))
     end
 
     -- Repartir d'un terrain propre : supprimer un éventuel paquet déjà construit
@@ -224,22 +242,25 @@ function build.one(config, name, opts, as_dep)
     local made, make_code = build.make(bcfg, dest, is_root, opts)
     if not made then
         if util.is_interrupted(make_code) then
-            return result("interrupted", name, name .. " : compilation interrompue (Ctrl+C)")
+            return result("interrupted", name,
+                i18n.t("result.build_interrupted", { package = name }))
         end
-        return result("failed", name, name .. " : échec de la compilation")
+        return result("failed", name, i18n.t("result.build_failed", { package = name }))
     end
 
     local ok, pkgs, inst_code = build.install(bcfg, dest, as_dep)
     if not ok then
         if util.is_interrupted(inst_code) then
-            return result("interrupted", name, name .. " : installation interrompue (Ctrl+C)")
+            return result("interrupted", name,
+                i18n.t("result.install_interrupted", { package = name }))
         end
-        return result("install_failed", name, name .. " : échec de l'installation")
+        return result("install_failed", name,
+            i18n.t("result.install_failed", { package = name }))
     end
 
     build.clean(bcfg, dest, pkgs) -- On ne va pas vérifier le retour car on fait déjà une alerte lors du nettoyage
 
-    return result("ok", name, name .. " : installé")
+    return result("ok", name, i18n.t("result.installed", { package = name }))
 end
 
 -- prepare(config, name) -> (dossier, nil) | (nil, message)
@@ -253,7 +274,7 @@ function build.prepare(config, name)
     -- Tester l'existence du PKGBUILD
     local exists, cerr = babet.fileExists(pkgbuild_path)
     if cerr ~= nil then return nil, cerr end
-    if not exists then return nil, name .. " : PKGBUILD introuvable" end
+    if not exists then return nil, i18n.t("build.pkgbuild_missing", { package = name }) end
 
     return meta, nil
 end
@@ -266,7 +287,10 @@ function build.resolve_builddir(config, is_root)
 
     local u, err = babet.user.get(BUILD_USER)
     if not u then
-        return nil, "L'utilisateur " .. BUILD_USER .. " est introuvable : " .. tostring(err)
+        return nil, i18n.t("build.user_missing", {
+            user = BUILD_USER,
+            error = tostring(err),
+        })
     end
     return babet.joinPath(u.home, ".cache", BUILD_USER)
 end
@@ -310,8 +334,7 @@ function build.review(config, meta)
         -- comportement est identique à avant.
         if #files > 1 then
             print("")
-            print(C.cyan("==> ") .. C.bold(#files .. " fichiers à examiner")
-                .. C.dim(" (ouverts un par un)"))
+            print(C.cyan("==> ") .. C.bold(i18n.n("review.files", #files)))
         end
         for i, f in ipairs(files) do
             if #files > 1 then
@@ -319,14 +342,17 @@ function build.review(config, meta)
             end
             local code = util.passthrough({ config.editor, dest .. "/" .. f })
             if code ~= 0 then
-                print("Impossible d'ouvrir " .. f .. " avec '" .. tostring(config.editor) .. "'")
+                print(i18n.t("review.open_failed", {
+                    file = f,
+                    editor = tostring(config.editor),
+                }))
                 return false, "review_error"
             end
         end
     elseif meta.updated then
         -- Mise à jour : diff git de TOUS les fichiers entre les deux commits.
         print("")
-        print(C.cyan("==> ") .. C.bold("Modifications depuis la dernière version :"))
+        print(C.cyan("==> ") .. C.bold(i18n.t("review.changes")))
         local res = util.run_as(config.build_user, {
             "git", "-C", dest, "diff", "--color=always",
             meta.old_commit .. ".." .. meta.new_commit,
@@ -336,18 +362,18 @@ function build.review(config, meta)
             if not (res.stdout:match("\n$")) then io.write("\n") end
         else
             -- Diff vide ou indisponible (ex. changements hors fichiers suivis).
-            print(C.dim("  (aucune modification de fichier à afficher)"))
+            print(C.dim("  " .. i18n.t("review.no_changes")))
         end
     else
         -- Dépôt inchangé depuis la dernière fois : rien à revoir.
-        print(C.dim("==> PKGBUILD inchangé depuis la dernière validation."))
+        print(C.dim("==> " .. i18n.t("review.unchanged")))
         return true
     end
 
-    io.write("Continuer la construction ? [O/n] ")
+    io.write(i18n.t("review.continue") .. " ")
     io.flush()
     local ans = (io.read("l") or ""):lower()
-    if ans == "n" or ans == "non" then
+    if i18n.is_answer(ans, "no") then
         return false, "refused"
     end
     return true
@@ -362,8 +388,10 @@ end
 local function ensure_repo_deps(config, name)
     local rdeps, err = deps.repo_deps_of(config, name)
     if not rdeps then
-        return false, name .. " : échec résolution des dépendances dépôt ("
-            .. tostring(err) .. ")"
+        return false, i18n.t("deps.repo_resolution_failed", {
+            package = name,
+            error = tostring(err),
+        })
     end
     if #rdeps == 0 then
         return true, nil
@@ -371,8 +399,10 @@ local function ensure_repo_deps(config, name)
     local argv = babet.mergeTables({ "-S", "--asdeps", "--needed" }, rdeps)
     local code = pacman.passthrough(config, argv)
     if code ~= 0 then
-        return false, name .. " : échec installation des dépendances dépôt ("
-            .. table.concat(rdeps, ", ") .. ")"
+        return false, i18n.t("deps.repo_install_failed", {
+            package = name,
+            dependencies = table.concat(rdeps, ", "),
+        })
     end
     return true, nil
 end
@@ -402,7 +432,10 @@ function build.aur(config, name, built, opts)
     local order, rerr = deps.resolve(config, name)
     if not order then
         results[#results + 1] = result("failed", name,
-            name .. " : échec de résolution des dépendances (" .. tostring(rerr) .. ")")
+            i18n.t("deps.aur_resolution_failed", {
+                package = name,
+                error = tostring(rerr),
+            }))
         return results
     end
 
@@ -412,7 +445,8 @@ function build.aur(config, name, built, opts)
     local function build_one_full(pkg, pkg_opts, as_dep)
         local ok, derr = ensure_repo_deps(config, pkg)
         if not ok then
-            return result("failed", pkg, pkg .. " : " .. tostring(derr))
+            return result("failed", pkg,
+                i18n.t("common.named_error", { name = pkg, error = tostring(derr) }))
         end
         return build.one(config, pkg, pkg_opts, as_dep)
     end
@@ -428,7 +462,7 @@ function build.aur(config, name, built, opts)
             if not res.ok then
                 -- Une dépendance n'a pas abouti : inutile de tenter la cible.
                 results[#results + 1] = result("failed", name,
-                    name .. " : abandonné (dépendance " .. dep .. " non aboutie)")
+                    i18n.t("deps.abandoned", { package = name, dependency = dep }))
                 return results
             end
         end

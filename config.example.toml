@@ -14,6 +14,11 @@
 # Enable colors in yaourt output.
 # color = true
 
+# Interface language. "auto" follows LANGUAGE, LC_ALL, LC_MESSAGES, then LANG.
+# Any locale with a catalogue is accepted (for example "fr", "pt_BR" or
+# "zh_TW"). Regional locales fall back to their base language, then English.
+# language = "auto"
+
 # AUR base URL (RPC v5 and Git).
 # aur_url = "https://aur.archlinux.org"
 

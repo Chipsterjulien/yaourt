@@ -1,0 +1,497 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: sk\n"
+"Language-Team: Slovenčina\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Yaourt-Yes: a,áno,ano,y,yes\n"
+"X-Yaourt-No: n,nie,no\n"
+"X-Yaourt-Manual: m,manuálne,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — rozhranie pre pacman + pomocník AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "POUŽITIE:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "odovzdať operácie programu pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "nainštalovať balík (repozitáre alebo AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "hľadať v repozitároch a AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "aktualizovať repozitáre a AUR ([M]: ručne vybrať balíky AUR)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "vyčistiť vyrovnávaciu pamäť zostavenia (čiastočne | úplne)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "získať zostavovacie súbory AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "zobraziť túto pomoc"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "zobraziť verziu"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "Používateľ systému \"yaourt\" sa nenašiel."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Vytvorte ho (ako root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: nenachádza sa v AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC chyba"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Kompilacia softvérového balíka {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Kompiľovať softvérový balík {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Kompilačné softvérové balíčko {package} (nová inštalácia {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Kompilačné softvérové balíčko {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Zlyhanie kompilácie softvéru (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD nenašiel"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "nemohol odstrániť softvérový balík {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "nemohol odstrániť zastaraný softvérový balík {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "Používateľ {user} sa nenašiel: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Kache softvérovej konštrukcie sa nenašlo ({path}): nič na čiastku."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "Z{path} nevyčistili"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR vyčistiť preskočil."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Čistenie softvérových zdrojov (softvérový balík {count})"
+msgstr[1] "Zdroje budovania softvéru na čistenie (softvérové balíčky {count})"
+msgstr[2] "Čistenie softvérových zdrojov (softvérové balíčky {count})"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "Repositorium {count} vyčistené."
+msgstr[1] "{count} úlohy vyčistené."
+msgstr[2] "{count} úložiště vyčistené."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Kache softvérového softvéru je prázdna: na strane AUR nie je čo čistiť."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "nemohol skontrolovať cache softvéru: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "nemohol uvádzať cache softvéru: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman predkladový súbor"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman cache (úplný)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Potvrdíte odstránenie všetkých skladov?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "nemohol odstrániť {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "Úplné odstránenie softvérovej build cache (softvérový balík {count})"
+msgstr[1] "ÚMPLNÉ odstránenie cache softvérovej konštrukcie (softvérové balíčky {count})"
+msgstr[2] "ÚMPLNÉ odstránenie softvérovej build cache (softvérové balíčky {count})"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR odstránenie preskočilo."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Odstrániť súbory, ktoré nie sú sledované Git z každej úložiště?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Všetky klonované úložiště budú odstránené (na budúcej budove budú klonované znova)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "Úložisko {count} odstránené."
+msgstr[1] "{count} úložiště odstránené."
+msgstr[2] "{count} úložiště odstránené."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} očakáva aspoň jeden názov balíka softvéru"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} očakáva vyhľadávanie"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} sa nenašiel v PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Zrušili."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Chyb: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(nikto)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "Neznáme"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: neplatná konfigurácia ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: opustený (závislosť {dependency} nebola dokončená)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: riešenie závislosti zlyhalo ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Priamy AUR závislosť {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(bez závislosti od AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR príkaz zostavovania závislosti na {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: nedokončil inštaláciu závislostí od reštaurácie ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: nerešpektujú závislosť od reštaurácie ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(cíl)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "klonovanie {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "aktualizácia {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "Repositoriá ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: chýbajúci príkaz"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: neočakávaný výstup: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[A/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: Kompilacia softvéru zlyhala"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: výstavba prerušená (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: neúspešná inštalácia"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: prerušená inštalácia (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: nainštalovaný"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: preskúmanie nebolo možné dokončiť"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: preskúmanie zamietnuté"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Zmeny od predchádzajúcej verzie:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Pokračovať v budove?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "Súbor {count} na preskúmanie (otvorený jeden po druhom)"
+msgstr[1] "Súbory {count} na preskúmanie (otvorené jednotlivo)"
+msgstr[2] "Súbory {count} na preskúmanie (otvorené jednotlivo)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(bez zmien súboru sa zobrazí)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "{file} nemohol otvoriť pomocou \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD nezmenený od predchádzajúceho preskúmania."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} vyžaduje Babet >= {required} (detekovaná verzia: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (hlasy, popularita) (výsledok {count})"
+msgstr[1] "AUR (hlasy, popularita) ({count} výsledky)"
+msgstr[2] "AUR (hlasy, popularita) ({count} výsledky)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (hlasy, popularita) ({shown} zobrazený z výsledku {total})"
+msgstr[1] "AUR (hlasy, popularita) ({shown} zobrazený z výsledkov {total})"
+msgstr[2] "AUR (hlasy, popularita) ({shown} zobrazený z výsledkov {total})"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Na {term} nebol nájdený žiadny softvérový balík."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Úradné úložiště (výsledok {count})"
+msgstr[1] "Oficiálne úložiště (výsledky {count})"
+msgstr[2] "Úradné repozitóriá ({count} výsledky)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Oficiálne úložiště ({shown} zobrazené z výsledku {total})"
+msgstr[1] "Oficiálne úložiště ({shown} zobrazené z výsledkov {total})"
+msgstr[2] "Oficiálne úložiště ({shown} zobrazené z výsledkov {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " hlasy: {votes}, popularita: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[Inštalovaný]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[instalačný: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(siarlo)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Otec"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(neaktuálne)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "Aktuálne"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Zlyhanie ({count}):"
+msgstr[1] "Zlyhania ({count}):"
+msgstr[2] "Zlyhania ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Prerušený ({count}):"
+msgstr[1] "Prerušený ({count}):"
+msgstr[2] "Prerušené ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "nainštalovaný softvérový balík {count}"
+msgstr[1] "nainštalované softvérové balíčky {count}"
+msgstr[2] "nainštalované softvérové balíčky {count}"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "Aktualizovaný softvérový balík {count} AUR"
+msgstr[1] "Aktualizované softvérové balíčky {count} AUR"
+msgstr[2] "Aktualizované softvérové balíčky {count} AUR"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Odmietol používateľ ({count}):"
+msgstr[1] "Odmietol používateľ ({count}):"
+msgstr[2] "Odmietol používateľ ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR softvérový balíček skontrolovať preskočil pre tento prebeh"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "softvérový balík spravovaný systémom AUR ({count})"
+msgstr[1] "softvérové balíčky spravované systémom AUR ({count})"
+msgstr[2] "softvérové balíčky spravované systémom AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR softvérový balík na sledovanie ({count})"
+msgstr[1] "Softvérové balíčky AUR na sledovanie ({count})"
+msgstr[2] "AUR softvérové balíčky na sledovanie ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "balík softvéru, ktorý nie je spravovaný AUR ({count})"
+msgstr[1] "softvérové balíčky, ktoré nie sú spravované AUR ({count})"
+msgstr[2] "softvérové balíky, ktoré nie sú spravované AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Pokračovať v aktualizácii?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Pokračovať v aktualizácii?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Aktualizácia softvéru (nová verzia) (programový balík {count}):"
+msgstr[1] "Aktualizácie softvéru (nová verzia) (pakety softvéru {count}):"
+msgstr[2] "Aktualizácie softvéru (nová verzia) (softvérové balíčky {count}):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Nová revízia softvérového balíka (softvérový balík {count}):"
+msgstr[1] "Nové revízie softvérového balíka (softvérové balíčky {count}):"
+msgstr[2] "Nové revízie softvérového balíka (softvérové balíčky {count}):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Vyberte softvérové balíčky AUR na aktualizáciu"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Čísla na aktualizáciu (napr. 1 3 5, 1-4, ^2 pre všetkých okrem 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "Zlyhanie synchronizácie databáz (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Systém je aktuálny."

@@ -6,6 +6,8 @@
 -- IMPORTANT — tous les appels à `babet.exec` passent par util.run().
 -- Centralisé ici : si l'API exec bouge, il n'y a QUE ce bloc à toucher.
 
+local i18n = require("lib.i18n")
+
 local util = {}
 
 function util.cache_home()
@@ -57,7 +59,7 @@ end
 function util.passthrough(argv, cwd)
     local cmd = argv[1]
     if type(cmd) ~= "string" then
-        return 1, "util.passthrough: commande manquante"
+        return 1, i18n.t("process.command_missing", { function_name = "util.passthrough" })
     end
 
     local args = {}
@@ -112,7 +114,7 @@ end
 function util.run(argv, opts)
     local cmd = argv[1]
     if type(cmd) ~= "string" then
-        return nil, "util.run: commande manquante"
+        return nil, i18n.t("process.command_missing", { function_name = "util.run" })
     end
     local args = {}
     for i = 2, #argv do args[#args + 1] = argv[i] end
@@ -156,7 +158,12 @@ function util.vercmp(a, b)
     local res, err = util.run({ "vercmp", a, b })
     if not res then return nil, err end
     local n = tonumber((res.stdout:gsub("%s+$", "")))
-    if not n then return nil, "vercmp: sortie inattendue: " .. res.stdout end
+    if not n then
+        return nil, i18n.t("process.unexpected_output", {
+            command = "vercmp",
+            output = res.stdout,
+        })
+    end
     if n < 0 then return -1 elseif n > 0 then return 1 else return 0 end
 end
 

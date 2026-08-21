@@ -1,0 +1,459 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: id\n"
+"Language-Team: Bahasa Indonesia\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Yaourt-Yes: y,ya,yes\n"
+"X-Yaourt-No: t,tidak,n,no\n"
+"X-Yaourt-Manual: m,manual\n"
+"X-Yaourt-Aliases: in\n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — antarmuka pacman + pembantu AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "PENGGUNAAN:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "teruskan operasi ke pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "instal paket (repositori atau AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "cari di repositori dan AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "perbarui repositori dan AUR ([M]: pilih paket AUR secara manual)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "bersihkan cache build (sebagian | lengkap)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "ambil berkas build AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "tampilkan bantuan ini"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "tampilkan versi"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "Pengguna sistem \"yaourt\" tidak dapat ditemukan."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Buat (sebagai root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: tidak ditemukan dalam AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "Kesalahan RPC"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Kompilasi paket perangkat lunak {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Kompilasi paket perangkat lunak {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Kompilasi paket perangkat lunak {package} (instal baru {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Kompilasi paket perangkat lunak {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Kompilasi perangkat lunak gagal (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD tidak ditemukan"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "tidak dapat menghapus paket perangkat lunak {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "tidak dapat menghapus paket perangkat lunak lama {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "Pengguna {user} tidak dapat ditemukan: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Perangkat lunak membangun cache tidak ditemukan ({path}): tidak ada yang harus dibersihkan."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "gagal membersihkan {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "Pembersihan AUR melewatkan."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Sumber pembuatan perangkat lunak pembersihan (paket perangkat lunak {count})"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "Repository {count} dibersihkan."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Cache pembangun perangkat lunak kosong: tidak ada yang harus dibersihkan di sisi AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "tidak dapat memeriksa cache build software: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "tidak dapat mencantumkan cache perangkat lunak: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "Cache pacman"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "Cache pacman (lengkap)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Mengkonfirmasi penghapusan semua repositori?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "tidak dapat menghapus {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "PEMENTANGAN KAMPUL dari cache build perangkat lunak (paket perangkat lunak {count})"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "Penghapusan AUR terlewatkan."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Menghapus file yang tidak dilacak oleh Git dari setiap repositori?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Semua repositori yang diklon akan dihapus (mereka akan diklon lagi pada build berikutnya)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "Repository {count} dihapus."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} mengharapkan setidaknya satu nama paket perangkat lunak"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} mengharapkan istilah pencarian"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} tidak ditemukan di PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Aku membatalkannya."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Kesalahan: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(tidak ada)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "tidak diketahui"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: konfigurasi tidak valid ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: ditinggalkan (ketergantungan {dependency} tidak selesai)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: resolusi ketergantungan gagal ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Pembagian langsung AUR dari {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(tidak ada ketergantungan AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "Perintah kompilasi ketergantungan AUR untuk {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: gagal memasang dependensi repository ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: gagal menyelesaikan ketergantungan repositori ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(target)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "kloning {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "memperbarui {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "repositori ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: perintah yang hilang"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: output tak terduga: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[Y/t]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: kompilasi perangkat lunak gagal"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: konstruksi terganggu (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: pemasangan gagal"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: pemasangan terganggu (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: dipasang"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: Pemeriksaan tidak dapat diselesaikan"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: Ulasan ditolak"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Perubahan dari versi sebelumnya:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Terus membangun?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "Berkas {count} untuk ditinjau (dibuka satu per satu)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(tidak ada perubahan file untuk ditampilkan)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Tidak dapat membuka {file} dengan \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD tidak berubah sejak review sebelumnya."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} membutuhkan Babet >= {required} (versi terdeteksi: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (votes, popularitas) ({count} hasil)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (pendapat, popularitas) ({shown} ditunjukkan dari hasil {total})"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Tidak ada perangkat lunak yang ditemukan untuk \"{term}\"."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Repository resmi ({count} hasil)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Repository resmi ({shown} ditunjukkan dari hasil {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " suara: {votes}, popularitas: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[diinstal]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[diinstal: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(anak yatim)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Anak yatim piatu"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(terlambat)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "sampai saat ini"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Kegagalan ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Terganggu ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "Paket perangkat lunak {count} dipasang"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "Paket perangkat lunak {count} AUR diperbarui"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Dilarang oleh pengguna ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR cek paket perangkat lunak melewatkan untuk menjalankan ini"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "paket perangkat lunak yang dikelola oleh AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "Paket perangkat lunak AUR untuk ditonton ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "paket perangkat lunak yang tidak dikelola oleh AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Lanjutkan pembaruan?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Lanjutkan pembaruan?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Pembaruan perangkat lunak (versi baru) (paket perangkat lunak {count}):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Revisi paket perangkat lunak baru (paket perangkat lunak {count}):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Pilih paket perangkat lunak AUR untuk diperbarui"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Nomer untuk diperbarui (misalnya 1 3 5, 1-4, ^2 untuk semua kecuali 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "gagal menyinkronkan basis data (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Sistemnya up to date."

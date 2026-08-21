@@ -22,6 +22,7 @@
 
 local util = require("lib.util")
 local aur  = require("lib.aur")
+local i18n = require("lib.i18n")
 
 local deps = {}
 
@@ -180,12 +181,12 @@ end
 function deps.show(config, name)
     local list, err = deps.aur_deps_of(config, name)
     if not list then
-        print("Erreur : " .. tostring(err))
+        print(i18n.t("common.error", { error = tostring(err) }))
         return 1
     end
-    print("Dépendances AUR directes de " .. name .. " :")
+    print(i18n.t("deps.direct_heading", { package = name }))
     if #list == 0 then
-        print("  (aucune)")
+        print("  " .. i18n.t("common.none"))
     else
         for _, d in ipairs(list) do print("  " .. d) end
     end
@@ -197,15 +198,15 @@ end
 function deps.show_resolve(config, name)
     local order, err = deps.resolve(config, name)
     if not order then
-        print("Erreur : " .. tostring(err))
+        print(i18n.t("common.error", { error = tostring(err) }))
         return 1
     end
-    print("Ordre de build des dépendances AUR de " .. name .. " :")
+    print(i18n.t("deps.order_heading", { package = name }))
     if #order == 0 then
-        print("  (aucune dépendance AUR)")
+        print("  " .. i18n.t("deps.none"))
     else
         for i, d in ipairs(order) do print("  " .. i .. ". " .. d) end
-        print("  " .. (#order + 1) .. ". " .. name .. "  (cible)")
+        print("  " .. (#order + 1) .. ". " .. name .. "  " .. i18n.t("deps.target"))
     end
     return 0
 end

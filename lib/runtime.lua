@@ -4,6 +4,7 @@
 -- runtime.lua — vérification de la version minimale de Babet.
 
 local version = require("lib.version")
+local i18n = require("lib.i18n")
 
 local runtime = {
     minimum = version.babet_min,
@@ -51,12 +52,11 @@ function runtime.assert_supported()
         return true
     end
 
-    error(string.format(
-        "%s nécessite Babet >= %s (version détectée : %s)",
-        version.name,
-        runtime.minimum,
-        tostring(babet.VERSION or "inconnue")
-    ), 0)
+    error(i18n.t("runtime.unsupported", {
+        name = version.name,
+        required = runtime.minimum,
+        current = tostring(babet.VERSION or i18n.t("common.unknown")),
+    }), 0)
 end
 
 return runtime

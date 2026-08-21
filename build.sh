@@ -76,6 +76,15 @@ trap 'rm -rf "$STAGE"' EXIT
 cp "$ROOT/main.lua" "$STAGE/"
 cp -r "$ROOT/lib" "$STAGE/"
 
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "Erreur : python3 est requis pour générer les catalogues i18n." >&2
+  exit 1
+fi
+python3 "$ROOT/tools/compile_catalogs.py" \
+  --po-dir "$ROOT/po" \
+  --output "$STAGE/lib/i18n_catalogs.lua" \
+  --pot "$STAGE/yaourt.pot"
+
 "$BABET" --create-exe "$STAGE" "$OUT"
 chmod +x "$OUT"
 echo "Binaire généré : $OUT"

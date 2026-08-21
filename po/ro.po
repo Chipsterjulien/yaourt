@@ -1,0 +1,497 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: ro\n"
+"Language-Team: Română\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2;\n"
+"X-Yaourt-Yes: d,da,y,yes\n"
+"X-Yaourt-No: n,nu,no\n"
+"X-Yaourt-Manual: m,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — interfață pentru pacman + asistent AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "UTILIZARE:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "delegă operațiile către pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "instalează un pachet (depozite sau AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "caută în depozite și AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "actualizează depozitele și AUR ([M]: selectează manual pachetele AUR)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "curăță memoria cache de compilare (parțial | complet)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "obține fișierele de compilare AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "arată acest ajutor"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "arată versiunea"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "Utilizatorul sistemului \"yaourt\" nu a fost găsit."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Creați-l (ca root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: nu se găsește în AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC eroare"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Compilează pachetul de software {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Compilează pachetul de software {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Compilează pachetul de software {package} (nouă instalație {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Compilează pachetul de software {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Compilarea software a eşuat (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD nu a fost găsit"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "nu a putut elimina pachetul de software {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "nu a putut elimina pachetul software vechi {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "Utilizatorul {user} nu a fost găsit: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Cache-ul software nu a fost găsit ({path}): nimic de curățat."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "nu a curățat {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR curăţarea sărit."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Surse de construcții de software de curățare (paketul de software {count})"
+msgstr[1] "Surse de construcții de software de curățare (pakete de software {count})"
+msgstr[2] "Surse de construcții software de curățare (pakete de software {count})"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "Repositoriul {count} a fost curățat."
+msgstr[1] "Repositoriile {count} au fost curăţate."
+msgstr[2] "Repositoriile {count} au fost curăţate."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Cache-ul software-ului este gol: nimic de curățat pe partea AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "nu a putut inspecta cache-ul software-ului: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "nu a putut lista cache-ul software-ului: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman cache"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman cache (complet)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Confirmarea eliminării tuturor depozitelor?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "nu a putut elimina {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "Eliminarea completă a cache-ului de construcție a software-ului (paketul de software {count})"
+msgstr[1] "Eliminarea completă a cache-ului de construcție a software-ului (pakete de software {count})"
+msgstr[2] "Eliminarea completă a cache-ului de construcție a software-ului (pakete de software {count})"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR eliminarea a fost omis."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Simulează fișierele care nu sunt urmărit de Git de la fiecare repository?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Toate depozitele clonate vor fi eliminate (sunt clonate din nou la următoarea construcție)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "Depozitarul {count} eliminat."
+msgstr[1] "Repozitorii {count} au fost eliminați."
+msgstr[2] "Repozitorii {count} au fost eliminați."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} așteaptă cel puțin un nume de pachet de software"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} așteaptă un termen de căutare"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} nu a fost găsit în PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "A fost anulată."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Efect: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "- Nu , nu ."
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "necunoscut"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: configurație invalidă ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: abandonat (dependența {dependency} nu a fost completată)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: rezolvarea dependenței a eșuat ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Dependențe directe AUR ale {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(fără dependență de AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "Ordinea de compilație a dependenței AUR pentru {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: nu a reușit să se instaleze dependențe de depozit ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: nu a reușit să rezolve dependențele de rețea ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(Target)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "clonarea {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "actualizarea {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "Repozitorii ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: comandă lipsă"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: ieșire neașteptată: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[D/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: compilarea software a eşuat"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: construcție întreruptă (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: instalarea a eșuat"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: instalare întreruptă (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: instalat"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: revizuirea nu a putut fi finalizată"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: reexaminare refuzată"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Modificări de la versiunea precedentă:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Continuăm să construim?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "Fișierul {count} de revizuire (deschis unul câte unul)"
+msgstr[1] "Fișiere {count} de revizuire (deschise una câte una)"
+msgstr[2] "Fișiere {count} de revizuire (deschise una câte una)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(fără modificări de fișier pentru a afișa)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Nu a putut deschide {file} cu \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD nu s-a schimbat de la examinarea anterioară."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} necesită Babet >= {required} (versiunea detectată: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (voturi, popularitate) (rezultat {count})"
+msgstr[1] "AUR (voturi, popularitate) (rezultate {count})"
+msgstr[2] "AUR (voturi, popularitate) (rezultate {count})"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (voturi, popularitate) ({shown} prezentat din rezultatul {total})"
+msgstr[1] "AUR (voturi, popularitate) ({shown} prezentat din rezultatele {total})"
+msgstr[2] "AUR (voturi, popularitate) ({shown} prezentat din rezultatele {total})"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Nu s-a găsit niciun pachet de software pentru \"{term}\"."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Repozitorii oficiali (rezultat {count})"
+msgstr[1] "Repozitorii oficiali (rezultate {count})"
+msgstr[2] "Repozitorii oficiali (rezultate {count})"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Repozitorii oficiali ({shown} prezentat din rezultatul {total})"
+msgstr[1] "Repositorii oficiale ({shown} prezentate din rezultatele {total})"
+msgstr[2] "Repozitorii oficiale ({shown} prezentate din rezultatele {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " voturi: {votes}, popularitate: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[instalat]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[instalat: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(Orfan)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Orfan"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(învechit)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "până în prezent"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Defect ({count}):"
+msgstr[1] "Defecturi ({count}):"
+msgstr[2] "Defecturi ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Interruți ({count}):"
+msgstr[1] "Interpunere ({count}):"
+msgstr[2] "Interruți ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "Paketul de software {count} este instalat"
+msgstr[1] "Pakete software {count} instalate"
+msgstr[2] "Pakete software {count} instalate"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "Pachetul de software {count} AUR actualizat"
+msgstr[1] "{count} AUR pachetele de software actualizate"
+msgstr[2] "{count} Pakete de software AUR actualizate"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Refuz de către utilizator ({count}):"
+msgstr[1] "Refuz de către utilizator ({count}):"
+msgstr[2] "Refuz de către utilizator ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR verificarea pachetului de software a fost omis pentru această cursă"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "pachetul de software gestionat de AUR ({count})"
+msgstr[1] "pachetele software gestionate de AUR ({count})"
+msgstr[2] "pachetele software gestionate de AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "Pachetul de software AUR de urmărit ({count})"
+msgstr[1] "pachetele de software AUR de urmărit ({count})"
+msgstr[2] "pachetele de software AUR de urmărit ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "pachetul de software care nu este gestionat de AUR ({count})"
+msgstr[1] "pachetele software care nu sunt gestionate de AUR ({count})"
+msgstr[2] "pachetele de software care nu sunt gestionate de AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Continuă cu actualizarea?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Continuă cu actualizarea?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Actualizarea software-ului (nouă versiune) (paketul de software {count}):"
+msgstr[1] "Actualizări software (nouă versiune) (pakete de software {count}):"
+msgstr[2] "Actualizări software (nouă versiune) (pakete de software {count}):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Noua revizuire a pachetului de software ( pachetul de software {count}):"
+msgstr[1] "Noile versiuni ale pachetului de software ( pachetele de software {count}):"
+msgstr[2] "Noile versiuni ale pachetului de software ( pachetele de software {count}):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Selectați pachetele de software AUR pentru actualizare"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Numere de actualizare (de exemplu 1 3 5, 1-4, ^2 pentru toate cu excepția 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "nu a reușit să sincronizeze bazele de date (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Sistemul este actualizat."

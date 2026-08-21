@@ -9,6 +9,7 @@
 
 local util    = require("lib.util")
 local version = require("lib.version")
+local i18n    = require("lib.i18n")
 
 local aur = {}
 
@@ -96,7 +97,7 @@ function aur.info(config, names)
         local data, derr = babet.json.decode(res.body)
         if not data then return nil, "aur: json: " .. tostring(derr) end
         if data.type == "error" then
-            return nil, "aur: " .. tostring(data.error or "erreur RPC")
+            return nil, "aur: " .. tostring(data.error or i18n.t("aur.rpc_error"))
         end
         for _, entry in ipairs(data.results or {}) do
             result[entry.Name] = entry
@@ -121,7 +122,7 @@ function aur.search(config, term, by)
     local data, derr = babet.json.decode(res.body)
     if not data then return nil, "aur: json: " .. tostring(derr) end
     if data.type == "error" then
-        return nil, "aur: " .. tostring(data.error or "erreur RPC")
+        return nil, "aur: " .. tostring(data.error or i18n.t("aur.rpc_error"))
     end
     return data.results or {}
 end

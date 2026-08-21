@@ -1,0 +1,535 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: br\n"
+"Language-Team: Brezhoneg\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=5; plural=(n%10==1 && n%100!=11 && n%100!=71 && n%100!=91 ? 0 : n%10==2 && n%100!=12 && n%100!=72 && n%100!=92 ? 1 : ((n%10==3 || n%10==4 || n%10==9) && (n%100<10 || n%100>19) && (n%100<70 || n%100>79) && (n%100<90 || n%100>99)) ? 2 : n%1000000==0 && n!=0 ? 3 : 4);\n"
+"X-Yaourt-Yes: y,ya,yes\n"
+"X-Yaourt-No: n,nann,no\n"
+"X-Yaourt-Manual: m,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — etrefas pacman + skoazeller AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "ARVER:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "dileur an oberiadennoù da pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "staliañ ur pakad (mirlec’hioù pe AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "klask er mirlec’hioù hag en AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "hizivaat ar mirlec’hioù hag AUR ([M]: dibab ar pakadoù AUR gant an dorn)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "naetaat krubuilh ar savadur (damheñvel | klok)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "kargañ restroù savadur AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "diskouez ar skoazell-mañ"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "diskouez ar stumm"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "Ne c'haller ket kavout implijer ar reizhiad « yaourt»."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Créez-le (evel root) :"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package} : Ne c'haller ket kavout eAUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "Fazi RPC"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Savidigezh {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Savadur {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Savadur {package} (staliadur nevez {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Savadur {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "c'hwitadenn stummañ (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package} : PKGBUILD Ne c'haller ket kavout"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "Ne c'haller ket lemel ar pakad {path} : {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "ne c'haller ket lemel ar pakad restr {path} : {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "Ne c'haller ket kavout an implijer {user} : {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Kuzhiadenn ezvezant ({path}) : netra da naetaat."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "c'hwitadenn {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "Netaat AUR dianav."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Kempenn mammennoù ar savadurioù ({count} pakad)"
+msgstr[1] "Kempenn mammennoù ar savadurioù ({count} pakadoù)"
+msgstr[2] "Kempenn mammennoù ar savadurioù ({count} pakadoù)"
+msgstr[3] "Kempenn mammennoù ar savadurioù ({count} pakadoù)"
+msgstr[4] "Kempenn mammennoù ar savadurioù ({count} pakadoù)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count} teuz kempennet."
+msgstr[1] "{count} fiziadoù kempennet."
+msgstr[2] "{count} fiziadoù kempennet."
+msgstr[3] "{count} fiziadoù kempennet."
+msgstr[4] "{count} fiziadoù kempennet."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Krubuilh buan : netra da naetaat AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "Ne c’haller ket ensellet ar grubuilh rakstal : {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "Ne c'haller ket renabliñ ar grubuilh krouiñ : {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "Krubuilh pacman"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "Krubuilh pacman (Kement)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Kadarnaat ez eo lamet an holl fiziadoù ?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "Ne c'haller ket dilemel {path} : {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "Lemel AN TROC'H BRAS ({count} pakad)"
+msgstr[1] "Lemel AN TROC'H BRAS ({count} pakadoù)"
+msgstr[2] "Lemel AN TROC'H BRAS ({count} pakadoù)"
+msgstr[3] "Lemel AN TROC'H BRAS ({count} pakadoù)"
+msgstr[4] "Lemel AR C'HOC'H BRAS ({count} pakadoù)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "Dilemel AUR dianavezet."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Lemel ar restroù n'int ket heuliet gant Git e pep fiziad ?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "An holl c'huzhiadennoù klannañ a vo lamet (re-clonage er savadur a zeu)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count} diank."
+msgstr[1] "{count} fiziadoù dilamet."
+msgstr[2] "{count} fiziadoù dilamet."
+msgstr[3] "{count} fiziadoù dilamet."
+msgstr[4] "{count} fiziadoù dilamet."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} a c'hortoz un anv pakad da nebeutañ"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} a c'hortoz un termen enklask"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} Ne c'haller ket kavout e PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Nullet eo."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Fazi : {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name} : {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(hini ebet)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "dianav"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt : roud direizh ({path}) : {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package} : dilezet (diwar {dependency} n'eo ket disoc'het)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package} : c'hwitadenn an dalc'hoù ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Dalc'hioù AUR war-eeun {package} :"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(diwarez ebet AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "Urzh savadurioù AUR {package} :"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package} : c'hwitadenn staliadur an dalc'hoù fiziadur ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package} : c'hwitadenn an dalc'hoù fiziet ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(douar)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "kloñsañ {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "Hizivaat {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "Fichadurioù ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name} : urzhiad diank"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command} : mont er-maez dic'hortoz : {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[O/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package} : c'hwitadenn ar staliañ"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package} : niveridigezh harzet (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package} : c'hwitadenn ar staliadur"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package} : staliadur ehanet (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package} : staliet"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package} : kelaouenn dibosupl"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package} : kelaouenn nac'het"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Kemmoù diwar ar stumm diwezhañ :"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Kenderc'hel da sevel ? [O/n]"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count} restr da ensellañ (digor unan dre unan)"
+msgstr[1] "{count} restroù da ensellañ (digor unan dre unan)"
+msgstr[2] "{count} restroù da ensellañ (digor unan dre unan)"
+msgstr[3] "{count} restroù da ensellañ (digor unan dre unan)"
+msgstr[4] "{count} restroù da ensellañ (digor unan dre unan)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(kemmoù restr ebet da ziskouez)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Ne c'haller ket digeriñ {file} gant « {editor} »"
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD N'eo ket bet kemmet abaoe ar gwiriekaat diwezhañ."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} a rank Babet/ {required} (version dinoet : {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (votennoù, tud brudet) ({count} disoc'h)"
+msgstr[1] "AUR (votennoù, tud brudet) ({count} disoc'hoù)"
+msgstr[2] "AUR (voestoù, tud brudet) ({count} disoc'hoù)"
+msgstr[3] "AUR (votennoù, tud brudet) ({count} disoc'hoù)"
+msgstr[4] "AUR (votennoù, tud brudet) ({count} disoc'hoù)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (voestoù, tud brudet) ({shown} diskwelet war {total} disoc'h)"
+msgstr[1] "AUR (voestoù, tud brudet) ({shown} war {total} disoc'hoù)"
+msgstr[2] "AUR (voestoù, tud brudet) ({shown} diskwelet war {total} disoc'hoù)"
+msgstr[3] "AUR (voestoù, tud brudet) ({shown} war {total} disoc'hoù)"
+msgstr[4] "AUR (voestoù, tud brudet) ({shown} war {total} disoc'hoù)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Pakad ebet a zo bet kavet evit « {term} »."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Fiziadoù ofisiel ({count} Disoc'h)"
+msgstr[1] "Fiziadoù ofisiel ({count} disoc'hoù)"
+msgstr[2] "Fiziadoù ofisiel ( disoc'hoù) {count}"
+msgstr[3] "Fiziadoù ofisiel ({count} disoc'hoù)"
+msgstr[4] "Fiziadoù ofisiel ({count} disoc'hoù)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Fiziadoù ofisiel ({shown} diskouezet war {total} disoc'h)"
+msgstr[1] "Fiziadoù ofisiel ( war disoc'hoù) {shown} {total}"
+msgstr[2] "Fiziadoù ofisiel ({shown} war {total} disoc'hoù)"
+msgstr[3] "Fiziadoù ofisiel ({shown} war {total} disoc'hoù)"
+msgstr[4] "Fiziadoù ofisiel ({shown} war {total} disoc'hoù)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " Votadennoù : , tud vrudet : {votes} {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[installé]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[installé : {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(orfelin)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Orfelin"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(pemglev)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "Hizivaat"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "C'hwitadenn ({count}) :"
+msgstr[1] "Chekennoù ({count}) :"
+msgstr[2] "Chekennoù ({count}) :"
+msgstr[3] "Chekennoù ({count}) :"
+msgstr[4] "Chekennoù ({count}) :"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Ehanet ({count}) :"
+msgstr[1] "Ehanet ({count}) :"
+msgstr[2] "Ehanet () : {count}"
+msgstr[3] "Ehanet ({count}) :"
+msgstr[4] "Ehanet () : {count}"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] " pakad staliet {count}"
+msgstr[1] "{count} pakadoù staliet"
+msgstr[2] "{count} pakadoù staliet"
+msgstr[3] "{count} pakadoù staliet"
+msgstr[4] "{count} pakadoù staliet"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} pakad AUR hizivaet"
+msgstr[1] "{count} pakadoù AUR hizivaet"
+msgstr[2] " pakadoù AUR hizivaet {count}"
+msgstr[3] "{count} pakadoù AUR hizivaet"
+msgstr[4] "{count} pakadoù AUR hizivaet"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Nac'het gant an implijer ({count}) :"
+msgstr[1] "Nac'het gant an implijer ({count}) :"
+msgstr[2] "Nac'het gant an implijer ({count}) :"
+msgstr[3] "Nac'het gant an implijer ({count}) :"
+msgstr[4] "Nac'het gant an implijer ({count}) :"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} — gwiriañ ar pakadoù AUR dianavezet evit kas al labour da benn"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "Pakad meret gant AUR ({count})"
+msgstr[1] "Pakadoù meret gant AUR ({count})"
+msgstr[2] "Pakadoù meret gant AUR ({count})"
+msgstr[3] "Pakadoù meret gant AUR ({count})"
+msgstr[4] "Pakadoù meret gant AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "Pakad AUR da eveziañ ({count})"
+msgstr[1] "Pakadoù AUR da evezhiañ ({count})"
+msgstr[2] "Pakadoù AUR da evezhiañ ({count})"
+msgstr[3] "Pakadoù AUR da evezhiañ ({count})"
+msgstr[4] "Pakadoù AUR da eveziañ ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "Pakad n'eo ket meret gant AUR ({count})"
+msgstr[1] "Pakadoù n'int ket meret gant AUR ({count})"
+msgstr[2] "Pakadoù n'int ket meret gant AUR ({count})"
+msgstr[3] "Pakadoù n'int ket meret gant AUR ({count})"
+msgstr[4] "Pakadoù n'int ket meret gant AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Kenderc'hel hizivaat ? [O/n]"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Kenderc'hel hizivaat ? [O/n/M]"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Hizivaat ar meziantoù (stumm nevez) ({count} pakad) :"
+msgstr[1] "Hizivaat ar meziantoù (stumm nevez) ({count} pakadoù) :"
+msgstr[2] "Hizivaat ar meziantoù (stumm nevez) ({count} pakadoù) :"
+msgstr[3] "Hizivaat ar meziantoù (stumm nevez) ({count} pakadoù) :"
+msgstr[4] "Hizivaat ar meziantoù (stumm nevez) ({count} pakadoù) :"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Adwelet ar pakadoù ({count} pakad) :"
+msgstr[1] "Adwelet ar pakadoù ({count} :"
+msgstr[2] "Adwelet ar pakadoù ({count} :"
+msgstr[3] "Adwelet ar pakadoù ({count} :"
+msgstr[4] "Adwelet ar pakadoù ({count} :"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Diuzañ ar pakadoù AUR da hizivaat"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Niverennoù da hizivaat (da skouer 1 3 5, 1-4, ^2 evit pep tra nemet 2) :"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "c'hwitadenn an diazoù (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Hizivaet eo ar reizhiad."

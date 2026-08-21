@@ -6,6 +6,8 @@
 -- Regroupe les fonctions de présentation communes à plusieurs commandes
 -- (recherche, mise à jour…), pour éviter de les dupliquer.
 
+local i18n = require("lib.i18n")
+
 local display = {}
 
 -- repo_color(C, repo) -> fonction de couleur à appliquer au nom du dépôt.
@@ -30,8 +32,8 @@ end
 -- (build.result). Distingue les mises à jour réussies, les refus de revue (choix
 -- de l'utilisateur, non alarmants), les interruptions (Ctrl+C) et les échecs.
 -- Le verbe d'action (« installé(s) » / « mis à jour ») est paramétrable.
-function display.build_summary(C, results, ok_verb)
-    ok_verb = ok_verb or "installé(s)"
+function display.build_summary(C, results, action)
+    action = action or "installed"
     local groups = { ok = {}, refused = {}, interrupted = {}, failed = {} }
     for _, r in ipairs(results) do
         -- failed et install_failed sont regroupés sous « Échecs ».
@@ -44,7 +46,7 @@ function display.build_summary(C, results, ok_verb)
         end
     end
 
-    print(C.green("\n==> " .. #groups.ok .. " paquet(s) " .. ok_verb))
+    print(C.green("\n==> " .. i18n.n("summary.ok." .. action, #groups.ok)))
     if #groups.ok > 0 then
         local names = {}
         for _, r in ipairs(groups.ok) do names[#names + 1] = r.name end
@@ -52,21 +54,21 @@ function display.build_summary(C, results, ok_verb)
     end
 
     if #groups.refused > 0 then
-        print(C.cyan("\n==> Refusé(s) par l'utilisateur (" .. #groups.refused .. ") :"))
+        print(C.cyan("\n==> " .. i18n.n("summary.refused", #groups.refused)))
         for _, r in ipairs(groups.refused) do
             print(C.cyan("    " .. r.name))
         end
     end
 
     if #groups.interrupted > 0 then
-        print(C.yellow("\n==> Interrompu(s) (" .. #groups.interrupted .. ") :"))
+        print(C.yellow("\n==> " .. i18n.n("summary.interrupted", #groups.interrupted)))
         for _, r in ipairs(groups.interrupted) do
             print(C.yellow("    " .. tostring(r.message)))
         end
     end
 
     if #groups.failed > 0 then
-        print(C.red("\n==> Échec(s) (" .. #groups.failed .. ") :"))
+        print(C.red("\n==> " .. i18n.n("summary.failed", #groups.failed)))
         for _, r in ipairs(groups.failed) do
             print(C.red("    " .. tostring(r.message)))
         end

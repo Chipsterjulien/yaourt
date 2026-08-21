@@ -39,12 +39,16 @@
 - [x] Migration Babet 2.22.2 : contrats API réaudités, correction du nettoyage
       récursif `-Scc`, intégration HTTP `chunked` locale et test PTY réel.
 - [x] Releases 0.1.0 à 0.4.2 publiées, x86_64 + aarch64.
+- [x] i18n extensible : catalogues gettext, détection POSIX de la locale,
+      replis déterministes, pluriels, variables nommées, catalogues externes
+      sûrs et 43 langues intégrées.
 
 ## Packaging (prioritaire — runtime babet en place)
 
 - [ ] Deux paquets AUR : `yaourt` (compile tout depuis les sources, y compris
       le runtime) et `yaourt-bin` (récupère le binaire du runtime selon `$CARCH`
-      depuis les releases). Pipeline du runtime déjà en place.
+      depuis les releases). Pipeline du runtime déjà en place ; publication en
+      attente de la réouverture de l'AUR.
 - [ ] Revoir le `makedepends` du runtime dans le PKGBUILD (aujourd'hui il bloque
       `makepkg` car le runtime n'est pas un paquet installé : `--nodeps` requis).
 - [ ] Tester l'installation du paquet (sysusers/tmpfiles appliqués par les hooks
@@ -58,9 +62,6 @@
 
 ## Finitions
 
-- [ ] i18n extensible : externaliser les chaînes dans des catalogues de langue,
-      détecter la locale avec repli, gérer les pluriels propres à chaque langue
-      et permettre l'ajout d'une traduction sans modifier le code métier.
 - [ ] Mode de revue avancé optionnel (ex. onglets vim `-p`) via la config, en
       gardant l'ouverture séquentielle par défaut pour les néophytes.
 - [ ] `-w` / `--downloadonly` côté AUR : sens à définir (sources seules ?

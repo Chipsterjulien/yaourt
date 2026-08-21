@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: fi\n"
+"Language-Team: Suomi\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Yaourt-Yes: k,kyllä,y,yes\n"
+"X-Yaourt-No: e,ei,n,no\n"
+"X-Yaourt-Manual: m,manuaalinen,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — pacman-käyttöliittymä + AUR-avustaja"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "KÄYTTÖ:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "välitä toiminnot pacmanille (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "asenna paketti (pakettivarastoista tai AUR:stä)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "etsi pakettivarastoista ja AUR:stä"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "päivitä pakettivarastot ja AUR ([M]: valitse AUR-paketit käsin)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "tyhjennä koontivälimuisti (osittain | kokonaan)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "nouda AUR-koontitiedostot (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "näytä tämä ohje"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "näytä versio"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "\"yaourt\" -järjestelmän käyttäjää ei löytynyt."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Luota se (root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: ei ole AUR:ssä"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC-virhe"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Kompilaatio ohjelmistopaketti {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Kompilaatio ohjelmistopaketti {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Kompileerikaa ohjelmistopaketti {package} (uusi asennus {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Kompilaatio ohjelmistopaketti {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Ohjelmistojen kokoonpano epäonnistui (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD ei löytynyt"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "ei voitu poistaa ohjelmistopakettia {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "ei voitu poistaa vanhentunut ohjelmistopaketti {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "{user}-käyttäjää ei löytynyt: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Ohjelmisto rakentaa cache ei löytynyt ({path}): ei mitään siivota."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "ei ole puhdistettu {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR-puhdistus jäi."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Puhdistusohjelmiston rakenne lähteet ({count} ohjelmistopaketti)"
+msgstr[1] "Puhdistusohjelmistojen rakennelähteet ({count} ohjelmistopaketit)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count}-varasto puhdistettiin."
+msgstr[1] "{count}:n varastot puhdistettiin."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Ohjelmistoohjelmiston rakennusmähteys on tyhjä: AUR:n puolella ei ole mitään puhdistettavaa."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "ei pystynyt tarkistamaan ohjelmisto rakentaa cache: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "ei voitu luetella ohjelmiston rakennevaliketta: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman:n tallennus"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman:n tallennus (täydellinen)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Vahvistatko kaikkien varastojen poistamisen?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "ei voitu poistaa {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "Ohjelmistojen rakenne-epäisäkirjan ({count}) täydellinen poistaminen"
+msgstr[1] "Ohjelmistojen rakennusmähteen täydellinen poistaminen ({count}-ohjelmistopaketit)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR:n poistaminen jäi väliin."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Poista kaikki Git:n jäljittämättömät tiedostot."
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Kaikki klonoidut säilytyslaitteet poistetaan (neet klonataan uudelleen seuraavassa rakenteessa)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count}-varasto poistetaan."
+msgstr[1] "{count}-varastoja poistettiin."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} odottaa vähintään yhden ohjelmistopaketin nimen"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} odottaa hakua"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} ei löytynyt PATH:sta"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Se peruutettiin."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Virhe: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "- Ei mitään ."
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "tuntematon"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: epätodennäköinen konfiguraatio ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: hylätty (riippuvuus {dependency} ei täytetty)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: riippuvuusratkaisu epäonnistui ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "AUR:n suoria riippuvuuksia {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(ei ole riippuvuutta AUR:stä)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR:n riippuvuuden kokoonpanojärjestys {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: säilytystietojen riippuvuuden asentaminen epäonnistui ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: säilytystietojen riippuvuuden ratkaiseminen ei onnistunut ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(tavoitteena)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "kloonaatio {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "{package}:n päivittäminen"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "säilytyslaitokset ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: puuttuva käsky"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: odottamaton tulos: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[K/e]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: ohjelmistokompilointi epäonnistui"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: rakentaminen keskeytetty (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: asennus epäonnistui"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: asennus keskeytettiin (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: asennettu"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: tarkastus ei voitu suorittaa"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: tarkastus hylättiin"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Muutokset edellisestä versiosta:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Jatketaanko rakennusta?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count}-tiedosto tarkistettavaksi (avataan yksi kerrallaan)"
+msgstr[1] "{count}-tiedostoja tarkasteltavaksi (avataan yksi kerrallaan)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(ei ole tiedostojen muutoksia näkyvissä)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "{file}:tä ei voitu avata \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD ei ole muuttunut edellisestä tarkastelusta lähtien."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} vaatii Babet >= {required} (detektoitu versio: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (äänestykset, suosiota) ({count} tulos)"
+msgstr[1] "AUR (äänestykset, suosiota) ({count} tulokset)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (äänestykset, suosiota) ({shown} esitetty {total} tuloksesta)"
+msgstr[1] "AUR (äänestykset, suosiota) ({shown} näytetään {total}-tuloksista)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "\"{term}\" -ohjelmistoa ei löytynyt."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Viralliset rekisterit ({count} tulos)"
+msgstr[1] "Viralliset rekisterit ({count} tulokset)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Viralliset rekisterit ({shown} näkyy {total} tuloksesta)"
+msgstr[1] "Viralliset rekisterit ({shown} näkyy {total}-tuloksista)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " äänet: {votes}, suosio: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "- Se on nyt."
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[siirretty: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(siiras)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Orpoja"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(ei ole ajankohtainen)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "ajan tasalle"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Virhe ({count}):"
+msgstr[1] "Vähintään 50 prosenttia: {count}"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Huomattuna ({count}):"
+msgstr[1] "Pysäily ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "{count}-ohjelmistopaketti asennettu"
+msgstr[1] "Asennettu {count}-ohjelmistopaketit"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR ohjelmistopaketti päivitetty"
+msgstr[1] "{count} AUR ohjelmistopaketit päivitetty"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Käyttäjä kieltäytyi ({count}):"
+msgstr[1] "Käyttäjä kieltäytyi ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR -ohjelmistopaketti tarkistetaan"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "AUR:n ({count}) hallinnoimat ohjelmistopaketit"
+msgstr[1] "AUR ({count}) hallinnoivat ohjelmistopaketit"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR-ohjelmistopaketti, jota on katsottava ({count})"
+msgstr[1] "AUR-ohjelmistopaketit, joita on katsottava ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "ohjelmistopaketti, jota ei hallita AUR ({count})"
+msgstr[1] "ohjelmistopaketit, joita AUR ({count}) ei hallitse"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Jatketaanko päivitystä?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Jatketaanko päivitystä?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Ohjelmistopäivitys (uusi versio) ({count}-ohjelmistopaketti):"
+msgstr[1] "Ohjelmisto päivityksiä (uusi versio) ({count}-ohjelmistopaketit):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Uusi ohjelmistopaketin tarkistus ({count} ohjelmistopaketti):"
+msgstr[1] "Uudet ohjelmistopakettien tarkistukset ({count} ohjelmistopaketit):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Valitse AUR-ohjelmistopaketit päivitettäväksi"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Päivitettävät numerot (esim. 1 3 5, 1-4, ^2 kaikkien lukuun ottamatta 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "ei synkronoitu tietokantoja (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Järjestelmä on ajan tasalla."

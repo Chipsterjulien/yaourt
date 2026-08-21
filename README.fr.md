@@ -5,7 +5,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.4.2`).**
+> **Statut : jeune mais utilisable au quotidien (`0.5.0`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -56,6 +56,9 @@ interactives lancées avec `babet.spawn`, comme `pacman` et `makepkg`.
 - La compilation se fait toujours sous un utilisateur non privilégié dédié
   (`yaourt`), y compris lorsque le programme est lancé en root — `makepkg`
   n'étant jamais exécuté en root.
+- **Interface internationalisée** : 43 locales intégrées, détection automatique
+  de la locale POSIX, replis régionaux, pluriels sûrs et catalogues GNU gettext
+  externes, sans branche propre à une langue dans le code métier.
 
 ### Revue de sécurité des fichiers AUR
 
@@ -89,8 +92,9 @@ construction.
 
 - [Arch Linux](https://archlinux.org/) (ou dérivé compatible `pacman`).
 - `pacman`, `git`, `base-devel` (pour `makepkg`).
-- `package-query` (recherche AUR).
 - `sudo` (opérations pacman lorsqu'il n'est pas lancé en root).
+- Python 3 pour construire depuis les sources ; GNU gettext pour valider ou
+  installer les catalogues externes. Le binaire autonome n'en dépend pas.
 
 ## Installation
 
@@ -101,8 +105,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.4.2-x86_64
-sudo install -Dm755 yaourt-0.4.2-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.5.0-x86_64
+sudo install -Dm755 yaourt-0.5.0-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
@@ -144,8 +148,8 @@ La suite hors ligne vérifie les helpers de processus et de fichiers avec le
 vrai runtime Babet, exerce le client AUR sur un serveur HTTP local avec des
 réponses `chunked`, teste la chaîne interactive parent/enfant sous un véritable
 pseudo-terminal, puis contrôle les modes dossier et embarqué et construit le
-binaire final. Les tests d'intégration utilisent uniquement la bibliothèque
-standard de Python 3 :
+binaire final. Les tests d'intégration utilisent la bibliothèque standard de
+Python 3 et GNU gettext (`msgfmt`) pour valider chaque catalogue :
 
 ```sh
 BABET=/chemin/vers/babet-2.22.2-linux-x86_64 ./run_tests.sh
@@ -173,6 +177,42 @@ périmés ou non gérés par l'AUR. La valeur `"all"` affiche la liste complète
 `false` masque le récapitulatif ; l'ancienne valeur `true` reste acceptée comme
 alias de `"all"`. L'option `search_limit` règle le nombre de résultats de
 recherche.
+
+### Langue de l'interface
+
+`language = "auto"` est la valeur par défaut. yaourt consulte `LANGUAGE`,
+`LC_ALL`, `LC_MESSAGES`, puis `LANG`. Une locale peut aussi être imposée, par
+exemple avec `language = "pt_BR"`. Les formes POSIX et BCP 47 sont acceptées ;
+une locale régionale se replie sur sa langue de base, puis sur l'anglais
+(`pt_BR.UTF-8` → `pt_BR` → `pt` → `en`). `C` et `POSIX` sélectionnent
+l'anglais.
+
+Les 43 locales intégrées sont :
+
+`ar`, `ast`, `bg`, `bn`, `br`, `ca`, `cs_CZ`, `da`, `de`, `el`, `en`, `eo`,
+`es`, `es_419`, `fa`, `fi`, `fr`, `he`, `hi`, `hu`, `id`, `is`, `it`, `ja`,
+`ko`, `lt`, `nb`, `nl_NL`, `pl`, `pt`, `pt_BR`, `ro`, `ru`, `sk`, `sl`, `sr`,
+`sv`, `th`, `tr`, `uk`, `vi`, `zh_CN` et `zh_TW`.
+
+Les catalogues anglais et français définissent le vocabulaire du projet actuel
+et le conservent. Les autres catalogues sont des traductions initiales complètes
+produites localement et portent volontairement la mention qu'une relecture par
+des locuteurs natifs est nécessaire. Les contrôles garantissent déjà la
+complétude, les variables nommées et les formes de pluriel déclarées ; les
+améliorations linguistiques restent les bienvenues.
+
+yaourt lit aussi les fichiers externes `yaourt.mo` selon l'arborescence gettext
+standard, d'abord dans les dossiers indiqués par `YAOURT_LOCALEDIR`, puis dans
+`$XDG_DATA_HOME/locale`, `/usr/local/share/locale` et `/usr/share/locale`. Un
+catalogue externe remplace la traduction embarquée et se replie sur celle-ci
+pour les messages manquants. Il est analysé comme une donnée et n'est jamais
+exécuté comme du code Lua.
+
+Pour ajouter ou relire une langue sans toucher à la logique métier, voir
+[TRANSLATING.fr.md](TRANSLATING.fr.md). Les fichiers `po/*.po` sont la source de
+vérité ; `python3 tools/compile_catalogs.py` régénère le module embarqué sûr et
+le modèle `po/yaourt.pot`.
+
 En développement, un fichier `cfg/config.toml` présent dans le dossier courant
 est détecté automatiquement.
 

@@ -1,0 +1,497 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: uk\n"
+"Language-Team: Українська\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11) ? 0 : (n%10>=2 && n%10<=4 && (n%100<12 || n%100>14)) ? 1 : 2;\n"
+"X-Yaourt-Yes: т,так,y,yes\n"
+"X-Yaourt-No: н,ні,n,no\n"
+"X-Yaourt-Manual: в,вручну,m,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — інтерфейс pacman + помічник AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "ВИКОРИСТАННЯ:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "передати операції програмі pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "встановити пакунок (зі сховищ або AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "шукати у сховищах та AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "оновити сховища та AUR ([M]: вибрати пакунки AUR вручну)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "очистити кеш збирання (частково | повністю)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "отримати файли збирання AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "показати цю довідку"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "показати версію"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "Користувач системи \"yaourt\" не знайшов."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Створюйте його (як root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: не виявлено в AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "Помилка RPC"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Компілюйте пакет програмного забезпечення {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Компілюйте пакет програмного забезпечення {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Компілюйте пакет програмного забезпечення {package} (нова установка {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Компілюйте пакет програмного забезпечення {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "програмне компіляція не виконано (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD не знайдено"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "не вдалося видалити пакет програмного забезпечення {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "не вдалося видалити устарелий пакет програмного забезпечення {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "Користувача {user} не знайдено: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Програмне забезпечення не знайшло кэш ({path}): нічого чистити."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "не очистив {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "Очищення AUR пропущено."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Створення джерел чищення програмного забезпечення (пакет програмного забезпечення {count})"
+msgstr[1] "Створення джерел для очищення програмного забезпечення (пакети програмного забезпечення {count})"
+msgstr[2] "Створення джерел чищення програмного забезпечення (пакети програмного забезпечення {count})"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "Захистник {count} очищений."
+msgstr[1] "Захистки {count} очищені."
+msgstr[2] "Захистки {count} очищені."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Кэш створення програмного забезпечення порожній: нічого не чистити на стороні AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "не змогли перевірити кеши програми: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "не вдалося передати кэш програми: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman кэш"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman кэш (повністю)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Потвердити видалення всіх репозиторів?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "не вдалося видалити {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "КОМПЛЕТНО видалення кешу побудови програмного забезпечення (пакет програмного забезпечення {count})"
+msgstr[1] "КОМПЛЕТНО видалення кешу побудови програмного забезпечення (пакети програмного забезпечення {count})"
+msgstr[2] "КОМПЛЕТНО видалення кешу побудови програмного забезпечення (пакети програмного забезпечення {count})"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "Видалення AUR пропущено."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Знести файли, які не відстежують Git з кожного сховища?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Всі клоновані сховища будуть видалені (они будуть клоновані знову в наступній построці)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "Видалено {count} сховище."
+msgstr[1] "Видалено {count} сховища."
+msgstr[2] "Видалено {count} сховищ."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} очікує щонайменше одного імені пакета програмного забезпечення"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} очікує пошукового терміну"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} не знайдено в PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Відкладено."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Помилка: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(нікого)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "невідомі"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: недійсна конфігурація ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: покинуто (залежність {dependency} не завершена)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: розв'язання залежності не вдалося ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Прямі залежності AUR від {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(без залежності від AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "Заказ збірки залежності AUR для {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: не вдалося встановити залежність від сховища ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: не вдалося вирішити залежність від сховища ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(ціль)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "клонирование {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "оновлення {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "репозиторий ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: відсутня команда"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: несподіваний вихід: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[Т/н]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: компіляція програмного забезпечення не вдалося"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: перервана конструкція (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: невдало встановлення"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: перервана установка (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: встановлено"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: перегляд не вдалося завершити"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: відмова від перегляду"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Зміни з попередньої версії:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Продовжити будівництво?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "Файл {count} для перегляду (відкритий один за одним)"
+msgstr[1] "Файли {count} для перегляду (отворені один за одним)"
+msgstr[2] "Файли {count} для перегляду (отворені один за одним)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(без змін файлу для відображення)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Не вдалося відкрити {file} з \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD не змінився з попереднього перегляду."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} вимагає Babet >= {required} (виявлена версія: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (голоси, популярність) ({count} результат)"
+msgstr[1] "AUR (голоси, популярність) ({count} результати)"
+msgstr[2] "AUR (голоси, популярність) ({count} результатів)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (голоси, популярність) (показано {shown} із {total} результату)"
+msgstr[1] "AUR (голоси, популярність) (показано {shown} із {total} результатів)"
+msgstr[2] "AUR (голоси, популярність) (показано {shown} із {total} результатів)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Ніяких програмних пакетів для \"{term}\" не знайдено."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Офіційні репозиториї (результат {count})"
+msgstr[1] "Офіційні репозиториї (виніки {count})"
+msgstr[2] "Офіційні репозиториї (виніки {count})"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Офіційні репозитори ({shown} показано з результату {total})"
+msgstr[1] "Офіційні репозитори ({shown} показано з результатів {total})"
+msgstr[2] "Офіційні репозитори ({shown} показано з результатів {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " голоси: {votes}, популярність: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[Установлено]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[встановлено: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(сирота)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Сиріт"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(застроковано)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "на сьогоднішній день"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Випадок ({count}):"
+msgstr[1] "Випади ({count}):"
+msgstr[2] "Пошкодження ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Перервана ({count}):"
+msgstr[1] "Перервана ({count}):"
+msgstr[2] "Перервана ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "Установлений пакет програмного забезпечення {count}"
+msgstr[1] "Установлені пакети програмного забезпечення {count}"
+msgstr[2] "Установлені пакети програмного забезпечення {count}"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "Оновлений пакет програмного забезпечення {count} AUR"
+msgstr[1] "Обновлені пакети програмного забезпечення {count} AUR"
+msgstr[2] "Обновлені пакети програмного забезпечення {count} AUR"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Відмова користувача ({count}):"
+msgstr[1] "Відмова користувача ({count}):"
+msgstr[2] "Відмова користувача ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR перевірити пакет програмного забезпечення пропустили для цього запуску"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "пакет програмного забезпечення, який управляється AUR ({count})"
+msgstr[1] "пакети програмного забезпечення, які управляються AUR ({count})"
+msgstr[2] "пакети програмного забезпечення, які управляються AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "Платформа AUR для перегляду ({count})"
+msgstr[1] "Пакти програмного забезпечення AUR для перегляду ({count})"
+msgstr[2] "Пакти програмного забезпечення AUR для перегляду ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "пакет програмного забезпечення, який не управляється AUR ({count})"
+msgstr[1] "пакети програмного забезпечення, які не управляються AUR ({count})"
+msgstr[2] "пакети програмного забезпечення, які не управляються AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Продовжуйте оновлення?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Продовжуйте оновлення?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Обновлення програмного забезпечення (нова версія) (пакет програмного забезпечення {count}):"
+msgstr[1] "Обновлення програмного забезпечення (нова версія) (пакети програмного забезпечення {count}):"
+msgstr[2] "Обновлення програмного забезпечення (нова версія) (пакети програмного забезпечення {count}):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Новий пакет програмного забезпечення (пакет програмного забезпечення {count}):"
+msgstr[1] "Нові перегляди пакету програмного забезпечення (пакети програмного забезпечення {count}):"
+msgstr[2] "Нові перегляди програмного пакета (пакети програмного забезпечення {count}):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Виберіть пакет програмного забезпечення AUR для оновлення"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Номери для оновлення (наприклад, 1 3 5, 1-4, ^2 для всіх за винятком 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "не змогли синхронізувати бази даних (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Система актуальна."

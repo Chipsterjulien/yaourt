@@ -18,6 +18,7 @@ local util   = require("lib.util")
 local log    = require("lib.log")
 local color  = require("lib.color")
 local pacman = require("lib.pacman")
+local i18n   = require("lib.i18n")
 
 local clean  = {}
 
@@ -26,7 +27,7 @@ local clean  = {}
 local function list_pkg_dirs(builddir)
     local is_dir, dir_err = babet.isDir(builddir)
     if is_dir == nil then
-        log.warn("impossible d'inspecter le cache de build : " .. tostring(dir_err))
+        log.warn(i18n.t("cache.inspect_failed", { error = tostring(dir_err) }))
         return {}
     end
     if not is_dir then return nil end
@@ -38,7 +39,7 @@ local function list_pkg_dirs(builddir)
         maxdepth = 0,
     })
     if not dirs then
-        log.warn("impossible de lister le cache de build : " .. tostring(err))
+        log.warn(i18n.t("cache.list_failed", { error = tostring(err) }))
         return {}
     end
 
@@ -48,10 +49,10 @@ end
 
 -- confirm(C, prompt) -> bool : invite [O/n], vrai si l'utilisateur accepte.
 local function confirm(C, prompt)
-    io.write(C.cyan("==> ") .. prompt .. " [O/n] ")
+    io.write(C.cyan("==> ") .. prompt .. " " .. i18n.t("prompt.yes_no") .. " ")
     io.flush()
     local ans = (io.read("l") or ""):lower()
-    return not (ans == "n" or ans == "non")
+    return not i18n.is_answer(ans, "no")
 end
 
 -- soft(config) : nettoyage doux. Pour chaque dépôt, `git clean -fdx` (supprime
@@ -62,13 +63,13 @@ function clean.soft(config)
     local dirs = list_pkg_dirs(config.builddir)
 
     if dirs == nil then
-        print(C.dim("Cache de build absent (" .. config.builddir .. ") : rien à nettoyer."))
+        print(C.dim(i18n.t("cache.absent", { path = config.builddir })))
     elseif #dirs == 0 then
-        print(C.dim("Cache de build vide : rien à nettoyer côté AUR."))
+        print(C.dim(i18n.t("cache.empty")))
     else
-        print(C.cyan("==> ") .. C.bold("Nettoyage des sources de build (" .. #dirs .. " paquet(s))"))
+        print(C.cyan("==> ") .. C.bold(i18n.n("cache.clean_sources", #dirs)))
         print(C.dim("    " .. config.builddir))
-        if confirm(C, "Supprimer les fichiers non suivis par git dans chaque dépôt ?") then
+        if confirm(C, i18n.t("cache.remove_untracked")) then
             local cleaned = 0
             for _, dir in ipairs(dirs) do
                 -- git clean -fdx en tant que build_user (le dépôt lui appartient
@@ -79,18 +80,18 @@ function clean.soft(config)
                 if res and res.code == 0 then
                     cleaned = cleaned + 1
                 else
-                    log.warn("échec du nettoyage de " .. dir)
+                    log.warn(i18n.t("cache.clean_failed", { path = dir }))
                 end
             end
-            print(C.green("==> " .. cleaned .. " dépôt(s) nettoyé(s)."))
+            print(C.green("==> " .. i18n.n("cache.cleaned", cleaned)))
         else
-            print("Nettoyage AUR ignoré.")
+            print(i18n.t("cache.clean_skipped"))
         end
     end
 
     -- Cache pacman (délégué, avec sa propre confirmation).
     print("")
-    print(C.cyan("==> ") .. C.bold("Cache pacman"))
+    print(C.cyan("==> ") .. C.bold(i18n.t("cache.pacman")))
     local cmd = {}
     local p = util.sudo_prefix(config)
     if p then cmd[#cmd + 1] = p end
@@ -106,32 +107,35 @@ function clean.full(config)
     local dirs = list_pkg_dirs(config.builddir)
 
     if dirs == nil then
-        print(C.dim("Cache de build absent (" .. config.builddir .. ") : rien à nettoyer."))
+        print(C.dim(i18n.t("cache.absent", { path = config.builddir })))
     elseif #dirs == 0 then
-        print(C.dim("Cache de build vide : rien à nettoyer côté AUR."))
+        print(C.dim(i18n.t("cache.empty")))
     else
-        print(C.cyan("==> ") .. C.bold("Suppression COMPLÈTE du cache de build (" .. #dirs .. " paquet(s))"))
+        print(C.cyan("==> ") .. C.bold(i18n.n("cache.remove_full", #dirs)))
         print(C.dim("    " .. config.builddir))
-        print(C.red("    Tous les dépôts clonés seront supprimés (re-clonage au prochain build)."))
-        if confirm(C, "Confirmer la suppression de tous les dépôts ?") then
+        print(C.red("    " .. i18n.t("cache.remove_warning")))
+        if confirm(C, i18n.t("cache.remove_confirm")) then
             local removed = 0
             for _, dir in ipairs(dirs) do
                 local ok, err = babet.rmdirAll(dir)
                 if ok then
                     removed = removed + 1
                 else
-                    log.warn("impossible de supprimer " .. dir .. " : " .. tostring(err))
+                    log.warn(i18n.t("cache.remove_failed", {
+                        path = dir,
+                        error = tostring(err),
+                    }))
                 end
             end
-            print(C.green("==> " .. removed .. " dépôt(s) supprimé(s)."))
+            print(C.green("==> " .. i18n.n("cache.removed", removed)))
         else
-            print("Suppression AUR ignorée.")
+            print(i18n.t("cache.remove_skipped"))
         end
     end
 
     -- Cache pacman complet (délégué).
     print("")
-    print(C.cyan("==> ") .. C.bold("Cache pacman (complet)"))
+    print(C.cyan("==> ") .. C.bold(i18n.t("cache.pacman_full")))
     local cmd = {}
     local p = util.sudo_prefix(config)
     if p then cmd[#cmd + 1] = p end

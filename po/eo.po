@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: eo\n"
+"Language-Team: Esperanto\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Yaourt-Yes: j,jes,y,yes\n"
+"X-Yaourt-No: n,ne,no\n"
+"X-Yaourt-Manual: m,permane,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — fasado por pacman + AUR-helpilo"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "UZADO:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "delegu operaciojn al pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "instalu pakaĵon (deponejoj aŭ AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "serĉu en deponejoj kaj AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "ĝisdatigu deponejojn kaj AUR ([M]: mane elektu AUR-pakaĵojn)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "purigu la konstrukaŝmemoron (parte | tute)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "akiru AUR-konstru-dosierojn (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "montru ĉi tiun helpon"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "montru la version"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "La uzanto de la sistemo \"yaourt\" ne povis esti trovita."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Kreu ĝin (kiel root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: ne trovita en la AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "Eraro RPC"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Kompili programaro paketo {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Kompili programpaketon {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Kompili programpaketon {package} (nova instalado {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Kompili programpaketon {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Kompilado de softvaro malsukcesis (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD ne trovita"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "ne povis forigi programaron {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "ne povis forigi malnovan programpaketon {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "La uzanto de {user} ne estis trovita: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Programara programaro konstrui kaŝon ne trovita ({path}): nenio por purigi."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "ne purigis {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "La purigado de AUR preterlasis."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Purigado de programaro konstrui fontojn ({count} programaro paketo)"
+msgstr[1] "Purigado de programaro konstrui fontojn ({count} programaro paketoj)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count}-repositorio purigita."
+msgstr[1] "La deponejoj de {count} estis purigitaj."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "La kaŝejo de la programaro estas malplena: nenio por purigi sur la flanko de AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "ne povis inspekti la programarkonstruan kaŝon: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "ne povis listigi la softvarkonstruan kaŝon: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman kaŝo"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman kaŝo (kompleta)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Ĉu vi konfirmas la forigon de ĉiuj deponejoj?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "ne povis forigi {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "Kompleta forigo de la programaro konstrui kaŝon ({count} programaro paketo)"
+msgstr[1] "Kompleta forigo de la programaro konstrui kaŝon ({count} programaro paketoj)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR forigo saltis."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Forigi dosierojn, kiuj ne estas spuritaj de Git, el ĉiu revuo?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Ĉiuj klonitaj deponejoj estos forigitaj (ili estos klonitaj denove en la venonta konstruo)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count}-repositorio forigita."
+msgstr[1] "{count} deponejoj forigitaj."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} atendas almenaŭ unu softvarpaketan nomon"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} atendas serĉan terminon"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} ne estis trovita en PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Ĝi estas nuligita."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Eraro: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(neniuj)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "nekonata"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: malvalida konfiguro ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: forlasita (dependeco {dependency} ne kompletigis)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: dependa rezolucio malsukcesis ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "Direkta AUR dependencoj de {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(neniuj dependencoj de AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR dependenco kompilado ordono por {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: ne instaliĝis dependencoj de la deponejo ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: ne sukcesis solvi dependencojn de la stokado ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(celo)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "klonado {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "ĝisdatigo de {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "Repositorioj ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: mankas komando"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: neatendita produktaĵo: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[J/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: programara kompilado malsukcesis"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: konstruo interrompita (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: la instalaĵo malsukcesis"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: instalado interrompita (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: instalita"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: revizio ne povis esti kompletigita"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: revizio rifuzita"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Ŝanĝoj ekde la antaŭa versio:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Ĉu vi daŭrigas la konstruadon?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count} dosiero por revizio (malfermita unu post unu)"
+msgstr[1] "{count} dosieroj por revizii (malfermita unu post unu)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(neniuj dosierŝanĝoj por montri)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Ne povis malfermi {file} kun \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD ne ŝanĝiĝis ekde la antaŭa revizio."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} postulas Babet >= {required} (detektita versio: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (voĉoj, populareco) ({count} rezulto)"
+msgstr[1] "AUR (voĉoj, populareco) ({count} rezultoj)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (voĉoj, populareco) ({shown} montrita el {total} rezulto)"
+msgstr[1] "AUR (voĉoj, populareco) ({shown} montrita el la rezultoj de {total})"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Neniu programaro estis trovita por \"{term}\"."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Oficialaj arkivoj ({count} rezulto)"
+msgstr[1] "Oficialaj arkivoj ({count} rezultoj)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Oficialaj arkivoj ({shown} montrita el rezulto {total})"
+msgstr[1] "Oficialaj arkivoj ({shown} montrita el {total} rezultoj)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " Voĉoj: {votes}, populareco: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[instalante]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[Instalita: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(Orfo)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Orfa"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(malnoviĝinta)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "ĝisdatigita"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Malfunkcio ({count}):"
+msgstr[1] "Malfunkcioj ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Interrompiĝis ({count}):"
+msgstr[1] "Interrompiĝis ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "{count} programpaketo instalita"
+msgstr[1] "{count} programpaketoj instalitaj"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR programaro ĝisdatigita"
+msgstr[1] "{count} AUR programpaketoj ĝisdatigitaj"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Refuzita de la uzanto ({count}):"
+msgstr[1] "Refuzita de la uzanto ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR programaro paketo ĉeko preterlasis por ĉi tiu kuro"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "programaro administrita fare de la AUR ({count})"
+msgstr[1] "programpaketoj administritaj fare de la AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR programaro por rigardi ({count})"
+msgstr[1] "AUR programpaketoj por rigardi ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "programaro ne administrita fare de la AUR ({count})"
+msgstr[1] "programpaketoj ne administritaj de la AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Ĉu vi daŭrigas ĝisdatigi?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Ĉu vi daŭrigas ĝisdatigi?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Programaro ĝisdatigo (nova versio) ({count} programaro paketo):"
+msgstr[1] "Programaro ĝisdatigoj (nova versio) ({count} programaro paketoj):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Nova programpaketo revizio ({count} programpaketo):"
+msgstr[1] "Novaj softvarpaketo revizioj ({count} softvarpaketoj):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Elektu la AUR programpaketojn por ĝisdatigi"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Nombroj por ĝisdatigi (ekz. 1 3 5, 1-4, ^2 por ĉiuj krom 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "malsukcesis sinkronigi datumbazojn (pacman - Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "La sistemo estas ĝisdatigita."

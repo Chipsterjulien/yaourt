@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: hi\n"
+"Language-Team: हिन्दी\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Yaourt-Yes: ह,हाँ,हा,y,yes\n"
+"X-Yaourt-No: न,नहीं,नही,n,no\n"
+"X-Yaourt-Manual: म,मैन्युअल,m,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — pacman आवरण + AUR सहायक"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "उपयोग:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "कार्रवाइयाँ pacman को सौंपें (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "पैकेज इंस्टॉल करें (रिपॉज़िटरी या AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "रिपॉज़िटरी और AUR में खोजें"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "रिपॉज़िटरी और AUR अपडेट करें ([M]: AUR पैकेज हाथ से चुनें)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "बिल्ड कैश साफ़ करें (आंशिक | पूर्ण)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "AUR बिल्ड फ़ाइलें प्राप्त करें (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "यह सहायता दिखाएँ"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "संस्करण दिखाएँ"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "\"yaourt\" प्रणाली उपयोगकर्ता नहीं मिला।"
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "इसे बनाएँ (root के रूप में):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: AUR में नहीं मिला"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC त्रुटि"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "सॉफ्टवेयर पैकेज {package} को संकलित करें"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "सॉफ्टवेयर पैकेज {package} ({old_version} -> {new_version}) को संकलित करें"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "सॉफ्टवेयर पैकेज {package} (नई स्थापना {version}) को संकलित करें"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "सॉफ्टवेयर पैकेज {package} ({version}) को संकलित करें"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "सॉफ्टवेयर संकलन विफल (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD नहीं मिला"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "सॉफ्टवेयर पैकेज {path} को हटाने में असमर्थः {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "पुराने सॉफ़्टवेयर पैकेज {path} को हटाने में असमर्थः {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "{user} उपयोगकर्ता नहीं मिलाः {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "सॉफ्टवेयर निर्माण कैश नहीं मिला ({path}): साफ करने के लिए कुछ भी नहीं।"
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "{path} को साफ करने में विफल रहा"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR सफाई छोड़ दिया।"
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "सफाई सॉफ्टवेयर निर्माण स्रोत ({count} सॉफ्टवेयर पैकेज)"
+msgstr[1] "सफाई सॉफ्टवेयर निर्माण स्रोत ({count} सॉफ्टवेयर पैकेज)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count} रिपॉजिटरी को साफ कर दिया गया है।"
+msgstr[1] "{count} भंडारों को साफ किया गया।"
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "सॉफ्टवेयर सॉफ्टवेयर निर्माण कैश खाली हैः AUR पक्ष पर साफ करने के लिए कुछ भी नहीं है।"
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "सॉफ़्टवेयर बिल्ड कैश का निरीक्षण नहीं कर सका: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "सॉफ़्टवेयर बिल्ड कैश को सूचीबद्ध नहीं कर सकाः {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman कैश"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman कैश (पूर्ण)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "सभी भंडारों को हटाने की पुष्टि?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "{path} को हटाने में असमर्थः {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "सॉफ़्टवेयर बिल्ड कैश ({count} सॉफ़्टवेयर पैकेज) को पूरी तरह से हटाना"
+msgstr[1] "सॉफ़्टवेयर बिल्ड कैश ({count} सॉफ़्टवेयर पैकेज) को पूरी तरह से हटाना"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR हटाने को छोड़ दिया गया।"
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "सभी भंडार से Git द्वारा ट्रैक नहीं की गई फ़ाइलों को हटाने?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "सभी क्लोन किए गए भंडार हटा दिए जाएंगे (वे अगले निर्माण पर फिर से क्लोन किए जाएंगे) ।"
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count} भंडार हटाया गया।"
+msgstr[1] "{count} भंडार हटाए गए।"
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} कम से कम एक सॉफ्टवेयर पैकेज नाम की उम्मीद करता है"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} एक खोज शब्द की उम्मीद है"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} PATH में नहीं मिला"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "रद्द कर दिया गया।"
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "त्रुटि: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(कोई नहीं)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "अज्ञात"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: अमान्य कॉन्फ़िग ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: छोड़ दिया गया (निर्भरता {dependency} पूरी नहीं हुई)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: निर्भरता संकल्प विफल ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "AUR की प्रत्यक्ष {package} निर्भरताएँः"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(AUR निर्भरता नहीं)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR निर्भरता संकलन क्रम {package} के लिएः"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: भंडार निर्भरता स्थापित करने में विफल रहा ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: भंडार निर्भरता को हल करने में विफल रहा ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(लक्ष्य)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "क्लोनिंग {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "{package} को अद्यतन करना"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "भंडार ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: मिसिंग कमांड"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: अप्रत्याशित आउटपुट: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[ह/न]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: सॉफ्टवेयर संकलन विफल"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: बिल्ड बाधित (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: स्थापना विफल"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: स्थापना बाधित (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: स्थापित"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: समीक्षा को पूरा नहीं किया जा सका"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: समीक्षा अस्वीकार"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "पिछले संस्करण के बाद से परिवर्तनः"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "निर्माण जारी रखें?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count} फ़ाइल की समीक्षा (एक-एक करके खोला गया)"
+msgstr[1] "{count} फ़ाइलों की समीक्षा (एक-एक करके खोला गया)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(कोई फ़ाइल परिवर्तन प्रदर्शित करने के लिए नहीं)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "{file} को \"{editor}\" के साथ नहीं खोल सका"
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD पिछली समीक्षा के बाद से अपरिवर्तित है।"
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} के लिए Babet की आवश्यकता होती है >= {required} (भेजा गया संस्करणः {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (मतों, लोकप्रियता) ({count} परिणाम)"
+msgstr[1] "AUR (मतों, लोकप्रियता) ({count} परिणाम)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (मतों, लोकप्रियता) ({shown} {total} परिणाम से दिखाया गया)"
+msgstr[1] "AUR (मतों, लोकप्रियता) ({shown} {total} परिणामों से दिखाया गया है)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "\"{term}\" के लिए कोई सॉफ्टवेयर पैकेज नहीं मिला।"
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "आधिकारिक भंडार ({count} परिणाम)"
+msgstr[1] "आधिकारिक भंडार ({count} परिणाम)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "आधिकारिक अभिलेखागार ({shown} {total} परिणाम से दिखाया गया)"
+msgstr[1] "आधिकारिक भंडार ({shown} {total} परिणामों में दिखाया गया)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " वोट: {votes}, लोकप्रियता: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[स्थापित]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[स्थापितः {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(याताम)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "अनाथ"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(आधुनिक)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "अद्यतन"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "विफलता ({count}):"
+msgstr[1] "विफलता ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "बाधित ({count}):"
+msgstr[1] "बाधित ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "{count} सॉफ्टवेयर पैकेज स्थापित"
+msgstr[1] "{count} सॉफ्टवेयर पैकेज स्थापित"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR सॉफ्टवेयर पैकेज अद्यतन"
+msgstr[1] "{count} AUR सॉफ्टवेयर पैकेज अद्यतन"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "उपयोगकर्ता द्वारा अस्वीकार किया गया ({count}):"
+msgstr[1] "उपयोगकर्ता द्वारा अस्वीकार किया गया ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR सॉफ्टवेयर पैकेज चेक इस रन के लिए छोड़ दिया"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "AUR ({count}) द्वारा प्रबंधित सॉफ्टवेयर पैकेज"
+msgstr[1] "AUR ({count}) द्वारा प्रबंधित सॉफ्टवेयर पैकेज"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR सॉफ्टवेयर पैकेज देखने के लिए ({count})"
+msgstr[1] "AUR सॉफ़्टवेयर पैकेज देखने के लिए ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "AUR ({count}) द्वारा प्रबंधित नहीं किया गया सॉफ्टवेयर पैकेज"
+msgstr[1] "AUR ({count}) द्वारा प्रबंधित नहीं किए गए सॉफ्टवेयर पैकेज"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "अद्यतन जारी रखें?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "अद्यतन जारी रखें?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "सॉफ्टवेयर अद्यतन (नया संस्करण) ({count} सॉफ्टवेयर पैकेज):"
+msgstr[1] "सॉफ्टवेयर अपडेट (नया संस्करण) ({count} सॉफ्टवेयर पैकेज):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "नया सॉफ्टवेयर पैकेज संशोधन ({count} सॉफ्टवेयर पैकेज):"
+msgstr[1] "नए सॉफ़्टवेयर पैकेज संशोधन ({count} सॉफ़्टवेयर पैकेज):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "अद्यतन करने के लिए AUR सॉफ्टवेयर पैकेज का चयन करें"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "अद्यतन करने के लिए संख्याएँ (उदाहरण के लिए 1 3 5, 1-4, ^2 सभी के लिए 2 को छोड़कर):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "डेटाबेस सिंक्रनाइज़ करने में विफल रहा (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "सिस्टम अद्यतित है।"

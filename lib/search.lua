@@ -22,6 +22,7 @@ local color   = require("lib.color")
 local log     = require("lib.log")
 local util    = require("lib.util")
 local display = require("lib.display")
+local i18n    = require("lib.i18n")
 
 local search  = {}
 
@@ -51,11 +52,14 @@ end
 -- Parse la sortie de `pacman -Ss` : une ligne d'entête « dépôt/nom version … »
 -- suivie d'une ligne de description indentée.
 local function repo_search(term)
-    local res, err = util.run({ "pacman", "-Ss", term })
+    local res, err = util.run({ "pacman", "-Ss", term }, { env = { LC_ALL = "C" } })
     -- pacman -Ss renvoie un code non nul quand il n'y a aucun résultat :
     -- ce n'est pas une erreur de lancement, juste « rien trouvé ».
     if not res then
-        log.error("pacman -Ss: " .. tostring(err))
+        log.error(i18n.t("common.named_error", {
+            name = "pacman -Ss",
+            error = tostring(err),
+        }))
         return {}
     end
 
@@ -126,7 +130,7 @@ end
 local function print_repo(C, e)
     local rc   = display.repo_color(C, e.repo)
     local head = "  " .. rc(e.repo .. "/") .. C.bold(e.name) .. " " .. C.green(e.version)
-    if e.installed then head = head .. " " .. C.blue("[installé]") end
+    if e.installed then head = head .. " " .. C.blue(i18n.t("status.installed")) end
     print(head)
     if e.desc ~= "" then print("      " .. e.desc) end
 end
@@ -139,18 +143,22 @@ local function print_aur(C, e)
     -- Votes + popularité explicites, en cyan pour ressortir sans entrer en
     -- conflit avec les autres couleurs de la ligne (orphelin/installé/version).
     -- Le libellé en toutes lettres lève l'ambiguïté du couple de nombres.
-    head       = head .. " " .. C.badge("44", "37",
-        string.format(" votes : %d, popularité : %.2f ", e.votes, e.popularity))
+    head       = head .. " " .. C.badge("44", "37", i18n.t("search.score", {
+        votes = e.votes,
+        popularity = string.format("%.2f", e.popularity),
+    }))
 
     if e.installed then
         if e.inst_ver and e.inst_ver ~= e.version then
-            head = head .. " " .. C.blue("[installé : " .. e.inst_ver .. "]")
+            head = head .. " " .. C.blue(i18n.t("status.installed_version", {
+                version = e.inst_ver,
+            }))
         else
-            head = head .. " " .. C.blue("[installé]")
+            head = head .. " " .. C.blue(i18n.t("status.installed"))
         end
     end
-    if e.orphan then head = head .. "  " .. C.yellow("(orphelin)") end
-    if e.outofdate then head = head .. "  " .. C.red("(périmé)") end
+    if e.orphan then head = head .. "  " .. C.yellow(i18n.t("status.orphan")) end
+    if e.outofdate then head = head .. "  " .. C.red(i18n.t("status.out_of_date")) end
 
     print(head)
     if e.desc ~= "" then print("      " .. e.desc) end
@@ -194,22 +202,28 @@ function search.run(config, term)
     -- AUR d'abord (mieux notés en bas de section), dépôts ensuite.
     if aur_total > 0 then
         local shown = (#auras < aur_total)
-            and ("==> AUR (votes, popularité) (" .. #auras .. " affichés sur " .. aur_total .. ")")
-            or ("==> AUR (votes, popularité) (" .. aur_total .. ")")
+            and ("==> " .. i18n.n("search.aur_limited", aur_total, {
+                shown = #auras,
+                total = aur_total,
+            }))
+            or ("==> " .. i18n.n("search.aur", aur_total))
         print(C.cyan(shown))
         for _, e in ipairs(auras) do print_aur(C, e) end
     end
     if repo_total > 0 then
         if aur_total > 0 then print("") end
         local shown = (#repos < repo_total)
-            and ("==> Dépôts officiels (" .. #repos .. " affichés sur " .. repo_total .. ")")
-            or ("==> Dépôts officiels (" .. repo_total .. ")")
+            and ("==> " .. i18n.n("search.repositories_limited", repo_total, {
+                shown = #repos,
+                total = repo_total,
+            }))
+            or ("==> " .. i18n.n("search.repositories", repo_total))
         print(C.cyan(shown))
         for _, e in ipairs(repos) do print_repo(C, e) end
     end
 
     if repo_total == 0 and aur_total == 0 then
-        print(":: Aucun paquet trouvé pour « " .. term .. " ».")
+        print(":: " .. i18n.t("search.none", { term = term }))
         return 1
     end
     return 0

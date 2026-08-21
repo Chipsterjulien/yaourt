@@ -1,0 +1,497 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: lt\n"
+"Language-Team: Lietuvių\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11) ? 0 : (n%10>=2 && (n%100<10 || n%100>=20)) ? 1 : 2;\n"
+"X-Yaourt-Yes: t,taip,y,yes\n"
+"X-Yaourt-No: n,ne,no\n"
+"X-Yaourt-Manual: m,rankiniu būdu,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — pacman sąsaja + AUR pagalbininkas"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "NAUDOJIMAS:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "perduoti operacijas programai pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "įdiegti paketą (saugyklos arba AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "ieškoti saugyklose ir AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "atnaujinti saugyklas ir AUR ([M]: rankiniu būdu pasirinkti AUR paketus)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "išvalyti kūrimo podėlį (dalinai | visiškai)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "gauti AUR kūrimo failus (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "rodyti šią žinyno informaciją"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "rodyti versiją"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "\"yaourt\" sistemos naudotojo nebuvo galima rasti."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Sukurti (pavyzdžiui, root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: nėra AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC klaida"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Kompiliuokite programinį paketą {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Kompiliacijos programinės įrangos paketas {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Kompiliuoti programinį paketą {package} (nauja įrenginė {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Kompiliuokite programinį paketą {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Programinės įrangos kompiliacija nepavyko (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD nėra rasti"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "negalėjo pašalinti programinės įrangos paketo {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "negalėjo pašalinti pasenusio programinio paketo {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "{user} naudotojo negalima rasti: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Programinės įrangos statybos kasė nerado ({path}): nieko nereikia valyti."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "nepavyko išvalyti {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR valymo metu nepavyko."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Valdymo programinės įrangos kūrimo šaltiniai ({count} programinės įrangos paketas)"
+msgstr[1] "Valdymo programinės įrangos kūrimo šaltiniai ({count} programinės įrangos paketai)"
+msgstr[2] "Valdymo programinės įrangos kūrimo šaltiniai ({count} programinės įrangos paketai)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count} saugykla išvalyta."
+msgstr[1] "{count} saugyklos išvalytos."
+msgstr[2] "{count} saugyklos išvalytos."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Programinės įrangos statybos kasė yra tuščia: AUR pusėje nėra ką valyti."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "negalėjo patikrinti programinės įrangos statybos saugyklos: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "negalėjo pateikti kompiuterio statybos saugyklos: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman saugykla"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman saugykla (visiška)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Įsteigti pašalinti visus saugyklus?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "Neįmanoma pašalinti {path}: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "VIAUŠTINĖ pašalinti programinės įrangos statybos saugyklą (programinės įrangos paketas {count})"
+msgstr[1] "VIAUŠTINĖS pašalinti programinės įrangos statybos saugyklą ({count} programinės įrangos paketai)"
+msgstr[2] "VIAŠTINĖS pašalinti programinės įrangos statybos saugyklą ({count} programinės įrangos paketai)"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR pašalinta."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Ištrinti failus, kurių neperžiūrėjo Git iš visų saugyklų?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Visi klonuoti saugyklai bus pašalinti ( jie bus klonuoti dar kartą kitą kartą)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count} saugykla pašalinta."
+msgstr[1] "{count} saugyklos pašalintos."
+msgstr[2] "{count} saugyklos pašalintos."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} tikisi bent vieno programinės įrangos paketo pavadinimo"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} tikisi paieškos terminų"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} nebuvo rastas PATH"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Atšaukta."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "klaida: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr ": {error} {name}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(Niekas)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "Nepažįstamas"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: negaliojanti konfigūracija ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: paliktas (įvisumas {dependency} nebuvo baigtas)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: priklausomybės sprendimas nepavyko ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "AUR tiesiogiai priklausomos {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(išskyrus AUR priklausomybę)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR priklausomybės kompiliacijos užsakymas dėl {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: nereikėjo įdiegti saugyklos priklausomybės ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: nereikėjo išspręsti duomenų saugyklos priklausomybės ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(taikymas)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "klonuoti {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "atnaujinant {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "duomenų saugyklos ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: trūksta komandos"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: nenumatytas išėjimas: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[T/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: programinės įrangos kompiliacija nepavyko"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: statyba nutraukta (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: įrengimas nesėkmingai"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: įrengimas nutrauktas (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: įrengtas"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: peržiūros neįmanoma užbaigti"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: peržiūrą atsisakė"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Pakeitimai nuo ankstesnės versijos:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Kviečiame statyti?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count} failą peržiūrėti (atsidaryti vienas po kito)"
+msgstr[1] "{count} failus, kuriuos reikia peržiūrėti (atvertas vienas po kito)"
+msgstr[2] "{count} failus, kuriuos reikia peržiūrėti (atvertas vienas po kito)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(nėra jokių failų pakeitimų rodomi)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Negalima atidaryti {file} su \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD nesikeitė nuo ankstesnio peržiūros."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} reikalauja Babet >= {required} (sužinomasis versija: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (balsavimas, populiarumas) ({count} rezultatas)"
+msgstr[1] "AUR (balsavimas, populiarumas) ({count} rezultatai)"
+msgstr[2] "AUR (balsavimas, populiarumas) ({count} rezultatai)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (balsavimas, populiarumas) ({shown} iš {total} rezultato)"
+msgstr[1] "AUR (balsavimas, populiarumas) ({shown} iš {total} rezultatų)"
+msgstr[2] "AUR (balsavimas, populiarumas) ({shown} iš {total} rezultatų)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "\"{term}\" programinės įrangos pakuotės nėra."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Oficiali saugyklos ({count} rezultatas)"
+msgstr[1] "Oficialiai saugyklai ({count} rezultatai)"
+msgstr[2] "Oficiali saugyklos ({count} rezultatai)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Oficialiai saugyklai ({shown} iš {total} rezultato)"
+msgstr[1] "Oficialiai saugyklai ({shown}, rodomi iš {total} rezultatų)"
+msgstr[2] "Oficiali saugyklos ({shown}, rodomi iš {total} rezultatų)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " balsavimas: {votes}, populiarumas: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[Instaluota]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[Instaluotas: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(tyrtuvas)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Vaiduoklis"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(pasitraukęs)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "iki šiol"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Nesėkmė ({count}):"
+msgstr[1] "Nesėkmių ({count}):"
+msgstr[2] "Nesėkmės ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Prarasta ({count}):"
+msgstr[1] "Prarasta ({count}):"
+msgstr[2] "Prarasti ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "Įstatytas {count} programinis paketas"
+msgstr[1] "Įmontuoti {count} programinės įrangos paketai"
+msgstr[2] "Įmontuoti {count} programinės įrangos paketai"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR programinės įrangos paketas atnaujintas"
+msgstr[1] "{count} AUR programinės įrangos paketai atnaujinti"
+msgstr[2] "{count} AUR programinės įrangos paketai atnaujinti"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Naudotojo atsisakymas ({count}):"
+msgstr[1] "Naudotojo atsisakymas ({count}):"
+msgstr[2] "Naudotojo atsisakymas ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR programinės įrangos paketo patikrinimas šiam vykdymui nepavyko"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "programinės įrangos paketas, kurį valdo AUR ({count})"
+msgstr[1] "programinės įrangos paketai, kuriuos valdo AUR ({count})"
+msgstr[2] "programinės įrangos paketai, kuriuos valdo AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR programinės įrangos paketas, kurį reikia stebėti ({count})"
+msgstr[1] "AUR programinės įrangos paketai ({count})"
+msgstr[2] "AUR programinės įrangos paketai, kuriuos reikia stebėti ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "programinės įrangos paketas, kuriam netaikomas AUR ({count})"
+msgstr[1] "programinės įrangos paketai, kurių valdo AUR ({count})"
+msgstr[2] "programinės įrangos paketai, kurių valdo AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Kviečiame atnaujinti?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Kviečiame atnaujinti?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Programinės įrangos atnaujinimas (nauja verzija) ({count} programinės įrangos paketas):"
+msgstr[1] "Programinės įrangos atnaujinimas (nauja versija) ({count} programinės įrangos paketai):"
+msgstr[2] "Programinės įrangos atnaujinimas (nauja versija) ({count} programinės įrangos paketai):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Naujas programinės įrangos paketo peržiūrimas ({count} programinės įrangos paketas):"
+msgstr[1] "Naujos programinės įrangos paketo peržiūros ({count} programinės įrangos paketai):"
+msgstr[2] "Naujos programinės įrangos paketo peržiūros ({count} programinės įrangos paketai):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Pasirinkti atnaujinti AUR programinės įrangos paketus"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Įstatymo numeris (pvz., 1 3 5, 1-4, ^2 visiems, išskyrus 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "nesinaudojusi duomenų bazės (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Sistema atnaujinta."

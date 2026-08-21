@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: fa\n"
+"Language-Team: فارسی\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Yaourt-Yes: ب,بله,y,yes\n"
+"X-Yaourt-No: خ,خیر,n,no\n"
+"X-Yaourt-Manual: د,دستی,m,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — رابط pacman + دستیار AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "کاربرد:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "واگذاری عملیات به pacman (-Q، -R، -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "نصب یک بسته (مخزن‌ها یا AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "جست‌وجو در مخزن‌ها و AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "به‌روزرسانی مخزن‌ها و AUR ([M]: انتخاب دستی بسته‌های AUR)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "پاک‌کردن حافظهٔ نهان ساخت (جزئی | کامل)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "دریافت فایل‌های ساخت AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "نمایش این راهنما"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "نمایش نسخه"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "کاربر سیستم \"yaourt\" پیدا نشد."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "آن را ایجاد کنید (به عنوان root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: در AUR یافت نمی شود"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "خطای RPC"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "بسته نرم افزاری {package} را مرتب کنید"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "بسته نرم افزاری {package} را مرتب کنید ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "پیکج نرم افزاری {package} را مرتب کنید (نوی نصب {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "پیکج نرم افزاری {package} ({version}) را مرتب کنید"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "سازنده نرم افزار شکست خورده (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD یافت نشد"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "نتوانست بسته نرم افزاری {path} را حذف کند: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "نتوانست بسته نرم افزاری قدیمی {path} را حذف کند: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "کاربر {user} یافت نشد: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "کاش ساخت نرم افزار یافت نشد ({path}): چیزی برای تمیز کردن نیست."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "نتوانسته است {path} را تمیز کند"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "پاکسازی AUR رد شد"
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "منابع ساخت نرم افزار تمیز کردن (پاکت نرم افزار {count})"
+msgstr[1] "منابع ساخت نرم افزار تمیز کردن (پاک های نرم افزار {count})"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "مخزن {count} پاک شده"
+msgstr[1] "ذخيره هاي {count} پاک شده"
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "کاش ساخت نرم افزار خالی است: هیچ چیز برای تمیز کردن در طرف AUR."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "نتوانست حافظه حافظه ساخت نرم افزار را بررسی کند: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "نتوانست حافظه کش ساخت نرم افزار را لیست کند: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "Cache pacman"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "Cache pacman (تمام)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "تصحيح حذف تمام ذخيره ها؟"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "نتوانست {path} را حذف کند: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "حذف کامل کش ساخت نرم افزار (پاکت نرم افزار {count})"
+msgstr[1] "حذف کامل کش ساخت نرم افزار (پاک های نرم افزار {count})"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "حذف AUR رد شد"
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "پرونده هایی را که توسط Git ردیابی نشده اند از هر مخزن حذف کنید؟"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "تمام مخازن کلون شده حذف می شود (در ساخت بعدی دوباره کلون می شوند)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "مخزن {count} حذف شد"
+msgstr[1] "مخزن های {count} حذف شدند."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} انتظار دارد حداقل یک نام بسته نرم افزار باشد"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} انتظار یک اصطلاح جستجو دارد"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} در PATH یافت نشد"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "لغو شد"
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "خطا: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(هیچکس)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "نامعلوم"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: پیکربندی غیرفعال ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: رها شده (تبع {dependency} کامل نشده است)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: حل وابستگی شکست خورده ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "وابستگی های مستقیم AUR از {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(هیچ وابستگی AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "ترتیب جمع آوری وابستگی AUR برای {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: عدم نصب وابستگی های مخزن ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: وابستگی های مخزن را حل نکرد ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(هدف)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "کلون {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "به روز رسانی {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "ذخیره سازی ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: دستور گم شده"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: تولید غیر منتظره: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[ب/خ]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: مجموعه نرم افزار شکست خورده"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: تعمیر قطع شده (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: نصب شکست خورده"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: نصب قطع شده (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: نصب شده"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: بازرسی نمی توان به پایان رسید"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: بازبینی رد شد"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "تغییرات از نسخه قبلی:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "ادامه ساختمون؟"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "فایل {count} که باید بررسی شود (یک به یک باز شود)"
+msgstr[1] "فایل های {count} برای بررسی (از یک به یک باز می شوند)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(بدون تغییر فایل نمایش داده نمی شود)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "نتوانستم {file} را با \"{editor}\" باز کنم"
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD از زمان بررسی قبلی بدون تغییر است."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} نیاز به Babet >= {required} (ورژن شناسایی شده: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (تصویر، محبوبیت) (نتایج {count})"
+msgstr[1] "AUR (تصویر، محبوبیت) (نتایج {count})"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (تصویر، محبوبیت) ({shown} از نتیجه {total} نشان داده شده است)"
+msgstr[1] "AUR (تصویر، محبوبیت) ({shown} از نتایج {total} نشان داده شده است)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "هیچ بسته نرم افزاری برای \"{term}\" پیدا نشده"
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "مخزن رسمی (نتایج {count})"
+msgstr[1] "مخزن های رسمی (نتایج {count})"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "مخزن رسمی ({shown} از نتیجه {total} نشان داده شده است)"
+msgstr[1] "مخزن رسمی ({shown} از نتایج {total} نشان داده شده است)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " رای: {votes}، محبوبیت: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[تثبيت شده]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[مثبت شده: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(تيتام)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "يتيم"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(منته شده)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "به تازگی"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "شکست ({count}):"
+msgstr[1] "شکست ها ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "قطع ({count}):"
+msgstr[1] "قطع شده ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "بسته نرم افزاری {count} نصب شده"
+msgstr[1] "بسته های نرم افزاری {count} نصب شده"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "بسته نرم افزار {count} AUR به روز شده"
+msgstr[1] "بسته های نرم افزاری {count} AUR به روز شده"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "از طرف کاربر رد شده ({count}):"
+msgstr[1] "از طرف کاربر رد شده ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - بررسی بسته نرم افزار AUR برای این اجرا رد شد"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "بسته نرم افزاری که توسط AUR مدیریت می شود ({count})"
+msgstr[1] "بسته های نرم افزاری که توسط AUR مدیریت می شوند ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "بسته نرم افزاری AUR برای مشاهده ({count})"
+msgstr[1] "بسته های نرم افزاری AUR برای مشاهده ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "بسته نرم افزاری که توسط AUR مدیریت نمی شود ({count})"
+msgstr[1] "بسته های نرم افزاری که توسط AUR ({count}) مدیریت نمی شوند"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "ادامه بدين؟"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "ادامه بدين؟"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "بروزرسانی نرم افزار (برنامه جدید) (پاکت نرم افزار {count}):"
+msgstr[1] "بروزرسانی های نرم افزار (برنامه جدید) (پاک های نرم افزار {count}):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "بازبینی بسته نرم افزاری جدید (پکیج نرم افزاری {count}):"
+msgstr[1] "اصلاحات جدید بسته نرم افزار (پاک های نرم افزار {count}):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "بسته های نرم افزاری AUR را برای بروزرسانی انتخاب کنید"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "شماره هایی که باید به روز شوند (به عنوان مثال 1 3 5، 1- 4، ^ 2 برای همه به جز 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "عدم همبستگی پایگاه های داده (pacman - Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "سیستم به روز شده"

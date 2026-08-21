@@ -1,0 +1,516 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: sl\n"
+"Language-Team: Slovenščina\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1) ? 0 : (n%100==2) ? 1 : (n%100==3 || n%100==4) ? 2 : 3;\n"
+"X-Yaourt-Yes: d,da,y,yes\n"
+"X-Yaourt-No: n,ne,no\n"
+"X-Yaourt-Manual: r,ročno,m,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — vmesnik za pacman + pomočnik AUR"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "UPORABA:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "predaj operacije programu pacman (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "namesti paket (skladišča ali AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "išči po skladiščih in AUR"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "posodobi skladišča in AUR ([M]: ročno izberi pakete AUR)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "počisti predpomnilnik gradnje (delno | v celoti)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "pridobi datoteke za gradnjo AUR (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "prikaži to pomoč"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "prikaži različico"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "Uporabnika sistema \"yaourt\" ni bilo mogoče najti."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Ustvarite ga (kot root):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: ne najdemo v AUR"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "Napaka RPC"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Kompilirajte programski paket {package}"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Kompilirajte programski paket {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Kompilirajte programski paket {package} (nova namestitev {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Kompilirajte programski paket {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "neuspešno sestavljanje programske opreme (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD ni bil na voljo"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "ni mogel odstraniti programskega paketa {path}: {error}"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "ni mogel odstraniti zastarelnega programskega paketa {path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "Uporabnika {user} ni bilo mogoče najti: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Programska oprema build cache ni našla ({path}): nič za čiščenje."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "ni očistil {path}"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR čiščenje preskočilo."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Oprema za čiščenje virov izdelave (programski paket {count})"
+msgstr[1] "Književa oprema za čiščenje (programske pakete {count})"
+msgstr[2] "Književa za čiščenje (paketi za opremo {count})"
+msgstr[3] "Knjige za opremo za čiščenje (programske pakete {count})"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "Rezervatorij {count} je očistil."
+msgstr[1] "Repozitorij {count} je očistil."
+msgstr[2] "Repozicije {count} je očistila."
+msgstr[3] "Repozicije {count} so očiščene."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Cache je prazen: na strani AUR ni ničesar za čiščenje."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "ni mogel pregledati predpomnilnika za izdelavo programske opreme: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "ni mogel navesti vmesnika za izdelavo programske opreme: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman predpomnilnik"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman predplačilo (popoln)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Potrdite odstranitev vseh skladišč?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "{path} ni mogel odstraniti: {error}"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "KOPLEN odstranitev predplačila za izdelavo programske opreme (programski paket {count})"
+msgstr[1] "KONPLETno odstranitev predplačila za izdelavo programske opreme (programske pakete {count})"
+msgstr[2] "KONPLETno odstranitev predplačila za izdelavo programske opreme (programske pakete {count})"
+msgstr[3] "KONPLETno odstranitev predplačila za izdelavo programske opreme (programske pakete {count})"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "Odstranitev AUR je preskočena."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Odstranite datoteke, ki jih ni sledil Git iz vseh skladišč?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Vse klonirane skladišča bodo odstranjene (v naslednjem buildu bodo ponovno klonirane)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count} skladišče odstranjeno."
+msgstr[1] "Repozicije {count} so bile odstranjene."
+msgstr[2] "Repozicije {count} so bile odstranjene."
+msgstr[3] "Repozicije {count} so bile odstranjene."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} pričakuje vsaj eno ime paketa programske opreme"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} pričakuje iskanje"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} se v PATH ni našel"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "Odpovedano."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Napaka: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "-Nihče."
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "neznano"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: neplatna konfiguracija ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: zapuščena (zavisnost {dependency} ni končana)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: Odločitev odvisnosti ni uspela ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "neposredne AUR odvisnosti {package}:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(ni odvisnosti od AUR)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR zaporedje za zbiranje odvisnosti za {package}:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: ni mogoče namestiti odvisnosti skladišča ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: zavisnosti skladišča niso bile odpravljene ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(cilj)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "kloniranje {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "posodabljanje {package}"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "Repozitoriji ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: zapoved manjka"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: nepričakovan izhod: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[D/n]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: kompilacija programske opreme ni uspela"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: konstrukcija je prekinjena (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: instalacija ni uspela"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: prekinjena namestitev (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: nameščen"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: pregleda ni bilo mogoče dokončati"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: pregled zavrnjen"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Spremembe od prejšnje različice:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Nadaljujemo z gradnjo?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "Dostop {count} za pregled (odpreten eden za drugim)"
+msgstr[1] "{count} datoteke za pregled (odprta po enem)"
+msgstr[2] "Datoteke {count}, ki jih je treba pregledati (odprete eno za drugim)"
+msgstr[3] "{count} datoteke za pregled (odprte eno za drugim)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(ni sprememb v datoteki za prikaz)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "Ne morem odpreti {file} z \"{editor}\""
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD ni spremenjen od prejšnjega pregleda."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} zahteva Babet >= {required} (odkrita različica: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (glasovi, priljubljenost) (izsledek {count})"
+msgstr[1] "AUR (glasovi, priljubljenost) (izsledki {count})"
+msgstr[2] "AUR (glasovi, priljubljenost) (izsledki {count})"
+msgstr[3] "AUR (glasovi, priljubljenost) (izsledki {count})"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (glasovi, priljubljenost) ({shown} prikazano iz rezultata {total})"
+msgstr[1] "AUR (glasovi, priljubljenost) ({shown} prikazano iz rezultatov {total})"
+msgstr[2] "AUR (glasovi, priljubljenost) ({shown} prikazano iz rezultatov {total})"
+msgstr[3] "AUR (glasovi, priljubljenost) ({shown} prikazano iz rezultatov {total})"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "Za \"{term}\" ni bilo nobenega programskega paketa."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Uradni repozitoriji (izsledek {count})"
+msgstr[1] "Uradne repozitorije (izsledki {count})"
+msgstr[2] "Uradne repozitorije (izsledki {count})"
+msgstr[3] "Uradne repozitorije (izsledki {count})"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Uradne repozitorije ({shown} prikazano iz rezultata {total})"
+msgstr[1] "Uradni repozitoriji ({shown} prikazani iz rezultatov {total})"
+msgstr[2] "Uradne repozitorije ({shown} prikazano iz rezultatov {total})"
+msgstr[3] "Uradni repozitoriji ({shown} prikazani iz rezultatov {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " glasovi: {votes}, priljubljenost: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[namestil]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[instalirana: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(orčev)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "sirote"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(naprej zastarelo)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "posodobljena"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Izčrpanost ({count}):"
+msgstr[1] "Izčrpanost ({count}):"
+msgstr[2] "Izčrpanost ({count}):"
+msgstr[3] "Izčrpanost ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Prekinjena ({count}):"
+msgstr[1] "Prekinjena ({count}):"
+msgstr[2] "Prekinjena ({count}):"
+msgstr[3] "Prekinjena ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "Namestljen programski paket {count}"
+msgstr[1] "nameščeni programski paketi {count}"
+msgstr[2] "Namestljeni programski paketi {count}"
+msgstr[3] "nameščeni programski paketi {count}"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR programski paket posodobljen"
+msgstr[1] "{count} AUR posodobljeni programski paketi"
+msgstr[2] "{count} AUR posodobljeni programski paketi"
+msgstr[3] "{count} AUR posodobljeni programski paketi"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Uporabnik zavrne ({count}):"
+msgstr[1] "Uporabnik zavrne ({count}):"
+msgstr[2] "Uporabnik zavrne ({count}):"
+msgstr[3] "Uporabnik zavrne ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR programski paket preverjanje preskočil za to tekmo"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "programski paket, ki ga upravlja AUR ({count})"
+msgstr[1] "programske pakete, ki jih upravlja AUR ({count})"
+msgstr[2] "programske pakete, ki jih upravlja AUR ({count})"
+msgstr[3] "programske pakete, ki jih upravlja AUR ({count})"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "Programski paket AUR za gledanje ({count})"
+msgstr[1] "Programske pakete AUR za spremljanje ({count})"
+msgstr[2] "Programske pakete AUR za gledanje ({count})"
+msgstr[3] "Programske pakete AUR za spremljanje ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "programski paket, ki ga ne upravlja AUR ({count})"
+msgstr[1] "programske pakete, ki jih ne upravlja AUR ({count})"
+msgstr[2] "programske pakete, ki jih ne upravlja AUR ({count})"
+msgstr[3] "programske pakete, ki jih ne upravlja AUR ({count})"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "Nadaljujte z posodobitvijo?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "Nadaljujte z posodobitvijo?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "posodobitev programske opreme (nove različice) (programski paket {count}):"
+msgstr[1] "Posodobitve programske opreme (nova različica) (paketi programske opreme {count}):"
+msgstr[2] "Posodobitve programske opreme (nova različica) (paketi programske opreme {count}):"
+msgstr[3] "Posodobitve programske opreme (nova različica) (paketi programske opreme {count}):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Nove revizije programskega paketa (programski paket {count}):"
+msgstr[1] "Nova revizija programskega paketa (programske pakete {count}):"
+msgstr[2] "Nova revizija programskega paketa (programske pakete {count}):"
+msgstr[3] "Nova revizija programskega paketa (programski paketi {count}):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Izberite programske pakete AUR za posodobitev"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Številke za posodobitev (npr. 1 3 5, 1-4, ^2 za vse razen 2):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "ni bila mogoče sinhronizirati podatkovnih baz (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Sistem je posodobljen."

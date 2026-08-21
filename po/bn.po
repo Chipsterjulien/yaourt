@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: bn\n"
+"Language-Team: বাংলা\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Yaourt-Yes: হ,হ্যাঁ,y,yes\n"
+"X-Yaourt-No: ন,না,n,no\n"
+"X-Yaourt-Manual: ম,ম্যানুয়াল,m,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — pacman মোড়ক + AUR সহায়ক"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "ব্যবহার:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "কাজগুলো pacman-কে অর্পণ করুন (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "একটি প্যাকেজ ইনস্টল করুন (রিপোজিটরি বা AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "রিপোজিটরি ও AUR-এ অনুসন্ধান করুন"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "রিপোজিটরি ও AUR হালনাগাদ করুন ([M]: AUR প্যাকেজ হাতে বেছে নিন)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "বিল্ড ক্যাশ পরিষ্কার করুন (আংশিক | সম্পূর্ণ)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "AUR বিল্ড ফাইল আনুন (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "এই সহায়তা দেখান"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "সংস্করণ দেখান"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "\"yaourt\" সিস্টেমের ব্যবহারকারী খুঁজে পাওয়া যায়নি।"
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "এটি তৈরি করুন (root হিসাবে):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: AUR-এ পাওয়া যায় না"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC ত্রুটি"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "সফটওয়্যার প্যাকেজ {package} কম্পাইল করুন"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "সফটওয়্যার প্যাকেজ {package} কম্পাইল করুন ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "সফটওয়্যার প্যাকেজ {package} (নতুন ইনস্টলেশন {version}) কম্পাইল করুন"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "সফটওয়্যার প্যাকেজ {package} ({version}) কম্পাইল করুন"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "সফটওয়্যার কম্পাইলিং ব্যর্থ (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD পাওয়া যায়নি"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "সফটওয়্যার প্যাকেজ {path}: {error} মুছে ফেলা সম্ভব হয়নি"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "পুরানো সফটওয়্যার প্যাকেজ {path} মুছে ফেলতে পারিনি: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "{user} ব্যবহারকারী খুঁজে পাওয়া যায়নিঃ {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "সফটওয়্যার বিল্ড ক্যাশে পাওয়া যায়নি ({path}): পরিষ্কার করার কিছু নেই।"
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "{path} পরিষ্কার করতে ব্যর্থ"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR পরিষ্কারের সময় ছুটি।"
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "পরিষ্কারের সফটওয়্যার বিল্ড উত্স ({count} সফটওয়্যার প্যাকেজ)"
+msgstr[1] "পরিষ্কারের সফটওয়্যার বিল্ড উত্স ({count} সফটওয়্যার প্যাকেজ)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count} রিপোজিটরি পরিষ্কার।"
+msgstr[1] "{count} সংগ্রহস্থল পরিষ্কার করা হয়েছে।"
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "সফটওয়্যার বিল্ড ক্যাশে খালিঃ AUR দিকে পরিষ্কার করার কিছু নেই।"
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "সফটওয়্যার বিল্ড ক্যাশে পরীক্ষা করতে পারিনিঃ {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "সফটওয়্যার বিল্ড ক্যাশে তালিকাভুক্ত করতে পারিনিঃ {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman ক্যাশে"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman ক্যাশে (সম্পূর্ণ)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "সব রিপোজিটরি সরিয়ে ফেলার বিষয়টি নিশ্চিত?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "{path}: {error} অপসারণ করতে পারেনি"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "সফটওয়্যার বিল্ড ক্যাশে ({count} সফটওয়্যার প্যাকেজ) সম্পূর্ণ অপসারণ"
+msgstr[1] "সফটওয়্যার বিল্ড ক্যাশে ({count} সফটওয়্যার প্যাকেজ) সম্পূর্ণ অপসারণ"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR অপসারণ বাদ দেওয়া হয়েছে।"
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "প্রতিটি রিপোজিটরি থেকে Git দ্বারা ট্র্যাক করা ফাইল অপসারণ?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "ক্লোন করা সমস্ত রিপোজিটরি সরানো হবে (তারা পরবর্তী বিল্ডে আবার ক্লোন করা হবে) ।"
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count} সংগ্রহস্থল সরানো হয়েছে।"
+msgstr[1] "{count} সংগ্রহস্থল সরানো হয়েছে।"
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} কমপক্ষে একটি সফটওয়্যার প্যাকেজ নাম আশা করে"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} একটি অনুসন্ধান শব্দ আশা করে"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} PATH-এ পাওয়া যায়নি"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "বাতিল করা হয়েছে।"
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "ত্রুটিঃ {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(কোনও)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "অজানা"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: অবৈধ কনফিগারেশন ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: পরিত্যক্ত ({dependency} নির্ভরতা সম্পূর্ণ হয়নি)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: নির্ভরতা সমাধান ব্যর্থ ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "AUR এর সরাসরি {package} নির্ভরতাঃ"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(AUR নির্ভরতা নেই)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR নির্ভরতা সংকলন আদেশ {package} জন্যঃ"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: রিপোজিটরি নির্ভরতা ইনস্টল করতে ব্যর্থ ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: রিপোজিটরি নির্ভরতা সমাধান করতে ব্যর্থ ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(টার্গেট)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "ক্লোনিং {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "{package} আপডেট করা হয়েছে"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "সংগ্রহস্থল ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: missing command"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: অপ্রত্যাশিত আউটপুটঃ {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[হ/ন]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: সফটওয়্যার কম্পাইলিং ব্যর্থ"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: বিল্ড বিরতি (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: ইনস্টলেশন ব্যর্থ"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: ইনস্টলেশন বিরতি (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: ইনস্টল করা হয়েছে"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: পর্যালোচনা সম্পন্ন করা যায়নি"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: পর্যালোচনা প্রত্যাখ্যান"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "পূর্ববর্তী সংস্করণ থেকে পরিবর্তনঃ"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "নির্মাণ চালিয়ে যাবেন?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count} ফাইল যা পর্যালোচনা করা হবে (এক-এক করে খোলা)"
+msgstr[1] "{count} ফাইলগুলি পর্যালোচনা করা হবে (একটি-একটি খোলা)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(ফাইলের কোন পরিবর্তন প্রদর্শিত হবে না)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "\"{editor}\" দিয়ে {file} খুলতে পারিনি"
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD পূর্ববর্তী পর্যালোচনার পর থেকে অপরিবর্তিত।"
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name} প্রয়োজন Babet >= {required} (নিরীক্ষিত সংস্করণঃ {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (ভোট, জনপ্রিয়তা) ({count} ফলাফল)"
+msgstr[1] "AUR (ভোট, জনপ্রিয়তা) ({count} ফলাফল)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (ভোট, জনপ্রিয়তা) ({shown} ফলাফল থেকে দেখানো হয়েছে) {total}"
+msgstr[1] "AUR (ভোট, জনপ্রিয়তা) ({shown} {total} ফলাফল থেকে দেখানো হয়েছে)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "\"{term}\" এর জন্য কোন সফটওয়্যার প্যাকেজ পাওয়া যায়নি।"
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "অফিসিয়াল রিপোজিটরি ({count} ফলাফল)"
+msgstr[1] "অফিসিয়াল রিপোজিটরি ({count} ফলাফল)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "অফিসিয়াল রিপোজিটরি ({shown} {total} ফলাফল থেকে দেখানো হয়েছে)"
+msgstr[1] "অফিসিয়াল রিপোজিটরি ({shown} {total} ফলাফল থেকে দেখানো হয়েছে)"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " ভোটঃ {votes}, জনপ্রিয়তাঃ {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[ইনস্টল করা]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[ইনস্টল করাঃ {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(অত্যাচারিত)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "অনাথ"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(অবধি)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "আপ টু ডেট"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "ব্যর্থতা ({count}):"
+msgstr[1] "ব্যর্থতা ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "বিরতি ({count}):"
+msgstr[1] "বিরতি ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "{count} সফটওয়্যার প্যাকেজ ইনস্টল করা হয়েছে"
+msgstr[1] "{count} সফটওয়্যার প্যাকেজ ইনস্টল করা হয়েছে"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR সফটওয়্যার প্যাকেজ আপডেট"
+msgstr[1] "{count} AUR সফটওয়্যার প্যাকেজ আপডেট করা হয়েছে"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "ব্যবহারকারী অস্বীকার করেছেন ({count}):"
+msgstr[1] "ব্যবহারকারী অস্বীকার করেছেন ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR সফটওয়্যার প্যাকেজ চেক এই রান জন্য skipped"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "AUR ({count}) দ্বারা পরিচালিত সফ্টওয়্যার প্যাকেজ"
+msgstr[1] "AUR ({count}) দ্বারা পরিচালিত সফ্টওয়্যার প্যাকেজ"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR সফটওয়্যার প্যাকেজ ({count})"
+msgstr[1] "AUR সফটওয়্যার প্যাকেজগুলি দেখার জন্য ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "AUR ({count}) দ্বারা পরিচালিত নয় এমন সফ্টওয়্যার প্যাকেজ"
+msgstr[1] "AUR ({count}) দ্বারা পরিচালিত নয় এমন সফটওয়্যার প্যাকেজ"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "আপডেট চালিয়ে যান?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "আপডেট চালিয়ে যান?"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "সফটওয়্যার আপডেট (নতুন সংস্করণ) ({count} সফটওয়্যার প্যাকেজ):"
+msgstr[1] "সফটওয়্যার আপডেট (নতুন সংস্করণ) ({count} সফটওয়্যার প্যাকেজ):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "নতুন সফটওয়্যার প্যাকেজ সংশোধন ({count} সফটওয়্যার প্যাকেজ):"
+msgstr[1] "নতুন সফটওয়্যার প্যাকেজ সংশোধন ({count} সফটওয়্যার প্যাকেজ):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "আপডেট করার জন্য AUR সফটওয়্যার প্যাকেজ নির্বাচন করুন"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "আপডেট করার জন্য নম্বর (উদাহরণস্বরূপ, 1 3 5, 1-4, ^2 - 2 ব্যতীত)"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "ডাটাবেস সিঙ্ক্রোনাইজ করতে ব্যর্থ হয়েছে (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "সিস্টেম আপ টু ডেট।"

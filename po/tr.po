@@ -1,0 +1,478 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yaourt 0.5.0\n"
+"Language: tr\n"
+"Language-Team: Türkçe\n"
+"PO-Revision-Date: 2026-08-21\n"
+"Last-Translator: machine-assisted initial translation; native review requested\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Yaourt-Yes: e,evet,y,yes\n"
+"X-Yaourt-No: h,hayır,hayir,n,no\n"
+"X-Yaourt-Manual: m,manuel,manual\n"
+"X-Yaourt-Aliases: \n"
+"X-Translation-Status: machine-assisted; native review requested\n"
+
+msgctxt "help.title"
+msgid "{name} {version} — pacman wrapper + AUR helper"
+msgstr "{name} {version} — pacman arayüzü + AUR yardımcısı"
+
+msgctxt "help.usage"
+msgid "USAGE:"
+msgstr "KULLANIM:"
+
+msgctxt "help.delegate"
+msgid "delegate to pacman (-Q, -R, -Sy…)"
+msgstr "işlemleri pacman’e devret (-Q, -R, -Sy…)"
+
+msgctxt "help.install"
+msgid "install a package (repositories or AUR)"
+msgstr "bir paket kur (depolar veya AUR)"
+
+msgctxt "help.search"
+msgid "search repositories and AUR"
+msgstr "depolarda ve AUR’da ara"
+
+msgctxt "help.update"
+msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr "depoları ve AUR’u güncelle ([M]: AUR paketlerini elle seç)"
+
+msgctxt "help.clean"
+msgid "clean the build cache (soft | complete)"
+msgstr "derleme önbelleğini temizle (kısmi | tam)"
+
+msgctxt "help.get_build_files"
+msgid "retrieve AUR build files (git clone)"
+msgstr "AUR derleme dosyalarını al (git clone)"
+
+msgctxt "help.show_help"
+msgid "show this help"
+msgstr "bu yardımı göster"
+
+msgctxt "help.show_version"
+msgid "show the version"
+msgstr "sürümü göster"
+
+msgctxt "app.system_user_missing"
+msgid "The “yaourt” system user could not be found."
+msgstr "\"yaourt\" sistem kullanıcısı bulunamadı."
+
+msgctxt "app.system_user_create"
+msgid "Create it (as root):"
+msgstr "Yarat (root olarak):"
+
+msgctxt "aur.package_not_found"
+msgid "{package}: not found in the AUR"
+msgstr "{package}: AUR'de bulunmuyor"
+
+msgctxt "aur.rpc_error"
+msgid "RPC error"
+msgstr "RPC hatası"
+
+msgctxt "build.heading"
+msgid "Build package {package}"
+msgstr "Yazılım paketi {package} oluştur"
+
+msgctxt "build.heading_update"
+msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr "Yazılım paketi {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_new"
+msgid "Build package {package} (new installation {version})"
+msgstr "Yazılım paketi {package} (yeni kurulum {version})"
+
+msgctxt "build.heading_installed"
+msgid "Build package {package} ({version})"
+msgstr "Yazılım paketi {package} ({version})"
+
+msgctxt "build.makepkg_failed"
+msgid "build failed (makepkg)"
+msgstr "Yazılım oluşturma başarısız oldu (makepkg)"
+
+msgctxt "build.pkgbuild_missing"
+msgid "{package}: PKGBUILD not found"
+msgstr "{package}: PKGBUILD bulunamadı"
+
+msgctxt "build.remove_package_failed"
+msgid "could not remove package {path}: {error}"
+msgstr "Yazılım paketi {path}: {error} kaldırılamadı"
+
+msgctxt "build.remove_stale_failed"
+msgid "could not remove stale package {path}: {error}"
+msgstr "{path}: {error}"
+
+msgctxt "build.user_missing"
+msgid "The {user} user could not be found: {error}"
+msgstr "{user} kullanıcısı bulunamadı: {error}"
+
+msgctxt "cache.absent"
+msgid "Build cache not found ({path}): nothing to clean."
+msgstr "Yazılım yazılımı oluşturma önbelleği bulunamadı ({path}): temizlenecek bir şey yok."
+
+msgctxt "cache.clean_failed"
+msgid "failed to clean {path}"
+msgstr "{path} temizlenemedi"
+
+msgctxt "cache.clean_skipped"
+msgid "AUR cleanup skipped."
+msgstr "AUR temizliği atladı."
+
+msgctxt "cache.clean_sources"
+msgid "Cleaning build sources ({count} package)"
+msgid_plural "Cleaning build sources ({count} packages)"
+msgstr[0] "Temizleme yazılımının oluşturma kaynakları ({count} yazılım paketi)"
+msgstr[1] "Temizleme yazılımının oluşturma kaynakları ({count} yazılım paketleri)"
+
+msgctxt "cache.cleaned"
+msgid "{count} repository cleaned."
+msgid_plural "{count} repositories cleaned."
+msgstr[0] "{count} deposu temizlendi."
+msgstr[1] "{count} depoları temizlendi."
+
+msgctxt "cache.empty"
+msgid "Build cache is empty: nothing to clean on the AUR side."
+msgstr "Yazılım yazılımı oluşturma önbelleği boş: AUR tarafında temizlenecek bir şey yok."
+
+msgctxt "cache.inspect_failed"
+msgid "could not inspect the build cache: {error}"
+msgstr "Yazılım oluşturma önbelleğini inceleyemedi: {error}"
+
+msgctxt "cache.list_failed"
+msgid "could not list the build cache: {error}"
+msgstr "Yazılım oluşturma önbelleğini listeleyemedi: {error}"
+
+msgctxt "cache.pacman"
+msgid "pacman cache"
+msgstr "pacman önbelleği"
+
+msgctxt "cache.pacman_full"
+msgid "pacman cache (complete)"
+msgstr "pacman önbelleği (tam)"
+
+msgctxt "cache.remove_confirm"
+msgid "Confirm removal of all repositories?"
+msgstr "Tüm depoların kaldırıldığını onaylıyor musun?"
+
+msgctxt "cache.remove_failed"
+msgid "could not remove {path}: {error}"
+msgstr "{path}: {error} kaldırılamadı"
+
+msgctxt "cache.remove_full"
+msgid "COMPLETE removal of the build cache ({count} package)"
+msgid_plural "COMPLETE removal of the build cache ({count} packages)"
+msgstr[0] "Yazılım oluşturma önbelleğinin ({count} yazılım paketi) Tamamen kaldırılması"
+msgstr[1] "Yazılım oluşturma önbellekinin ({count} yazılım paketleri) Tamamen kaldırılması"
+
+msgctxt "cache.remove_skipped"
+msgid "AUR removal skipped."
+msgstr "AUR çıkarımı atlatıldı."
+
+msgctxt "cache.remove_untracked"
+msgid "Remove files not tracked by Git from every repository?"
+msgstr "Git tarafından izlenmeyen dosyaları her depodan çıkarmak mı?"
+
+msgctxt "cache.remove_warning"
+msgid "All cloned repositories will be removed (they will be cloned again on the next build)."
+msgstr "Tüm klonlanan deposu kaldırılacak (bir sonraki yapıtaşmada tekrar klonlanacaklar)."
+
+msgctxt "cache.removed"
+msgid "{count} repository removed."
+msgid_plural "{count} repositories removed."
+msgstr[0] "{count} deposu kaldırıldı."
+msgstr[1] "{count} deposu kaldırıldı."
+
+msgctxt "cli.package_required"
+msgid "{option} expects at least one package name"
+msgstr "{option} en az bir yazılım paketi adını bekliyor"
+
+msgctxt "cli.search_term_required"
+msgid "{option} expects a search term"
+msgstr "{option} bir arama terimi bekliyor"
+
+msgctxt "command.not_found"
+msgid "{command} was not found in PATH"
+msgstr "{command} PATH'de bulunamadı"
+
+msgctxt "common.cancelled"
+msgid "Cancelled."
+msgstr "İptal edildi."
+
+msgctxt "common.error"
+msgid "Error: {error}"
+msgstr "Hata: {error}"
+
+msgctxt "common.named_error"
+msgid "{name}: {error}"
+msgstr "{name}: {error}"
+
+msgctxt "common.none"
+msgid "(none)"
+msgstr "(Hiçbiri)"
+
+msgctxt "common.unknown"
+msgid "unknown"
+msgstr "Bilinmeyen"
+
+msgctxt "config.invalid"
+msgid "yaourt: invalid config ({path}): {error}"
+msgstr "yaourt: geçersiz yapılandırma ({path}): {error}"
+
+msgctxt "deps.abandoned"
+msgid "{package}: abandoned (dependency {dependency} did not complete)"
+msgstr "{package}: terk edilmiş ({dependency} bağımlılığı tamamlanmadı)"
+
+msgctxt "deps.aur_resolution_failed"
+msgid "{package}: dependency resolution failed ({error})"
+msgstr "{package}: bağımlılık çözümü başarısız oldu ({error})"
+
+msgctxt "deps.direct_heading"
+msgid "Direct AUR dependencies of {package}:"
+msgstr "AUR'in doğrudan {package} bağımlılıkları:"
+
+msgctxt "deps.none"
+msgid "(no AUR dependency)"
+msgstr "(AUR bağımlılığı yoktur)"
+
+msgctxt "deps.order_heading"
+msgid "AUR dependency build order for {package}:"
+msgstr "AUR için {package} bağımlılık toplama emri:"
+
+msgctxt "deps.repo_install_failed"
+msgid "{package}: failed to install repository dependencies ({dependencies})"
+msgstr "{package}: Depozito bağımlılıklarını yükleme başarısız oldu ({dependencies})"
+
+msgctxt "deps.repo_resolution_failed"
+msgid "{package}: failed to resolve repository dependencies ({error})"
+msgstr "{package}: Depo bağımlılıklarını çözemedi ({error})"
+
+msgctxt "deps.target"
+msgid "(target)"
+msgstr "(hedef)"
+
+msgctxt "fetch.cloning"
+msgid "cloning {package}"
+msgstr "klonlama {package}"
+
+msgctxt "fetch.updating"
+msgid "updating {package}"
+msgstr "{package}'yi güncelleme"
+
+msgctxt "install.repositories"
+msgid "repositories ({packages})"
+msgstr "Depolar ({packages})"
+
+msgctxt "process.command_missing"
+msgid "{function_name}: missing command"
+msgstr "{function_name}: eksik komut"
+
+msgctxt "process.unexpected_output"
+msgid "{command}: unexpected output: {output}"
+msgstr "{command}: Beklenmedik çıkış: {output}"
+
+msgctxt "prompt.yes_no"
+msgid "[Y/n]"
+msgstr "[E/h]"
+
+msgctxt "result.build_failed"
+msgid "{package}: build failed"
+msgstr "{package}: Yazılım derlemesi başarısız oldu"
+
+msgctxt "result.build_interrupted"
+msgid "{package}: build interrupted (Ctrl+C)"
+msgstr "{package}: yapı kesildi (Ctrl+C)"
+
+msgctxt "result.install_failed"
+msgid "{package}: installation failed"
+msgstr "{package}: kurulum başarısız oldu"
+
+msgctxt "result.install_interrupted"
+msgid "{package}: installation interrupted (Ctrl+C)"
+msgstr "{package}: kurulum kesildi (Ctrl+C)"
+
+msgctxt "result.installed"
+msgid "{package}: installed"
+msgstr "{package}: kurulmuş"
+
+msgctxt "result.review_failed"
+msgid "{package}: review could not be completed"
+msgstr "{package}: inceleme tamamlanamadı"
+
+msgctxt "result.review_refused"
+msgid "{package}: review refused"
+msgstr "{package}: inceleme reddedildi"
+
+msgctxt "review.changes"
+msgid "Changes since the previous version:"
+msgstr "Önceki sürümden bu yana yapılan değişiklikler:"
+
+msgctxt "review.continue"
+msgid "Continue building? [Y/n]"
+msgstr "Yapmayı devam ettirmek mi?"
+
+msgctxt "review.files"
+msgid "{count} file to review (opened one by one)"
+msgid_plural "{count} files to review (opened one by one)"
+msgstr[0] "{count} dosyası gözden geçirilecek (birer birer açılmıştır)"
+msgstr[1] "{count} dosyaları gözden geçirilecek (birbir açılır)"
+
+msgctxt "review.no_changes"
+msgid "(no file changes to display)"
+msgstr "(dosya değişiklikleri gösterilmeyecek)"
+
+msgctxt "review.open_failed"
+msgid "Could not open {file} with ‘{editor}’"
+msgstr "{file}'i \"{editor}\" ile açamadım"
+
+msgctxt "review.unchanged"
+msgid "PKGBUILD unchanged since the previous review."
+msgstr "PKGBUILD, önceki incelemeden bu yana değişmedi."
+
+msgctxt "runtime.unsupported"
+msgid "{name} requires Babet >= {required} (detected version: {current})"
+msgstr "{name}, Babet >= {required}'i gerektirir (varsayılan sürüm: {current})"
+
+msgctxt "search.aur"
+msgid "AUR (votes, popularity) ({count} result)"
+msgid_plural "AUR (votes, popularity) ({count} results)"
+msgstr[0] "AUR (sayılar, popülerlik) ({count} sonucu)"
+msgstr[1] "AUR (sayfalar, popülerlik) ({count} sonuçları)"
+
+msgctxt "search.aur_limited"
+msgid "AUR (votes, popularity) ({shown} shown out of {total} result)"
+msgid_plural "AUR (votes, popularity) ({shown} shown out of {total} results)"
+msgstr[0] "AUR (sayfalar, popülerlik) ({shown} {total} sonuçlarından gösterilmiştir)"
+msgstr[1] "AUR (sayfalar, popülerlik) ({shown} {total} sonuçlarından gösterilmiştir)"
+
+msgctxt "search.none"
+msgid "No package found for “{term}”."
+msgstr "\"{term}\" için bir yazılım paketi bulunamadı."
+
+msgctxt "search.repositories"
+msgid "Official repositories ({count} result)"
+msgid_plural "Official repositories ({count} results)"
+msgstr[0] "Resmi depolar ({count} sonucu)"
+msgstr[1] "Resmi depolar ({count} sonuçları)"
+
+msgctxt "search.repositories_limited"
+msgid "Official repositories ({shown} shown out of {total} result)"
+msgid_plural "Official repositories ({shown} shown out of {total} results)"
+msgstr[0] "Resmi depolar ({shown} sonucuyla gösterilen {total})"
+msgstr[1] "Resmi depolar ({shown} sonuçlarından gösterilen {total})"
+
+msgctxt "search.score"
+msgid " votes: {votes}, popularity: {popularity} "
+msgstr " oylar: {votes}, popülerlik: {popularity} "
+
+msgctxt "status.installed"
+msgid "[installed]"
+msgstr "[Kurulmuş]"
+
+msgctxt "status.installed_version"
+msgid "[installed: {version}]"
+msgstr "[Sınıf: {version}]"
+
+msgctxt "status.orphan"
+msgid "(orphan)"
+msgstr "(yetim)"
+
+msgctxt "status.orphan_plain"
+msgid "Orphan"
+msgstr "Yetim"
+
+msgctxt "status.out_of_date"
+msgid "(out of date)"
+msgstr "(Geçmiş)"
+
+msgctxt "status.up_to_date"
+msgid "up to date"
+msgstr "güncel"
+
+msgctxt "summary.failed"
+msgid "Failure ({count}):"
+msgid_plural "Failures ({count}):"
+msgstr[0] "Başarısızlık ({count}):"
+msgstr[1] "Başarısızlık ({count}):"
+
+msgctxt "summary.interrupted"
+msgid "Interrupted ({count}):"
+msgid_plural "Interrupted ({count}):"
+msgstr[0] "Kesinleştirilmiş ({count}):"
+msgstr[1] "Kesinleştirilmiş ({count}):"
+
+msgctxt "summary.ok.installed"
+msgid "{count} package installed"
+msgid_plural "{count} packages installed"
+msgstr[0] "{count} yazılım paketi yüklü"
+msgstr[1] "{count} yazılım paketleri yüklü"
+
+msgctxt "summary.ok.updated"
+msgid "{count} AUR package updated"
+msgid_plural "{count} AUR packages updated"
+msgstr[0] "{count} AUR yazılım paketi güncellenmiştir"
+msgstr[1] "{count} AUR yazılım paketleri güncellenmiştir"
+
+msgctxt "summary.refused"
+msgid "Refused by the user ({count}):"
+msgid_plural "Refused by the user ({count}):"
+msgstr[0] "Kullanıcı tarafından reddedilen ({count}):"
+msgstr[1] "Kullanıcı tarafından reddedilen ({count}):"
+
+msgctxt "update.aur_check_skipped"
+msgid "{error} — AUR package check skipped for this run"
+msgstr "{error} - AUR yazılım paket kontrolü bu çalışmaya atladı"
+
+msgctxt "update.aur_managed"
+msgid "Package managed by the AUR ({count})"
+msgid_plural "Packages managed by the AUR ({count})"
+msgstr[0] "AUR ({count}) tarafından yönetilen yazılım paketi"
+msgstr[1] "AUR ({count}) tarafından yönetilen yazılım paketleri"
+
+msgctxt "update.aur_notable"
+msgid "AUR package to watch ({count})"
+msgid_plural "AUR packages to watch ({count})"
+msgstr[0] "AUR izlemek için yazılım paketi ({count})"
+msgstr[1] "AUR izlemek için yazılım paketleri ({count})"
+
+msgctxt "update.aur_unmanaged"
+msgid "Package not managed by the AUR ({count})"
+msgid_plural "Packages not managed by the AUR ({count})"
+msgstr[0] "AUR ({count}) tarafından yönetilmeyen yazılım paketi"
+msgstr[1] "AUR ({count}) tarafından yönetilmeyen yazılım paketleri"
+
+msgctxt "update.continue"
+msgid "Continue the update? [Y/n]"
+msgstr "[E/h]'i devam ettirmek ister misin?"
+
+msgctxt "update.continue_manual"
+msgid "Continue the update? [Y/n/M]"
+msgstr "[E/h/M]"
+
+msgctxt "update.new_versions"
+msgid "Software update (new version) ({count} package):"
+msgid_plural "Software updates (new version) ({count} packages):"
+msgstr[0] "Yazılım güncellemesi (yeni sürüm) ({count} yazılım paketi):"
+msgstr[1] "Yazılım güncellemeleri (yeni sürüm) ({count} yazılım paketleri):"
+
+msgctxt "update.revisions"
+msgid "New package revision ({count} package):"
+msgid_plural "New package revisions ({count} packages):"
+msgstr[0] "Yeni yazılım paketi düzenlenmesi ({count} yazılım paketi):"
+msgstr[1] "Yeni yazılım paketleri ({count} yazılım paketleri):"
+
+msgctxt "update.select_aur"
+msgid "Select the AUR packages to update"
+msgstr "Güncelleyecek AUR yazılım paketlerini seçin"
+
+msgctxt "update.selection_prompt"
+msgid "Numbers to update (e.g. 1 3 5, 1-4, ^2 for all except 2):"
+msgstr "Güncelleme numaraları (örneğin 1 3 5, 1-4, ^2 2 hariç tüm için):"
+
+msgctxt "update.sync_failed"
+msgid "failed to synchronize databases (pacman -Sy)"
+msgstr "Veritabanları senkronize edemedi (pacman -Sy)"
+
+msgctxt "update.up_to_date"
+msgid "The system is up to date."
+msgstr "Sistem güncel."
