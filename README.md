@@ -1,159 +1,189 @@
 # yaourt
 
-Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
-l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
+**English** | [Français](README.fr.md)
 
-> **Statut : jeune mais utilisable au quotidien (`0.4.2`).**
-> La recherche, l'installation (dépôts et AUR avec résolution récursive des
-> dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
-> Le projet reste en évolution.
+A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
+[AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
+in Lua.
 
-## À propos
+> **Status: young, but suitable for daily use (`0.4.2`).**
+> Search, installation (official repositories and AUR with recursive dependency
+> resolution), unified upgrades, and cache cleanup are functional. The project
+> is still evolving.
 
-Ce projet est une **réécriture en Lua** du yaourt original
-([archlinuxfr/yaourt](https://github.com/archlinuxfr/yaourt)), aujourd'hui non
-maintenu. L'objectif est d'en reprendre l'esprit — un assistant pacman/AUR
-simple et lisible — sur une base de code moderne, en suivant une approche
-« Strangler Fig Pattern » (figuier étrangleur) : tout ce qui n'est pas encore
-porté nativement est délégué à `pacman`, puis remplacé progressivement.
+## About
 
-Il s'appuie sur [Babet](https://github.com/Chipsterjulien/babet) **2.22.2 ou
-plus récent**,
-un binaire Lua 5.5 autonome, et se distribue sous forme d'un exécutable unique.
-Au démarrage comme pendant la construction, yaourt vérifie la version du
-runtime et refuse une version antérieure avec un diagnostic explicite.
-Cette version minimale inclut notamment la lecture fiable des réponses HTTP
-`chunked` de l'AUR et le transfert/restauration du terminal pour les commandes
-interactives lancées avec `babet.spawn`, comme `pacman` et `makepkg`.
+This project is a **Lua rewrite** of the original yaourt
+([archlinuxfr/yaourt](https://github.com/archlinuxfr/yaourt)), which is no longer
+maintained. Its goal is to preserve the spirit of the original project—a simple,
+readable pacman/AUR helper—on top of a modern codebase. It follows a Strangler
+Fig approach: features that have not yet been ported natively are delegated to
+`pacman`, then progressively replaced.
 
-## Fonctionnalités
+yaourt relies on [Babet](https://github.com/Chipsterjulien/babet) **2.22.2 or
+newer**, a self-contained Lua 5.5 runtime, and is distributed as a single
+executable. Both at startup and during builds, yaourt checks the runtime version
+and rejects older versions with an explicit diagnostic.
 
-- Délégation transparente à `pacman` pour les opérations standard (`-Q`, `-R`,
+This minimum version notably provides reliable handling of AUR HTTP `chunked`
+responses and correct terminal transfer/restoration for interactive commands
+started with `babet.spawn`, such as `pacman` and `makepkg`.
+
+## Features
+
+- Transparent delegation to `pacman` for standard operations (`-Q`, `-R`,
   `-Sy`, …).
-- **`-Ss <terme>`** : recherche unifiée dépôts officiels + AUR, triée par votes,
-  avec un nombre de résultats par section limité et configurable.
-- **`-S <paquet>…`** : installation depuis les dépôts ou l'AUR, avec
-  **résolution récursive des dépendances AUR**, installation automatique des
-  dépendances des dépôts, et prise en charge des paquets virtuels (`provides`)
-  et des contraintes de version.
-- **`-Syu` / `-Su`** : mise à jour unifiée (dépôts + AUR), avec détection des
-  révisions, des orphelins et des paquets périmés. L'option `[M]` permet de
-  choisir à la carte les paquets AUR à mettre à jour : inclusion (`1 3 5`,
-  `1-4`) et exclusion (`^4` pour tout sauf le 4).
-- **`-Sc` / `-Scc`** : nettoyage du cache de build (doux : sources et artefacts ;
-  complet : tous les dépôts clonés), en complément du cache pacman.
-- **`-G <paquet>…`** : récupération des fichiers de build AUR (clone/màj git).
-- **Revue avant compilation** : au premier clone, tous les fichiers versionnés
-  du dépôt (PKGBUILD, `.install`, patches, scripts…) sont présentés un par un
-  dans l'éditeur ; lors d'une mise à jour, c'est le **diff** des modifications
-  depuis la version précédente qui est affiché. Rien n'est construit sans
-  validation.
-- Les dépendances AUR tirées automatiquement sont marquées comme dépendances
-  (`--asdeps`) : un `pacman -Rcs` de la cible les retire si elles deviennent
-  orphelines.
-- La compilation se fait toujours sous un utilisateur non privilégié dédié
-  (`yaourt`), y compris lorsque le programme est lancé en root — `makepkg`
-  n'étant jamais exécuté en root.
+- **`-Ss <term>`**: unified search across official repositories and the AUR,
+  sorted by votes, with a configurable result limit for each section.
+- **`-S <package>…`**: installation from official repositories or the AUR,
+  including **recursive AUR dependency resolution**, automatic installation of
+  repository dependencies, virtual package (`provides`) support, and version
+  constraints.
+- **`-Syu` / `-Su`**: unified upgrades for official repositories and the AUR,
+  with revision, orphan, and out-of-date detection. The `[M]` option provides
+  manual AUR package selection, with inclusion (`1 3 5`, `1-4`) and exclusion
+  (`^4` for everything except item 4).
+- **`-Sc` / `-Scc`**: build-cache cleanup in addition to pacman's cache. Soft
+  cleanup removes sources and artifacts; full cleanup removes every cloned
+  repository.
+- **`-G <package>…`**: retrieve AUR build files (Git clone/update).
+- **Pre-build review**: on the first clone, every version-controlled file in
+  the repository (`PKGBUILD`, `.install` files, patches, scripts, etc.) is shown
+  sequentially in the configured editor. On updates, yaourt displays the
+  complete diff since the previous revision. Nothing is built without user
+  confirmation.
+- Automatically pulled AUR dependencies are marked with `--asdeps`, allowing
+  `pacman -Rcs` on the requested package to remove them if they become orphaned.
+- AUR packages are always built as a dedicated, unprivileged `yaourt` user,
+  even when the program itself is started as root. `makepkg` is never run as
+  root.
 
-## Prérequis
+### AUR file security review
 
-- [Arch Linux](https://archlinux.org/) (ou dérivé compatible `pacman`).
-- `pacman`, `git`, `base-devel` (pour `makepkg`).
-- `package-query` (recherche AUR).
-- `sudo` (opérations pacman lorsqu'il n'est pas lancé en root).
+Before each AUR build, yaourt adapts the review to the state of its build cache:
+
+1. **First clone in yaourt's cache:** there is no previous revision from which
+   to produce a diff. Every version-controlled file is therefore opened **one
+   at a time** in the configured editor: `PKGBUILD`, `.install` files, patches,
+   local scripts, and so on. The files are presented for inspection and do not
+   need to be modified.
+2. **Repository already cached and updated:** yaourt displays the complete diff
+   between the old and new commits for every tracked file.
+3. **Unchanged repository:** no new review is required and the build can proceed
+   directly.
+
+“First clone” refers to yaourt's cache, not to whether the package is already
+installed. An installed package may therefore trigger a full review if it was
+installed using another AUR helper, if yaourt now uses a different cache
+location, or if the cached clone was removed. In particular, `-Scc` deletes all
+cached repositories, so the next build of each package is treated as a first
+clone again.
+
+The review intentionally covers every tracked file: an `.install` file can run
+commands as root, while a patch or local script can alter the sources being
+built. After the file presentation or diff, yaourt always asks for confirmation
+before starting the build.
+
+## Requirements
+
+- [Arch Linux](https://archlinux.org/) or a compatible pacman-based derivative.
+- `pacman`, `git`, and `base-devel` (for `makepkg`).
+- `package-query` (AUR search).
+- `sudo` (for pacman operations when yaourt is not started as root).
 
 ## Installation
 
-### Binaire précompilé (recommandé)
+### Prebuilt binary (recommended)
 
-Téléchargez le binaire de votre architecture depuis la
-[page des releases](https://github.com/Chipsterjulien/yaourt/releases),
-rendez-le exécutable et installez-le :
+Download the binary for your architecture from the
+[releases page](https://github.com/Chipsterjulien/yaourt/releases), make it
+executable, and install it:
 
 ```sh
 chmod +x yaourt-0.4.2-x86_64
 sudo install -Dm755 yaourt-0.4.2-x86_64 /usr/bin/yaourt
 ```
 
-Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
-(runtime Babet embarqué) ; vous pouvez vérifier leur intégrité avec les
-fichiers `.sha256` joints.
+Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
+and embed the Babet runtime. Their integrity can be checked with the attached
+`.sha256` files.
 
-#### Utilisateur de build
+#### Build user
 
-yaourt compile les paquets AUR sous un utilisateur système dédié `yaourt`
-(makepkg n'est jamais exécuté en root). **Lors d'une installation par le
-paquet, cet utilisateur et son répertoire de cache sont créés automatiquement**
-(via `sysusers.d` / `tmpfiles.d`), sans intervention.
+yaourt builds AUR packages as a dedicated system user named `yaourt` (`makepkg`
+is never run as root). When yaourt is installed as a package, this user and its
+cache directory are created automatically through `sysusers.d` and
+`tmpfiles.d`.
 
-Pour une installation hors paquet (binaire précompilé déposé à la main),
-créez-le vous-même :
+For a manual installation of a prebuilt binary, create the user yourself:
 
 ```sh
 sudo useradd --system --home-dir /var/cache/yaourt --create-home \
   --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt
 ```
 
-### En mode développement
+### Development mode
 
-Avec un binaire Babet 2.22.2 (minimum) placé dans `bin/` :
+With a Babet 2.22.2 (or newer) binary placed in `bin/`:
 
 ```sh
-./bin/babet . <opération>
+./bin/babet . <operation>
 ```
 
-Le script `build.sh` accepte aussi un chemin explicite :
+`build.sh` also accepts an explicit path:
 
 ```sh
-BABET=/chemin/vers/babet-2.22.2-linux-x86_64 ./build.sh
+BABET=/path/to/babet-2.22.2-linux-x86_64 ./build.sh
 ```
 
 ## Tests
 
-La suite hors ligne vérifie les helpers de processus et de fichiers avec le
-vrai runtime Babet, exerce le client AUR sur un serveur HTTP local avec des
-réponses `chunked`, teste la chaîne interactive parent/enfant sous un véritable
-pseudo-terminal, puis contrôle les modes dossier et embarqué et construit le
-binaire final. Les tests d'intégration utilisent uniquement la bibliothèque
-standard de Python 3 :
+The offline suite exercises process and filesystem helpers against the real
+Babet runtime, tests the AUR client against a local HTTP server using `chunked`
+responses, validates the interactive parent/child chain under a real
+pseudo-terminal, checks both directory and embedded modes, and builds the final
+executable. The integration tests use only the Python 3 standard library:
 
 ```sh
-BABET=/chemin/vers/babet-2.22.2-linux-x86_64 ./run_tests.sh
+BABET=/path/to/babet-2.22.2-linux-x86_64 ./run_tests.sh
 ```
 
-Un contrôle facultatif du RPC AUR peut être ajouté :
+An optional live AUR RPC check can be enabled with:
 
 ```sh
 YAOURT_NETWORK_TESTS=1 \
-  BABET=/chemin/vers/babet-2.22.2-linux-x86_64 \
+  BABET=/path/to/babet-2.22.2-linux-x86_64 \
   ./run_tests.sh
 ```
 
-Les opérations dépendant d'un système Arch réel (`pacman`, `makepkg`, compte
-de build `yaourt`) restent à valider sur une machine Arch Linux.
+Unified upgrades and interactive AUR build paths have also been validated
+manually on Arch Linux. Packaged installation through `sysusers.d` and
+`tmpfiles.d` remains tracked in [TODO](TODO.md).
 
 ## Configuration
 
-Une configuration est chargée depuis `~/.config/yaourt/config.toml`
-(voir [`config.example.toml`](config.example.toml) pour les options
-disponibles). Lors d'un `-Syu`, `list_aur = "notable"` affiche par défaut les
-paquets orphelins, périmés ou non gérés par l'AUR. La valeur `"all"` affiche la
-liste complète et `false` masque le récapitulatif ; l'ancienne valeur `true`
-reste acceptée comme alias de `"all"`. L'option `search_limit` règle le nombre
-de résultats de recherche.
-En développement, un fichier `cfg/config.toml` présent dans le dossier courant
-est détecté automatiquement.
+Configuration is loaded from `~/.config/yaourt/config.toml`. See
+[`config.example.toml`](config.example.toml) for the English commented example,
+or [`config.example.fr.toml`](config.example.fr.toml) for the French version.
 
-## Crédits et historique
+During `-Syu`, `list_aur = "notable"` displays orphaned, out-of-date, or
+non-AUR-managed packages by default. `"all"` displays the complete list, while
+`false` hides the summary. The legacy value `true` remains accepted as an alias
+for `"all"`. The `search_limit` option controls the number of displayed search
+results.
 
-yaourt a été créé par **Julien Mischkowitz** (`wain@archlinux.fr`) et **Tuxce**
-(`tuxce.net@gmail.com`), avec de nombreux contributeurs, au sein du projet
-[archlinuxfr/yaourt](https://github.com/archlinuxfr/yaourt). Ce dépôt en est une
-réécriture indépendante, qui reprend le nom et l'esprit du projet d'origine
-désormais abandonné. Voir le fichier [AUTHORS](AUTHORS) pour le détail.
+In development mode, a `cfg/config.toml` file in the current directory is
+detected automatically.
 
-## Licence
+## Credits and history
 
-Distribué sous licence **GNU General Public License v3.0 ou ultérieure
-(GPLv3+)**, comme le projet d'origine (sous GPL). Voir le fichier
-[LICENSE](LICENSE).
+yaourt was created by **Julien Mischkowitz** (`wain@archlinux.fr`) and **Tuxce**
+(`tuxce.net@gmail.com`), with contributions from many others, as part of the
+[archlinuxfr/yaourt](https://github.com/archlinuxfr/yaourt) project. This
+repository is an independent rewrite that retains the name and spirit of the
+now-abandoned original project. See [AUTHORS](AUTHORS) for details.
+
+## License
+
+Distributed under the **GNU General Public License v3.0 or later (GPLv3+)**, as
+was the GPL-licensed original project. See [LICENSE](LICENSE).

@@ -1,30 +1,30 @@
-# Configuration yaourt — copier vers ~/.config/yaourt/config.toml
-# Toutes les clés sont optionnelles. Décommenter uniquement celles à modifier.
+# yaourt configuration — copy to ~/.config/yaourt/config.toml
+# Every key is optional. Uncomment only the values you want to change.
 
-# Répertoire de clonage/build des paquets AUR.
+# Directory used to clone and build AUR packages.
 # builddir = "~/.cache/yaourt"
 
-# Commande sudo pour les opérations pacman nécessitant root.
+# sudo command used for pacman operations that require root privileges.
 # sudo = "sudo"
 
-# Éditeur pour la revue de PKGBUILD.
-# Par défaut : $EDITOR, sinon $VISUAL, sinon "vi".
+# Editor used to review PKGBUILD files and other tracked build files.
+# Default: $EDITOR, then $VISUAL, then "vi".
 # editor = "vim"
 
-# Couleur dans les affichages de yaourt.
+# Enable colors in yaourt output.
 # color = true
 
-# Base de l'AUR (RPC v5 + git).
+# AUR base URL (RPC v5 and Git).
 # aur_url = "https://aur.archlinux.org"
 
-# Récapitulatif AUR affiché avant les mises à jour :
-#   "notable" = paquets orphelins, périmés ou non gérés par l'AUR (défaut) ;
-#   "all"     = tous les paquets AUR installés avec leur statut ;
-#   false     = aucun récapitulatif.
-# La valeur true reste acceptée comme alias de "all".
+# AUR summary displayed before upgrades:
+#   "notable" = orphaned, out-of-date, or non-AUR-managed packages (default);
+#   "all"     = every installed AUR package and its status;
+#   false     = no AUR summary.
+# The legacy value true remains accepted as an alias for "all".
 # list_aur = "notable"
 
-# Nombre maximal de résultats affichés par section lors d'une recherche (-Ss).
-# AUR et dépôts sont limités chacun à cette valeur (pour l'AUR, ce sont les
-# paquets les mieux notés qui sont conservés). 0 = aucune limite (tout afficher).
+# Maximum number of results displayed in each search section (-Ss).
+# AUR and repository results are each limited to this value. For the AUR, the
+# highest-rated packages are retained. 0 means unlimited (display everything).
 # search_limit = 20

@@ -38,7 +38,7 @@
       `babet.spawn` avec flux hérités et tests dossier/embarqué.
 - [x] Migration Babet 2.22.2 : contrats API réaudités, correction du nettoyage
       récursif `-Scc`, intégration HTTP `chunked` locale et test PTY réel.
-- [x] Releases 0.1.0 à 0.4.1 publiées, x86_64 + aarch64.
+- [x] Releases 0.1.0 à 0.4.2 publiées, x86_64 + aarch64.
 
 ## Packaging (prioritaire — runtime babet en place)
 
@@ -58,7 +58,9 @@
 
 ## Finitions
 
-- [ ] i18n : externaliser les chaînes, gérer le pluriel.
+- [ ] i18n extensible : externaliser les chaînes dans des catalogues de langue,
+      détecter la locale avec repli, gérer les pluriels propres à chaque langue
+      et permettre l'ajout d'une traduction sans modifier le code métier.
 - [ ] Mode de revue avancé optionnel (ex. onglets vim `-p`) via la config, en
       gardant l'ouverture séquentielle par défaut pour les néophytes.
 - [ ] `-w` / `--downloadonly` côté AUR : sens à définir (sources seules ?
