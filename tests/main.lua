@@ -141,6 +141,14 @@ test("i18n : aide protégée contre un catalogue externe mal formé", function()
     assert(not rendered:find("\nligne injectée", 1, true))
 end)
 
+test("i18n : une seule valeur renvoyée après interpolation", function()
+    i18n.set_language("fr")
+    assert_equal(select("#", i18n.t("fetch.updating", {
+        package = "google-chrome",
+    })), 1)
+    assert_equal(select("#", i18n.n("summary.failed", 2)), 1)
+end)
+
 test("i18n : normalisation, alias et repli déterministe", function()
     i18n.set_language("pt-BR.UTF-8")
     assert_equal(i18n.language(), "pt_BR")

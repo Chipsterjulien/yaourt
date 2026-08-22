@@ -453,7 +453,11 @@ local function interpolate(value, variables)
         if replacement == nil then return "{" .. name .. "}" end
         return tostring(replacement)
     end)
-    return value:gsub(marker, "{")
+    -- string.gsub renvoie aussi le nombre de substitutions. Stocker le texte
+    -- avant de le retourner garantit que i18n.t/i18n.n n'exposent jamais cette
+    -- seconde valeur aux fonctions variadiques telles que log.info ou print.
+    value = value:gsub(marker, "{")
+    return value
 end
 
 function i18n.t(key, variables)
