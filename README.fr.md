@@ -5,7 +5,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.5.0`).**
+> **Statut : jeune mais utilisable au quotidien (`0.5.1`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -38,6 +38,9 @@ interactives lancées avec `babet.spawn`, comme `pacman` et `makepkg`.
   **résolution récursive des dépendances AUR**, installation automatique des
   dépendances des dépôts, et prise en charge des paquets virtuels (`provides`)
   et des contraintes de version.
+- **`-Sw <paquet>…` / `-S --downloadonly <paquet>…`** : mode natif de pacman
+  pour télécharger sans installer les paquets des dépôts. Toute commande qui
+  contient une cible AUR est refusée en entier avant téléchargement ou build.
 - **`-Syu` / `-Su`** : mise à jour unifiée (dépôts + AUR), avec détection des
   révisions, des orphelins et des paquets périmés. L'option `[M]` permet de
   choisir à la carte les paquets AUR à mettre à jour : inclusion (`1 3 5`,
@@ -105,8 +108,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.5.0-x86_64
-sudo install -Dm755 yaourt-0.5.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.5.1-x86_64
+sudo install -Dm755 yaourt-0.5.1-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes

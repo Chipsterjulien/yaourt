@@ -24,6 +24,51 @@ local i18n    = require("lib.i18n")
 
 local install = {}
 
+-- parse_opts(args) -> (names, opts)
+-- Sépare les cibles des modificateurs d'une opération -S. Le mode de
+-- téléchargement seul est conservé explicitement : il est sûr pour les
+-- dépôts, mais ne possède pas encore de sémantique AUR non ambiguë.
+function install.parse_opts(args)
+    local names = {}
+    local opts  = {
+        force = false,
+        needed = false,
+        download_only = false,
+        passthrough = {},
+    }
+
+    local op   = args[1] or ""
+    local tail = op:match("^%-%a*S(%a*)$") or ""
+    for ch in tail:gmatch("%a") do
+        if ch == "f" then
+            opts.force = true
+        elseif ch == "w" then
+            opts.download_only = true
+        else
+            opts.passthrough[#opts.passthrough + 1] = "-" .. ch
+        end
+    end
+
+    for i = 2, #args do
+        local arg = args[i]
+        if arg:sub(1, 1) == "-" then
+            if arg == "--needed" then
+                opts.needed = true
+            elseif arg == "-f" or arg == "--force" then
+                opts.force = true
+            elseif arg == "-w" or arg == "--downloadonly" then
+                opts.download_only = true
+            else
+                opts.passthrough[#opts.passthrough + 1] = arg
+            end
+        else
+            names[#names + 1] = arg
+        end
+    end
+
+    return names, opts
+end
+
 -- in_repos(name) -> bool : vrai si le paquet existe dans un dépôt officiel.
 -- Détection via `pacman -Si <name>` (capturé) : code 0 = trouvé.
 local function in_repos(name)
@@ -50,9 +95,37 @@ end
 -- la résolution récursive des dépendances).
 function install.run(config, names, opts)
     local C            = color.new(config.color)
-    opts               = opts or { force = false, needed = false, passthrough = {} }
+    opts               = opts or {
+        force = false,
+        needed = false,
+        download_only = false,
+        passthrough = {},
+    }
 
     local repos, auras = classify(names)
+
+    -- `pacman -Sw` ne sait télécharger que les paquets des dépôts. Construire
+    -- puis installer silencieusement une cible AUR ferait l'inverse de la
+    -- demande. Une commande mixte est donc refusée en entier avant le moindre
+    -- téléchargement, clone, build ou appel pacman modificateur.
+    if opts.download_only and #auras > 0 then
+        log.error(i18n.t("install.download_only_aur_unsupported", {
+            packages = table.concat(auras, ", "),
+        }))
+        return 1
+    end
+
+    -- Dépôts uniquement : on rend la main à pacman avec sa sémantique native
+    -- et sans produire un bilan d'installation mensonger.
+    if opts.download_only then
+        local argv = { "-S", "-w" }
+        if opts.needed then argv[#argv + 1] = "--needed" end
+        for _, flag in ipairs(opts.passthrough or {}) do
+            argv[#argv + 1] = flag
+        end
+        argv = babet.mergeTables(argv, repos)
+        return pacman.passthrough(config, argv)
+    end
 
     local results      = {} -- résultats typés (build.result) pour le bilan
     local built        = {} -- anti-doublon partagé entre les cibles AUR

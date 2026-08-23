@@ -244,6 +244,122 @@ test("mise à jour : récapitulatif AUR respecté par l'orchestration", function
     assert(ok, err)
 end)
 
+test("installation : analyse de -Sw et --downloadonly", function()
+    local install = require("lib.install")
+
+    for _, args in ipairs({
+        { "-Sw", "paquet" },
+        { "-S", "--downloadonly", "paquet" },
+        { "-S", "-w", "paquet" },
+    }) do
+        local names, opts = install.parse_opts(args)
+        assert_equal(table.concat(names, ","), "paquet")
+        assert_equal(opts.download_only, true)
+        assert_equal(#opts.passthrough, 0)
+    end
+
+    local names, opts = install.parse_opts({
+        "-Sfw", "--needed", "--noconfirm", "paquet",
+    })
+    assert_equal(table.concat(names, ","), "paquet")
+    assert_equal(opts.force, true)
+    assert_equal(opts.needed, true)
+    assert_equal(opts.download_only, true)
+    assert_equal(table.concat(opts.passthrough, ","), "--noconfirm")
+end)
+
+test("installation : -Sw dépôt délégué sans faux bilan", function()
+    local install = require("lib.install")
+    local pacman = require("lib.pacman")
+    local original_run = util.run
+    local original_passthrough = pacman.passthrough
+    local calls = {}
+
+    local ok, err = pcall(function()
+        util.run = function(argv)
+            assert_equal(table.concat(argv, " "), "pacman -Si paquet-depot")
+            return { code = 0, stdout = "", stderr = "" }
+        end
+        pacman.passthrough = function(_, argv)
+            calls[#calls + 1] = table.concat(argv, " ")
+            return 0
+        end
+
+        local code = install.run({ color = false }, { "paquet-depot" }, {
+            force = false,
+            needed = true,
+            download_only = true,
+            passthrough = { "--noconfirm" },
+        })
+        assert_equal(code, 0)
+        assert_equal(#calls, 1)
+        assert_equal(calls[1], "-S -w --needed --noconfirm paquet-depot")
+    end)
+
+    util.run = original_run
+    pacman.passthrough = original_passthrough
+    assert(ok, err)
+end)
+
+test("installation : -Sw refuse globalement toute cible AUR", function()
+    local install = require("lib.install")
+    local build = require("lib.build")
+    local pacman = require("lib.pacman")
+    local original_run = util.run
+    local original_aur = build.aur
+    local original_passthrough = pacman.passthrough
+    local original_error = require("lib.log").error
+    local log = require("lib.log")
+    local pacman_calls, build_calls, errors = 0, 0, {}
+
+    local ok, err = pcall(function()
+        util.run = function(argv)
+            local name = argv[3]
+            assert_equal(argv[1], "pacman")
+            assert_equal(argv[2], "-Si")
+            return {
+                code = name == "paquet-depot" and 0 or 1,
+                stdout = "",
+                stderr = "",
+            }
+        end
+        pacman.passthrough = function()
+            pacman_calls = pacman_calls + 1
+            return 0
+        end
+        build.aur = function()
+            build_calls = build_calls + 1
+            return {}
+        end
+        log.error = function(message)
+            errors[#errors + 1] = message
+        end
+
+        local code = install.run(
+            { color = false },
+            { "paquet-depot", "paquet-aur" },
+            {
+                force = false,
+                needed = false,
+                download_only = true,
+                passthrough = {},
+            }
+        )
+        assert_equal(code, 1)
+        assert_equal(pacman_calls, 0)
+        assert_equal(build_calls, 0)
+        assert_equal(#errors, 1)
+        assert(errors[1]:find("paquet-aur", 1, true))
+        assert(not errors[1]:find("paquet-depot", 1, true))
+    end)
+
+    util.run = original_run
+    build.aur = original_aur
+    pacman.passthrough = original_passthrough
+    log.error = original_error
+    assert(ok, err)
+end)
+
 test("affichage : mode AUR notable", function()
     local config = require("lib.config")
     local update = require("lib.update")
@@ -483,7 +599,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.5.0")
+        assert_equal(opts.headers["User-Agent"], "yaourt/0.5.1")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then

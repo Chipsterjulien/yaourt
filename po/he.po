@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.5.0\n"
+"Project-Id-Version: yaourt 0.5.1\n"
 "Language: he\n"
 "Language-Team: עברית\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -266,6 +266,10 @@ msgstr "קלאון {package}"
 msgctxt "fetch.updating"
 msgid "updating {package}"
 msgstr "מעדכן את {package}"
+
+msgctxt "install.download_only_aur_unsupported"
+msgid "Download-only mode is not supported for AUR packages: {packages}"
+msgstr "מצב הורדה בלבד אינו נתמך עבור חבילות AUR: {packages}"
 
 msgctxt "install.repositories"
 msgid "repositories ({packages})"

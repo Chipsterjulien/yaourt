@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.5.0\n"
+"Project-Id-Version: yaourt 0.5.1\n"
 "Language: it\n"
 "Language-Team: Italiano\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -258,6 +258,10 @@ msgstr "clonazione {package}"
 msgctxt "fetch.updating"
 msgid "updating {package}"
 msgstr "aggiornamento della {package}"
+
+msgctxt "install.download_only_aur_unsupported"
+msgid "Download-only mode is not supported for AUR packages: {packages}"
+msgstr "La modalità di solo download non è supportata per i pacchetti AUR: {packages}"
 
 msgctxt "install.repositories"
 msgid "repositories ({packages})"

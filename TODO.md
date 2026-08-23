@@ -27,6 +27,8 @@
       `util.is_interrupted`, message « interrompu » distinct, code de sortie 130.
 - [x] Transmission des modificateurs en `-S` : `-f` -> makepkg (force rebuild
       cible), `--needed` -> pacman + makepkg, flags inconnus -> pacman (dépôts).
+- [x] `-Sw` / `--downloadonly` : délégation native pour les paquets dépôt et
+      refus global, sans effet de bord, dès qu'une cible AUR est présente.
 - [x] Marquage `--asdeps` des dépendances AUR construites (un `-Rcs` de la cible
       les retire si elles deviennent orphelines).
 - [x] Bilan typé (`build.result` : ok / refused / failed / install_failed /
@@ -64,8 +66,6 @@
 
 - [ ] Mode de revue avancé optionnel (ex. onglets vim `-p`) via la config, en
       gardant l'ouverture séquentielle par défaut pour les néophytes.
-- [ ] `-w` / `--downloadonly` côté AUR : sens à définir (sources seules ?
-      build sans installation ?) — laissé de côté volontairement.
 
 ## Commandes internes (non documentées dans -h)
 

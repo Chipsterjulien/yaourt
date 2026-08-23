@@ -6,7 +6,7 @@ A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
 [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
 in Lua.
 
-> **Status: young, but suitable for daily use (`0.5.0`).**
+> **Status: young, but suitable for daily use (`0.5.1`).**
 > Search, installation (official repositories and AUR with recursive dependency
 > resolution), unified upgrades, and cache cleanup are functional. The project
 > is still evolving.
@@ -39,6 +39,9 @@ started with `babet.spawn`, such as `pacman` and `makepkg`.
   including **recursive AUR dependency resolution**, automatic installation of
   repository dependencies, virtual package (`provides`) support, and version
   constraints.
+- **`-Sw <package>…` / `-S --downloadonly <package>…`**: pacman's native
+  download-only mode for repository packages. Commands containing an AUR
+  target are rejected as a whole before any download or build.
 - **`-Syu` / `-Su`**: unified upgrades for official repositories and the AUR,
   with revision, orphan, and out-of-date detection. The `[M]` option provides
   manual AUR package selection, with inclusion (`1 3 5`, `1-4`) and exclusion
@@ -104,8 +107,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-0.5.0-x86_64
-sudo install -Dm755 yaourt-0.5.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.5.1-x86_64
+sudo install -Dm755 yaourt-0.5.1-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
