@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.5.1\n"
+"Project-Id-Version: yaourt 0.6.0\n"
 "Language: br\n"
 "Language-Team: Brezhoneg\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -497,11 +497,11 @@ msgstr[3] "Pakadoù n'int ket meret gant AUR ({count})"
 msgstr[4] "Pakadoù n'int ket meret gant AUR ({count})"
 
 msgctxt "update.continue"
-msgid "Continue the update? [Y/n]"
+msgid "Continue the update?"
 msgstr "Kenderc'hel hizivaat ? [O/n]"
 
 msgctxt "update.continue_manual"
-msgid "Continue the update? [Y/n/M]"
+msgid "Continue the update?"
 msgstr "Kenderc'hel hizivaat ? [O/n/M]"
 
 msgctxt "update.new_versions"

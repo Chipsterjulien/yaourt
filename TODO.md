@@ -10,7 +10,7 @@
       (`pacman -T` local + `pacman -Sp` dépôts).
 - [x] `-Syu` approche « façon yaourt » : synchro réelle (`pacman -Sy` + `-Qu`),
       suppression de la dépendance `pacman-contrib`.
-- [x] Harmonisation `-S` / `-Syu` via `build.aur` (chemin de build unifié).
+- [x] Harmonisation `-S` / `-Syu` via `build.aur_many` (chemin de build unifié).
 - [x] Sélection manuelle `[M]` dans `-Syu` : inclusion (numéros + plages) et
       exclusion (`^4` = tout sauf 4). Invite `[O/n/M]` seulement s'il y a de
       l'AUR ; saisie vide = rien.
@@ -29,6 +29,9 @@
       cible), `--needed` -> pacman + makepkg, flags inconnus -> pacman (dépôts).
 - [x] `-Sw` / `--downloadonly` : délégation native pour les paquets dépôt et
       refus global, sans effet de bord, dès qu'une cible AUR est présente.
+- [x] Split packages : plan global `pkgbase -> pkgname[]`, un seul clone/revue/
+      build par `PackageBase`, installation limitée aux sous-paquets requis et
+      conservation des raisons explicite/dépendance.
 - [x] Marquage `--asdeps` des dépendances AUR construites (un `-Rcs` de la cible
       les retire si elles deviennent orphelines).
 - [x] Bilan typé (`build.result` : ok / refused / failed / install_failed /
@@ -40,7 +43,9 @@
       `babet.spawn` avec flux hérités et tests dossier/embarqué.
 - [x] Migration Babet 2.22.2 : contrats API réaudités, correction du nettoyage
       récursif `-Scc`, intégration HTTP `chunked` locale et test PTY réel.
-- [x] Releases 0.1.0 à 0.4.2 publiées, x86_64 + aarch64.
+- [x] Migration Babet 2.24.0 : runtime officiel complet, OpenSSL 3.5.8 et
+      campagne yaourt validée en modes dossier et embarqué.
+- [x] Releases 0.1.0 à 0.5.1 publiées, x86_64 + aarch64.
 - [x] i18n extensible : catalogues gettext, détection POSIX de la locale,
       replis déterministes, pluriels, variables nommées, catalogues externes
       sûrs et 43 langues intégrées.
@@ -58,6 +63,8 @@
 
 ## Robustesse
 
+- [ ] Intégrer `CheckDepends` au solveur pour installer les dépendances de test
+      avant `makepkg` (objectif 0.7.0).
 - [ ] Nettoyage optionnel des dépendances de build devenues orphelines après
       compilation.
 - [ ] Cache des résolutions (aur.info / pacman répétés) pour les gros graphes.

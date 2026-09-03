@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.5.1\n"
+"Project-Id-Version: yaourt 0.6.0\n"
 "Language: bn\n"
 "Language-Team: বাংলা\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -446,11 +446,11 @@ msgstr[0] "AUR ({count}) দ্বারা পরিচালিত নয় �
 msgstr[1] "AUR ({count}) দ্বারা পরিচালিত নয় এমন সফটওয়্যার প্যাকেজ"
 
 msgctxt "update.continue"
-msgid "Continue the update? [Y/n]"
+msgid "Continue the update?"
 msgstr "আপডেট চালিয়ে যান?"
 
 msgctxt "update.continue_manual"
-msgid "Continue the update? [Y/n/M]"
+msgid "Continue the update?"
 msgstr "আপডেট চালিয়ে যান?"
 
 msgctxt "update.new_versions"

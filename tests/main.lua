@@ -45,8 +45,8 @@ end
 
 test("runtime Babet supporté", function()
     assert(runtime.assert_supported())
-    assert_equal(runtime.minimum, "2.22.2")
-    assert(runtime.version_at_least("2.22.2"))
+    assert_equal(runtime.minimum, "2.24.0")
+    assert(runtime.version_at_least("2.24.0"))
     assert(not runtime.version_at_least("999.0.0"))
 end)
 
@@ -147,6 +147,77 @@ test("i18n : une seule valeur renvoyée après interpolation", function()
         package = "google-chrome",
     })), 1)
     assert_equal(select("#", i18n.n("summary.failed", 2)), 1)
+end)
+
+test("i18n : invites localisées avec un seul choix par défaut", function()
+    i18n.set_language("fr")
+    assert_equal(
+        i18n.prompt("update.continue_manual", true),
+        "Continuer la mise à jour ? [O/n/m]"
+    )
+    assert_equal(
+        i18n.prompt("update.continue", false),
+        "Continuer la mise à jour ? [O/n]"
+    )
+
+    i18n.set_language("en")
+    assert_equal(
+        i18n.prompt("update.continue_manual", true),
+        "Continue the update? [Y/n/m]"
+    )
+
+    -- Ces catalogues n'intègrent pas tous eux-mêmes les choix dans la phrase :
+    -- le moteur doit les ajouter à partir de leurs réponses localisées.
+    i18n.set_language("de")
+    assert_equal(
+        i18n.prompt("update.continue_manual", true),
+        "Weiter mit dem Update? [J/n/m]"
+    )
+    i18n.set_language("es")
+    assert_equal(
+        i18n.prompt("update.continue_manual", true),
+        "¿Continuar con la actualización? [S/n/m]"
+    )
+
+    -- Un ancien catalogue qui place lui-même le bloc reste compatible, mais
+    -- le moteur en reprend la structure et retire la fausse majuscule de m.
+    i18n.set_language("br")
+    assert_equal(
+        i18n.prompt("update.continue_manual", true),
+        "Kenderc'hel hizivaat ? [Y/n/m]"
+    )
+
+    for _, locale in ipairs(i18n.available_languages()) do
+        i18n.set_language(locale)
+        local prompt = i18n.prompt("update.continue_manual", true)
+        local choices = assert(prompt:match("%[([^%]]+)%]"))
+        local _, slash_count = choices:gsub("/", "")
+        assert_equal(slash_count, 2)
+        assert(not prompt:find("/M]", 1, true))
+        assert(not prompt:find("\n", 1, true))
+        assert_equal(select("#", i18n.prompt("update.continue_manual", true)), 1)
+    end
+
+    local original_t = i18n.t
+    local ok, err = pcall(function()
+        i18n.set_language("fr")
+        i18n.t = function(key, variables)
+            if key == "update.continue_manual" then
+                return "Question externe\nligne injectée [Y/n/M]\t"
+            end
+            return original_t(key, variables)
+        end
+        assert_equal(
+            i18n.prompt("update.continue_manual", true),
+            "Question externe ligne injectée [O/n/m]"
+        )
+    end)
+    i18n.t = original_t
+    assert(ok, err)
+
+    assert(i18n.is_answer("m", "manual"))
+    assert(i18n.is_answer("M", "manual"))
+    i18n.set_language("fr")
 end)
 
 test("i18n : normalisation, alias et repli déterministe", function()
@@ -306,7 +377,7 @@ test("installation : -Sw refuse globalement toute cible AUR", function()
     local build = require("lib.build")
     local pacman = require("lib.pacman")
     local original_run = util.run
-    local original_aur = build.aur
+    local original_aur_many = build.aur_many
     local original_passthrough = pacman.passthrough
     local original_error = require("lib.log").error
     local log = require("lib.log")
@@ -327,7 +398,7 @@ test("installation : -Sw refuse globalement toute cible AUR", function()
             pacman_calls = pacman_calls + 1
             return 0
         end
-        build.aur = function()
+        build.aur_many = function()
             build_calls = build_calls + 1
             return {}
         end
@@ -354,9 +425,366 @@ test("installation : -Sw refuse globalement toute cible AUR", function()
     end)
 
     util.run = original_run
-    build.aur = original_aur
+    build.aur_many = original_aur_many
     pacman.passthrough = original_passthrough
     log.error = original_error
+    assert(ok, err)
+end)
+
+test("split packages : plan groupé par pkgbase", function()
+    local build = require("lib.build")
+    local deps = require("lib.deps")
+    local aur = require("lib.aur")
+    local original_resolve_many = deps.resolve_many
+    local original_info = aur.info
+
+    local ok, err = pcall(function()
+        deps.resolve_many = function(_, targets)
+            assert_equal(table.concat(targets, ","), "outil,outils-doc")
+            return {
+                order = { "bibliotheque", "outil", "outils-doc" },
+                direct = {
+                    bibliotheque = {},
+                    outil = { "bibliotheque" },
+                    ["outils-doc"] = {},
+                },
+            }
+        end
+        aur.info = function(_, names)
+            assert_equal(table.concat(names, ","), "bibliotheque,outil,outils-doc")
+            return {
+                bibliotheque = { Name = "bibliotheque", PackageBase = "bibliotheque" },
+                outil = { Name = "outil", PackageBase = "suite-outils" },
+                ["outils-doc"] = { Name = "outils-doc", PackageBase = "suite-outils" },
+            }
+        end
+
+        local plan = assert(build.plan({}, { "outil", "outils-doc" }))
+        assert_equal(table.concat(plan.order, ","), "bibliotheque,suite-outils")
+        assert_equal(
+            table.concat(plan.bases["suite-outils"].packages, ","),
+            "outil,outils-doc"
+        )
+        assert(plan.bases["suite-outils"].explicit.outil)
+        assert(plan.bases["suite-outils"].explicit["outils-doc"])
+        assert(plan.bases["suite-outils"].dependencies.bibliotheque)
+    end)
+
+    deps.resolve_many = original_resolve_many
+    aur.info = original_info
+    assert(ok, err)
+end)
+
+test("split packages : seuls les sous-paquets requis sont installés", function()
+    local build = require("lib.build")
+    local pacman = require("lib.pacman")
+    local original_run = util.run
+    local original_exists = babet.fileExists
+    local original_passthrough = pacman.passthrough
+    local calls = {}
+    local paths = {
+        ["/tmp/out/outil-1-1-x86_64.pkg.tar.zst"] = "outil",
+        ["/tmp/out/outils-doc-1-1-any.pkg.tar.zst"] = "outils-doc",
+        ["/tmp/out/outil-debug-1-1-x86_64.pkg.tar.zst"] = "outil-debug",
+    }
+
+    local ok, err = pcall(function()
+        babet.fileExists = function(path) return paths[path] ~= nil end
+        util.run = function(argv, opts)
+            if argv[#argv] == "--packagelist" then
+                return {
+                    code = 0,
+                    stdout = table.concat({
+                        "/tmp/out/outil-1-1-x86_64.pkg.tar.zst",
+                        "/tmp/out/outils-doc-1-1-any.pkg.tar.zst",
+                        "/tmp/out/outil-debug-1-1-x86_64.pkg.tar.zst",
+                    }, "\n") .. "\n",
+                    stderr = "",
+                }
+            end
+            assert_equal(table.concat(argv, " "),
+                "pacman -Qp --quiet " .. argv[4])
+            assert_equal(opts.env.LC_ALL, "C")
+            return { code = 0, stdout = paths[argv[4]] .. "\n", stderr = "" }
+        end
+        pacman.passthrough = function(_, argv)
+            calls[#calls + 1] = table.concat(argv, " ")
+            return 0
+        end
+
+        local installed, produced = build.install(
+            {}, "/tmp/build", { "outil" }, { outil = true }
+        )
+        assert(installed)
+        assert_equal(#produced, 3)
+        assert_equal(#calls, 1)
+        assert_equal(calls[1], "-U /tmp/out/outil-1-1-x86_64.pkg.tar.zst")
+        assert(not calls[1]:find("outils-doc", 1, true))
+        assert(not calls[1]:find("outil-debug", 1, true))
+
+        local missing = build.install(
+            {}, "/tmp/build", { "outil-absent" }, { ["outil-absent"] = true }
+        )
+        assert_equal(missing, false)
+        assert_equal(#calls, 1)
+    end)
+
+    util.run = original_run
+    babet.fileExists = original_exists
+    pacman.passthrough = original_passthrough
+    assert(ok, err)
+end)
+
+test("split packages : raisons explicite et dépendance préservées", function()
+    local build = require("lib.build")
+    local pacman = require("lib.pacman")
+    local original_run = util.run
+    local original_exists = babet.fileExists
+    local original_passthrough = pacman.passthrough
+    local calls = {}
+    local paths = {
+        ["/tmp/out/liboutil-1-1-x86_64.pkg.tar.zst"] = "liboutil",
+        ["/tmp/out/outil-1-1-x86_64.pkg.tar.zst"] = "outil",
+    }
+
+    local ok, err = pcall(function()
+        babet.fileExists = function(path) return paths[path] ~= nil end
+        util.run = function(argv, opts)
+            if argv[#argv] == "--packagelist" then
+                return {
+                    code = 0,
+                    stdout = table.concat({
+                        "/tmp/out/liboutil-1-1-x86_64.pkg.tar.zst",
+                        "/tmp/out/outil-1-1-x86_64.pkg.tar.zst",
+                    }, "\n") .. "\n",
+                    stderr = "",
+                }
+            end
+            assert_equal(table.concat(argv, " "),
+                "pacman -Qp --quiet " .. argv[4])
+            assert_equal(opts.env.LC_ALL, "C")
+            return { code = 0, stdout = paths[argv[4]] .. "\n", stderr = "" }
+        end
+        pacman.passthrough = function(_, argv)
+            calls[#calls + 1] = table.concat(argv, " ")
+            return 0
+        end
+
+        assert(build.install(
+            {},
+            "/tmp/build",
+            { "liboutil", "outil" },
+            { outil = true }
+        ))
+        assert_equal(#calls, 2)
+        assert_equal(calls[1], table.concat({
+            "-U --asdeps",
+            "/tmp/out/liboutil-1-1-x86_64.pkg.tar.zst",
+            "/tmp/out/outil-1-1-x86_64.pkg.tar.zst",
+        }, " "))
+        assert_equal(calls[2], "-D --asexplicit outil")
+    end)
+
+    util.run = original_run
+    babet.fileExists = original_exists
+    pacman.passthrough = original_passthrough
+    assert(ok, err)
+end)
+
+test("split packages : erreur d’identification d’un artefact visible", function()
+    local build = require("lib.build")
+    local pacman = require("lib.pacman")
+    local log = require("lib.log")
+    local original_run = util.run
+    local original_exists = babet.fileExists
+    local original_passthrough = pacman.passthrough
+    local original_error = log.error
+    local errors = {}
+    local install_calls = 0
+    local path = "/tmp/out/outil-1-1-x86_64.pkg.tar.zst"
+
+    local ok, err = pcall(function()
+        babet.fileExists = function(candidate) return candidate == path end
+        util.run = function(argv, opts)
+            if argv[#argv] == "--packagelist" then
+                return { code = 0, stdout = path .. "\n", stderr = "" }
+            end
+            assert_equal(table.concat(argv, " "),
+                "pacman -Qp --quiet " .. path)
+            assert_equal(opts.env.LC_ALL, "C")
+            return {
+                code = 1,
+                stdout = "",
+                stderr = "error: could not inspect package",
+            }
+        end
+        pacman.passthrough = function()
+            install_calls = install_calls + 1
+            return 0
+        end
+        log.error = function(message)
+            errors[#errors + 1] = message
+        end
+
+        local installed, produced = build.install(
+            {}, "/tmp/build", { "outil" }, { outil = true }
+        )
+        assert_equal(installed, false)
+        assert_equal(#produced, 1)
+        assert_equal(install_calls, 0)
+        assert_equal(#errors, 1)
+        assert(errors[1]:find(path, 1, true))
+        assert(errors[1]:find("could not inspect package", 1, true))
+    end)
+
+    util.run = original_run
+    babet.fileExists = original_exists
+    pacman.passthrough = original_passthrough
+    log.error = original_error
+    assert(ok, err)
+end)
+
+test("split packages : makepkg ne préinstalle aucun artefact", function()
+    local build = require("lib.build")
+    local original_passthrough = util.passthrough
+    local command
+
+    local ok, err = pcall(function()
+        util.passthrough = function(argv)
+            command = table.concat(argv, " ")
+            return 0
+        end
+        local made, code = build.make({}, "/tmp/build", false, {
+            force = true,
+            needed = true,
+        })
+        assert(made)
+        assert_equal(code, 0)
+        assert_equal(command, "makepkg -c -f --needed")
+        assert(not command:find(" -i", 1, true))
+    end)
+
+    util.passthrough = original_passthrough
+    assert(ok, err)
+end)
+
+test("split packages : un seul build par pkgbase", function()
+    local build = require("lib.build")
+    local deps = require("lib.deps")
+    local original_plan = build.plan
+    local original_one_group = build.one_group
+    local original_repo_deps = deps.repo_deps_of
+    local calls = 0
+
+    local ok, err = pcall(function()
+        build.plan = function()
+            return {
+                order = { "suite-outils" },
+                bases = {
+                    ["suite-outils"] = {
+                        base = "suite-outils",
+                        representative = "outil",
+                        packages = { "outil", "outils-doc" },
+                        explicit = { outil = true, ["outils-doc"] = true },
+                        dependencies = {},
+                    },
+                },
+                missing = {},
+            }
+        end
+        deps.repo_deps_of = function() return {} end
+        build.one_group = function(_, group)
+            calls = calls + 1
+            assert_equal(table.concat(group.packages, ","), "outil,outils-doc")
+            return {
+                build.result("ok", "outil", "ok"),
+                build.result("ok", "outils-doc", "ok"),
+            }
+        end
+
+        local results = build.aur_many({}, { "outil", "outils-doc" })
+        assert_equal(calls, 1)
+        assert_equal(#results, 2)
+        assert(results[1].ok and results[2].ok)
+    end)
+
+    build.plan = original_plan
+    build.one_group = original_one_group
+    deps.repo_deps_of = original_repo_deps
+    assert(ok, err)
+end)
+
+test("split packages : installation planifiée en une transaction AUR", function()
+    local install = require("lib.install")
+    local build = require("lib.build")
+    local original_run = util.run
+    local original_aur_many = build.aur_many
+    local calls = 0
+
+    local ok, err = pcall(function()
+        util.run = function(argv)
+            assert_equal(argv[1], "pacman")
+            assert_equal(argv[2], "-Si")
+            return { code = 1, stdout = "", stderr = "" }
+        end
+        build.aur_many = function(_, names)
+            calls = calls + 1
+            assert_equal(table.concat(names, ","), "outil,outils-doc")
+            return {
+                build.result("ok", "outil", "ok"),
+                build.result("ok", "outils-doc", "ok"),
+            }
+        end
+
+        assert_equal(install.run(
+            { color = false },
+            { "outil", "outils-doc" },
+            { passthrough = {} }
+        ), 0)
+        assert_equal(calls, 1)
+    end)
+
+    util.run = original_run
+    build.aur_many = original_aur_many
+    assert(ok, err)
+end)
+
+test("split packages : mise à jour planifiée en une transaction AUR", function()
+    local update = require("lib.update")
+    local build = require("lib.build")
+    local original_check = update.check
+    local original_display = update.display
+    local original_aur_many = build.aur_many
+    local original_read = io.read
+    local calls = 0
+
+    local ok, err = pcall(function()
+        update.check = function()
+            local auras = {
+                { name = "outil", oldver = "1-1", newver = "2-1" },
+                { name = "outils-doc", oldver = "1-1", newver = "2-1" },
+            }
+            return {}, auras, auras, nil
+        end
+        update.display = function() end
+        io.read = function() return "o" end
+        build.aur_many = function(_, names)
+            calls = calls + 1
+            assert_equal(table.concat(names, ","), "outil,outils-doc")
+            return {
+                build.result("ok", "outil", "ok"),
+                build.result("ok", "outils-doc", "ok"),
+            }
+        end
+
+        assert_equal(update.run({ color = false, list_aur = false }), 0)
+        assert_equal(calls, 1)
+    end)
+
+    update.check = original_check
+    update.display = original_display
+    build.aur_many = original_aur_many
+    io.read = original_read
     assert(ok, err)
 end)
 
@@ -599,7 +1027,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.5.1")
+        assert_equal(opts.headers["User-Agent"], "yaourt/0.6.0")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then

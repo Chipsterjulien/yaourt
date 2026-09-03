@@ -14,7 +14,7 @@ rewrite.
 
 - Python 3;
 - GNU gettext (`msginit` and `msgfmt`);
-- Babet 2.22.2 or newer to run the full test suite.
+- Babet 2.24.0 or newer to run the full test suite.
 
 ## Adding a locale
 
@@ -44,8 +44,11 @@ Complete the usual PO headers and these yaourt-specific headers:
 ```
 
 `X-Yaourt-Yes`, `X-Yaourt-No`, and `X-Yaourt-Manual` define comma-separated
-localized answers. Their first value should match the letter translated in the
-prompt messages.
+localized answers. Their first value is used to build the prompt choices. The
+program uppercases the default affirmative answer when the script has an ASCII
+case and keeps the other choices lowercase. Translate only the question in a
+prompt message: do not add a block such as `[Y/n]` or `[Y/n/m]`; yaourt renders
+it itself. Existing catalogues containing such a block remain compatible.
 `X-Yaourt-Aliases` is optional and lists alternate locale names, also separated
 by commas. It is useful when a regional catalogue should handle the base locale
 (for example, the `cs_CZ` catalogue declares `cs`). The universal English
@@ -100,7 +103,7 @@ Then validate the edited locale and run the complete offline suite:
 msgfmt --check --check-format \
   -o /tmp/yaourt-xx_YY.mo po/xx_YY.po
 
-BABET=/path/to/babet-2.22.2-linux-x86_64 ./run_tests.sh
+BABET=/path/to/babet-2.24.0-linux-x86_64 ./run_tests.sh
 ```
 
 Commit `po/xx_YY.po`, the regenerated `po/yaourt.pot`, and

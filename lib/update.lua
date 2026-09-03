@@ -12,7 +12,7 @@
 --
 -- Affichage épuré façon yaourt : `dépôt/nom  ancienne -> nouvelle`, coloré
 -- par dépôt. Puis invite [O/n]. Sur [O], upgrade des dépôts (tout-ou-rien)
--- via pacman, puis build des paquets AUR (build.aur).
+-- via pacman, puis build des paquets AUR (build.aur_many).
 --
 -- Note : l'utilisateur tape son mot de passe AVANT l'affichage (le -Sy est
 -- root). S'il refuse à l'invite, les bases ont été synchronisées mais rien
@@ -410,11 +410,12 @@ function update.run(config)
     if #repos == 0 and #auras == 0 then return 0 end
 
     local C = color.new(config.color)
-    -- L'option [M]anuel n'a de sens que s'il y a des paquets AUR à choisir ;
+    -- L'option [m]anuel n'a de sens que s'il y a des paquets AUR à choisir ;
     -- sinon on propose simplement [O/n].
-    local prompt = (#auras > 0)
-        and i18n.t("update.continue_manual")
-        or i18n.t("update.continue")
+    local has_manual = #auras > 0
+    local prompt = has_manual
+        and i18n.prompt("update.continue_manual", true)
+        or i18n.prompt("update.continue", false)
     io.write("\n" .. C.cyan("==> " .. prompt) .. " ")
     io.flush()
     local ans = (io.read("l") or ""):lower()
@@ -423,9 +424,9 @@ function update.run(config)
         return 0
     end
 
-    -- [M]anuel : sélection à la carte des paquets AUR (inclusion). Ne concerne
+    -- [m]anuel : sélection à la carte des paquets AUR (inclusion). Ne concerne
     -- que l'AUR ; les paquets des dépôts restent gérés par pacman -Su. Ignoré
-    -- s'il n'y a aucun paquet AUR (l'invite ne propose alors pas M).
+    -- s'il n'y a aucun paquet AUR (l'invite ne propose alors pas m).
     if i18n.is_answer(ans, "manual") and #auras > 0 then
         auras = select_auras(config, auras)
     end
@@ -445,20 +446,13 @@ function update.run(config)
     end
 
     if #auras > 0 then
-        local built = {} -- anti-doublon partagé entre les paquets AUR mis à jour
-        local results = {}
-        local stop = false
+        local names = {}
         for _, u in ipairs(auras) do
-            -- build.aur résout les dépendances AUR récursives et installe les
-            -- dépendances dépôt, comme pour -S (chemin unifié), et renvoie une
-            -- liste de résultats typés (un par paquet construit).
-            local res_list = build.aur(config, u.name, built)
-            for _, r in ipairs(res_list) do
-                results[#results + 1] = r
-                if r.status == "interrupted" then stop = true end
-            end
-            if stop then break end
+            names[#names + 1] = u.name
         end
+        -- Plan global : plusieurs sous-paquets installés provenant du même
+        -- pkgbase sont mis à jour par une seule compilation.
+        local results = build.aur_many(config, names)
         return display.build_summary(C, results, "updated")
     end
 

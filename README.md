@@ -6,7 +6,7 @@ A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
 [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
 in Lua.
 
-> **Status: young, but suitable for daily use (`0.5.1`).**
+> **Status: young, but suitable for daily use (`0.6.0`).**
 > Search, installation (official repositories and AUR with recursive dependency
 > resolution), unified upgrades, and cache cleanup are functional. The project
 > is still evolving.
@@ -20,14 +20,17 @@ readable pacman/AUR helper—on top of a modern codebase. It follows a Strangler
 Fig approach: features that have not yet been ported natively are delegated to
 `pacman`, then progressively replaced.
 
-yaourt relies on [Babet](https://github.com/Chipsterjulien/babet) **2.22.2 or
+yaourt relies on [Babet](https://github.com/Chipsterjulien/babet) **2.24.0 or
 newer**, a self-contained Lua 5.5 runtime, and is distributed as a single
 executable. Both at startup and during builds, yaourt checks the runtime version
 and rejects older versions with an explicit diagnostic.
 
-This minimum version notably provides reliable handling of AUR HTTP `chunked`
+This supported runtime retains reliable handling of AUR HTTP `chunked`
 responses and correct terminal transfer/restoration for interactive commands
-started with `babet.spawn`, such as `pacman` and `makepkg`.
+started with `babet.spawn`, such as `pacman` and `makepkg`. It also provides the
+official production build with OpenSSL 3.5.8 and the release validation added in
+Babet 2.24. yaourt uses the complete official Babet runtime, without a custom
+feature profile.
 
 ## Features
 
@@ -39,6 +42,10 @@ started with `babet.spawn`, such as `pacman` and `makepkg`.
   including **recursive AUR dependency resolution**, automatic installation of
   repository dependencies, virtual package (`provides`) support, and version
   constraints.
+- **Split packages:** targets sharing the same AUR `PackageBase` are cloned,
+  reviewed, and built only once. yaourt installs only the requested or required
+  subpackages—not every artifact produced by the `PKGBUILD`—while preserving
+  explicit and dependency installation reasons.
 - **`-Sw <package>…` / `-S --downloadonly <package>…`**: pacman's native
   download-only mode for repository packages. Commands containing an AUR
   target are rejected as a whole before any download or build.
@@ -107,8 +114,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-0.5.1-x86_64
-sudo install -Dm755 yaourt-0.5.1-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.6.0-x86_64
+sudo install -Dm755 yaourt-0.6.0-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
@@ -131,7 +138,7 @@ sudo useradd --system --home-dir /var/cache/yaourt --create-home \
 
 ### Development mode
 
-With a Babet 2.22.2 (or newer) binary placed in `bin/`:
+With a Babet 2.24.0 (or newer) binary placed in `bin/`:
 
 ```sh
 ./bin/babet . <operation>
@@ -140,27 +147,28 @@ With a Babet 2.22.2 (or newer) binary placed in `bin/`:
 `build.sh` also accepts an explicit path:
 
 ```sh
-BABET=/path/to/babet-2.22.2-linux-x86_64 ./build.sh
+BABET=/path/to/babet-2.24.0-linux-x86_64 ./build.sh
 ```
 
 ## Tests
 
 The offline suite exercises process and filesystem helpers against the real
-Babet runtime, tests the AUR client against a local HTTP server using `chunked`
-responses, validates the interactive parent/child chain under a real
-pseudo-terminal, checks both directory and embedded modes, and builds the final
-executable. The integration tests use the Python 3 standard library and GNU
-gettext (`msgfmt`) to validate every translation catalogue:
+Babet runtime, validates split-package planning and artifact selection, tests
+the AUR client against a local HTTP server using `chunked` responses, validates
+the interactive parent/child chain under a real pseudo-terminal, checks both
+directory and embedded modes, and builds the final executable. The integration
+tests use the Python 3 standard library and GNU gettext (`msgfmt`) to validate
+every translation catalogue:
 
 ```sh
-BABET=/path/to/babet-2.22.2-linux-x86_64 ./run_tests.sh
+BABET=/path/to/babet-2.24.0-linux-x86_64 ./run_tests.sh
 ```
 
 An optional live AUR RPC check can be enabled with:
 
 ```sh
 YAOURT_NETWORK_TESTS=1 \
-  BABET=/path/to/babet-2.22.2-linux-x86_64 \
+  BABET=/path/to/babet-2.24.0-linux-x86_64 \
   ./run_tests.sh
 ```
 

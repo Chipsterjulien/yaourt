@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.5.1\n"
+"Project-Id-Version: yaourt 0.6.0\n"
 "Language: sr\n"
 "Language-Team: Српски\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -463,11 +463,11 @@ msgstr[1] "софтверски пакети који не управља AUR ({
 msgstr[2] "софтверски пакети који не управља AUR ({count})"
 
 msgctxt "update.continue"
-msgid "Continue the update? [Y/n]"
+msgid "Continue the update?"
 msgstr "Да ли настави са ажурирањем?"
 
 msgctxt "update.continue_manual"
-msgid "Continue the update? [Y/n/M]"
+msgid "Continue the update?"
 msgstr "Да ли настављаш са ажурирањем?"
 
 msgctxt "update.new_versions"

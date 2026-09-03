@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.5.1\n"
+"Project-Id-Version: yaourt 0.6.0\n"
 "Language: tr\n"
 "Language-Team: Türkçe\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -446,11 +446,11 @@ msgstr[0] "AUR ({count}) tarafından yönetilmeyen yazılım paketi"
 msgstr[1] "AUR ({count}) tarafından yönetilmeyen yazılım paketleri"
 
 msgctxt "update.continue"
-msgid "Continue the update? [Y/n]"
+msgid "Continue the update?"
 msgstr "[E/h]'i devam ettirmek ister misin?"
 
 msgctxt "update.continue_manual"
-msgid "Continue the update? [Y/n/M]"
+msgid "Continue the update?"
 msgstr "[E/h/M]"
 
 msgctxt "update.new_versions"

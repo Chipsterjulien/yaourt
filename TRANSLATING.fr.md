@@ -14,7 +14,7 @@ traducteurs, mais leur terminologie ne fait pas autorité pour cette réécritur
 
 - Python 3 ;
 - GNU gettext (`msginit` et `msgfmt`) ;
-- Babet 2.22.2 ou plus récent pour exécuter toute la suite de tests.
+- Babet 2.24.0 ou plus récent pour exécuter toute la suite de tests.
 
 ## Ajouter une locale
 
@@ -44,8 +44,13 @@ Compléter les en-têtes PO habituels ainsi que ceux propres à yaourt :
 ```
 
 `X-Yaourt-Yes`, `X-Yaourt-No` et `X-Yaourt-Manual` définissent des réponses
-localisées séparées par des virgules ; leur première valeur doit correspondre
-à la lettre traduite dans les messages d'invite. `X-Yaourt-Aliases` est
+localisées séparées par des virgules ; leur première valeur sert à construire
+les choix affichés. Le programme met en majuscule la réponse affirmative par
+défaut lorsque l'écriture possède une casse ASCII, et conserve les autres choix
+en minuscules. Dans un message d'invite, traduire uniquement la question : ne
+pas ajouter de bloc comme `[O/n]` ou `[O/n/m]`, yaourt le génère lui-même. Les
+catalogues existants qui possèdent déjà ce bloc restent compatibles.
+`X-Yaourt-Aliases` est
 facultatif et énumère, également avec des
 virgules, les autres noms de la locale. Il sert par exemple à faire prendre en
 charge `cs` par le catalogue régional `cs_CZ`. Les réponses anglaises
@@ -105,7 +110,7 @@ Valider ensuite la locale modifiée puis toute la suite hors ligne :
 msgfmt --check --check-format \
   -o /tmp/yaourt-xx_YY.mo po/xx_YY.po
 
-BABET=/chemin/vers/babet-2.22.2-linux-x86_64 ./run_tests.sh
+BABET=/chemin/vers/babet-2.24.0-linux-x86_64 ./run_tests.sh
 ```
 
 Valider dans Git `po/xx_YY.po`, le fichier `po/yaourt.pot` régénéré et

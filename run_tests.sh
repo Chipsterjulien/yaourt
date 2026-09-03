@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Vérifications de la migration vers Babet 2.22.2.
+# Vérifications de la compatibilité avec Babet 2.24.0.
 
 set -euo pipefail
 
@@ -25,6 +25,9 @@ if [[ -z "$BABET" ]]; then
   MATCHES=( "$ROOT/bin/"babet-*-linux-"$ARCH" )
   if [[ -e "${MATCHES[0]}" ]]; then
     BABET="$(ls -t "${MATCHES[@]}" 2>/dev/null | head -n1)"
+    # Les binaires téléchargés ou copiés peuvent perdre leur bit exécutable.
+    # Même comportement que build.sh : le restaurer avant la validation.
+    [[ -x "$BABET" ]] || chmod +x "$BABET" 2>/dev/null || true
   elif [[ -x "$ROOT/bin/babet" ]]; then
     BABET="$ROOT/bin/babet"
   else

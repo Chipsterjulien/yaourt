@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.5.1\n"
+"Project-Id-Version: yaourt 0.6.0\n"
 "Language: th\n"
 "Language-Team: ไทย\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -429,11 +429,11 @@ msgid_plural "Packages not managed by the AUR ({count})"
 msgstr[0] "แพคเกจโปรแกรมที่ไม่ได้จัดการโดย AUR ({count})"
 
 msgctxt "update.continue"
-msgid "Continue the update? [Y/n]"
+msgid "Continue the update?"
 msgstr "ต่อไปอัพเดท?"
 
 msgctxt "update.continue_manual"
-msgid "Continue the update? [Y/n/M]"
+msgid "Continue the update?"
 msgstr "ต่อไปอัพเดท [ช/ม/ก]"
 
 msgctxt "update.new_versions"

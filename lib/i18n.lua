@@ -486,6 +486,75 @@ local universal_answers = {
     manual = { m = true, manual = true, manuel = true },
 }
 
+local prompt_fallbacks = {
+    yes = "y",
+    no = "n",
+    manual = "m",
+}
+
+local function prompt_token(catalog, kind)
+    local answers = catalog and catalog.answers and catalog.answers[kind]
+    if type(answers) ~= "string" then return nil end
+
+    for answer in answers:gmatch("[^,]+") do
+        local candidate = trim(answer)
+        -- Un catalogue externe ne doit pas pouvoir casser la structure de
+        -- l'invite. Les mots courts restent autorisés pour les écritures qui
+        -- ne disposent pas d'une touche alphabétique équivalente.
+        if candidate ~= "" and #candidate <= 32
+            and not candidate:find("[%c/%[%]]")
+        then
+            return candidate
+        end
+    end
+    return nil
+end
+
+local function current_prompt_token(kind)
+    for _, locale in ipairs(state.chain) do
+        local value = prompt_token(state.external[locale], kind)
+        if value then return value end
+        value = prompt_token((embedded.catalogs or {})[locale], kind)
+        if value then return value end
+    end
+    return prompt_fallbacks[kind]
+end
+
+local function prompt_choices(include_manual)
+    -- La majuscule ASCII signale uniquement le choix par défaut. Les autres
+    -- choix restent en minuscules ; les écritures sans casse sont inchangées.
+    local yes = current_prompt_token("yes"):upper()
+    local no = current_prompt_token("no"):lower()
+    local choices = { yes, no }
+    if include_manual then
+        choices[#choices + 1] = current_prompt_token("manual"):lower()
+    end
+    return "[" .. table.concat(choices, "/") .. "]"
+end
+
+function i18n.prompt(key, include_manual)
+    local value = trim(i18n.t(key):gsub("[%c]+", " "):gsub("%s+", " "))
+    local choices = prompt_choices(include_manual)
+
+    -- Compatibilité avec les catalogues existants : leur éventuel bloc de
+    -- choix est remplacé là où le traducteur l'avait placé. Les catalogues
+    -- récents peuvent traduire la question seule ; le bloc est alors ajouté.
+    local rendered, count = value:gsub(
+        "%[[^%]\r\n]*%]",
+        function() return choices end,
+        1
+    )
+    if count == 0 then
+        rendered, count = value:gsub(
+            "［[^］\r\n]*］",
+            function() return choices end,
+            1
+        )
+    end
+    if count == 0 then rendered = trim(value) .. " " .. choices end
+    return rendered
+end
+
 function i18n.is_answer(value, kind)
     value = trim(value):lower()
     if universal_answers[kind] and universal_answers[kind][value] then return true end

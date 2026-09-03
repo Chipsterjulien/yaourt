@@ -146,34 +146,57 @@ end
 -- se retrouvent en tête et les paquets les plus proches de la cible en fin.
 -- L'ensemble `visited` évite les doublons et neutralise les cycles éventuels.
 function deps.resolve(config, target)
-    local order   = {}
-    local visited = {}
+    local plan, err = deps.resolve_many(config, { target })
+    if not plan then return nil, err end
+
+    local order = {}
+    for _, pkg in ipairs(plan.order) do
+        if pkg ~= target then order[#order + 1] = pkg end
+    end
+    return order, nil
+end
+
+-- resolve_many(config, targets) -> ({ order, direct }, nil) | (nil, err)
+-- Variante multi-cibles du solveur. Contrairement à resolve(), la liste
+-- ordonnée contient aussi les cibles : elle décrit ainsi tout le graphe de
+-- paquets requis par une même transaction. `direct[pkg]` conserve les arêtes
+-- du graphe ; build.lua les regroupe ensuite par PackageBase pour construire
+-- une seule fois les split packages partageant le même dépôt AUR.
+function deps.resolve_many(config, targets)
+    local order    = {}
+    local direct   = {}
+    local visited  = {}
+    local visiting = {}
     local rerr
 
     local function visit(pkg)
         if visited[pkg] then return true end
-        visited[pkg] = true
+        -- Les cycles AUR sont invalides en pratique, mais les neutraliser ici
+        -- conserve le comportement historique du solveur sans récursion infinie.
+        if visiting[pkg] then return true end
+        visiting[pkg] = true
 
-        local direct, err = deps.aur_deps_of(config, pkg)
-        if not direct then
+        local pkg_deps, err = deps.aur_deps_of(config, pkg)
+        if not pkg_deps then
             rerr = err
             return false
         end
-        for _, d in ipairs(direct) do
-            if not visit(d) then return false end
+        direct[pkg] = pkg_deps
+        for _, dependency in ipairs(pkg_deps) do
+            if not visit(dependency) then return false end
         end
-        -- Post-ordre : on ajoute pkg APRÈS ses dépendances. La cible est
-        -- construite séparément par l'appelant, donc on ne l'ajoute pas.
-        if pkg ~= target then
-            order[#order + 1] = pkg
-        end
+
+        visiting[pkg] = nil
+        visited[pkg] = true
+        order[#order + 1] = pkg
         return true
     end
 
-    if not visit(target) then
-        return nil, rerr
+    for _, target in ipairs(targets or {}) do
+        if not visit(target) then return nil, rerr end
     end
-    return order, nil
+
+    return { order = order, direct = direct }, nil
 end
 
 -- deps.show(config, name) -> code de sortie. Outil de debug : affiche les

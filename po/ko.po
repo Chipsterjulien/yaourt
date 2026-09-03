@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.5.1\n"
+"Project-Id-Version: yaourt 0.6.0\n"
 "Language: ko\n"
 "Language-Team: 한국어\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -429,11 +429,11 @@ msgid_plural "Packages not managed by the AUR ({count})"
 msgstr[0] "AUR ({count}) 에 의해 관리되지 않는 소프트웨어 패키지"
 
 msgctxt "update.continue"
-msgid "Continue the update? [Y/n]"
+msgid "Continue the update?"
 msgstr "업데이트를 계속하세요?"
 
 msgctxt "update.continue_manual"
-msgid "Continue the update? [Y/n/M]"
+msgid "Continue the update?"
 msgstr "업데이트를 계속하세요?"
 
 msgctxt "update.new_versions"

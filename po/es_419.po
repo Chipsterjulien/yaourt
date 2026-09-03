@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.5.1\n"
+"Project-Id-Version: yaourt 0.6.0\n"
 "Language: es_419\n"
 "Language-Team: Español latinoamericano\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -446,11 +446,11 @@ msgstr[0] "paquete de software no gestionado por el AUR ({count})"
 msgstr[1] "paquetes de software no gestionados por el AUR ({count})"
 
 msgctxt "update.continue"
-msgid "Continue the update? [Y/n]"
+msgid "Continue the update?"
 msgstr "¿Continuar con la actualización?"
 
 msgctxt "update.continue_manual"
-msgid "Continue the update? [Y/n/M]"
+msgid "Continue the update?"
 msgstr "¿Continuar con la actualización?"
 
 msgctxt "update.new_versions"

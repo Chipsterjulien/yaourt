@@ -5,7 +5,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.5.1`).**
+> **Statut : jeune mais utilisable au quotidien (`0.6.0`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -19,14 +19,17 @@ simple et lisible — sur une base de code moderne, en suivant une approche
 « Strangler Fig Pattern » (figuier étrangleur) : tout ce qui n'est pas encore
 porté nativement est délégué à `pacman`, puis remplacé progressivement.
 
-Il s'appuie sur [Babet](https://github.com/Chipsterjulien/babet) **2.22.2 ou
+Il s'appuie sur [Babet](https://github.com/Chipsterjulien/babet) **2.24.0 ou
 plus récent**,
 un binaire Lua 5.5 autonome, et se distribue sous forme d'un exécutable unique.
 Au démarrage comme pendant la construction, yaourt vérifie la version du
 runtime et refuse une version antérieure avec un diagnostic explicite.
-Cette version minimale inclut notamment la lecture fiable des réponses HTTP
-`chunked` de l'AUR et le transfert/restauration du terminal pour les commandes
-interactives lancées avec `babet.spawn`, comme `pacman` et `makepkg`.
+Ce runtime conserve notamment la lecture fiable des réponses HTTP `chunked` de
+l'AUR et le transfert/restauration du terminal pour les commandes interactives
+lancées avec `babet.spawn`, comme `pacman` et `makepkg`. Il apporte aussi le
+build officiel de production avec OpenSSL 3.5.8 et les validations de release
+ajoutées dans Babet 2.24. yaourt utilise le runtime Babet officiel complet, sans
+profil de fonctionnalités particulier.
 
 ## Fonctionnalités
 
@@ -38,6 +41,10 @@ interactives lancées avec `babet.spawn`, comme `pacman` et `makepkg`.
   **résolution récursive des dépendances AUR**, installation automatique des
   dépendances des dépôts, et prise en charge des paquets virtuels (`provides`)
   et des contraintes de version.
+- **Split packages** : les cibles qui partagent le même `PackageBase` AUR ne
+  sont clonées, examinées et construites qu'une seule fois. yaourt installe
+  uniquement les sous-paquets demandés ou requis — pas tous les artefacts du
+  `PKGBUILD` — tout en préservant leur raison explicite ou dépendance.
 - **`-Sw <paquet>…` / `-S --downloadonly <paquet>…`** : mode natif de pacman
   pour télécharger sans installer les paquets des dépôts. Toute commande qui
   contient une cible AUR est refusée en entier avant téléchargement ou build.
@@ -108,8 +115,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.5.1-x86_64
-sudo install -Dm755 yaourt-0.5.1-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.6.0-x86_64
+sudo install -Dm755 yaourt-0.6.0-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
@@ -133,7 +140,7 @@ sudo useradd --system --home-dir /var/cache/yaourt --create-home \
 
 ### En mode développement
 
-Avec un binaire Babet 2.22.2 (minimum) placé dans `bin/` :
+Avec un binaire Babet 2.24.0 (minimum) placé dans `bin/` :
 
 ```sh
 ./bin/babet . <opération>
@@ -142,27 +149,28 @@ Avec un binaire Babet 2.22.2 (minimum) placé dans `bin/` :
 Le script `build.sh` accepte aussi un chemin explicite :
 
 ```sh
-BABET=/chemin/vers/babet-2.22.2-linux-x86_64 ./build.sh
+BABET=/chemin/vers/babet-2.24.0-linux-x86_64 ./build.sh
 ```
 
 ## Tests
 
 La suite hors ligne vérifie les helpers de processus et de fichiers avec le
-vrai runtime Babet, exerce le client AUR sur un serveur HTTP local avec des
-réponses `chunked`, teste la chaîne interactive parent/enfant sous un véritable
+vrai runtime Babet, le plan de construction et la sélection des artefacts des
+split packages, exerce le client AUR sur un serveur HTTP local avec des réponses
+`chunked`, teste la chaîne interactive parent/enfant sous un véritable
 pseudo-terminal, puis contrôle les modes dossier et embarqué et construit le
 binaire final. Les tests d'intégration utilisent la bibliothèque standard de
 Python 3 et GNU gettext (`msgfmt`) pour valider chaque catalogue :
 
 ```sh
-BABET=/chemin/vers/babet-2.22.2-linux-x86_64 ./run_tests.sh
+BABET=/chemin/vers/babet-2.24.0-linux-x86_64 ./run_tests.sh
 ```
 
 Un contrôle facultatif du RPC AUR peut être ajouté :
 
 ```sh
 YAOURT_NETWORK_TESTS=1 \
-  BABET=/chemin/vers/babet-2.22.2-linux-x86_64 \
+  BABET=/chemin/vers/babet-2.24.0-linux-x86_64 \
   ./run_tests.sh
 ```
 

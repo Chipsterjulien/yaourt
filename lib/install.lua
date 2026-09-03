@@ -5,14 +5,15 @@
 --
 -- Implémente `-S <paquet>...`. Les paquets sont classés en deux groupes :
 -- ceux présents dans les dépôts officiels (installés en UN seul `pacman -S`)
--- et ceux de l'AUR (construits via build.aur, qui résout récursivement leurs
+-- et ceux de l'AUR (construits via build.aur_many, qui résout récursivement leurs
 -- dépendances AUR et installe leurs dépendances dépôt).
 --
 -- ROADMAP (objectif : équivalent yay) :
 --   étape 1  : routage dépôt/AUR, paquet par paquet, avec bilan.
 --   étape 2  : groupement des paquets dépôt dans un seul `pacman -S`.
---   étape 3  : résolution récursive des dépendances AUR (déléguée à build.aur,
---              partagée avec -Syu).
+--   étape 3  : résolution récursive des dépendances AUR (déléguée à
+--              build.aur_many, partagée avec -Syu).
+--   étape 4  : plan global par PackageBase pour les split packages.
 
 local util    = require("lib.util")
 local log     = require("lib.log")
@@ -91,8 +92,8 @@ local function classify(names)
 end
 
 -- run(config, names) -> code de sortie (0 = tout ok, 1 = au moins un échec)
--- Dépôts d'abord (un seul pacman -S), puis chaque AUR via build.aur (qui gère
--- la résolution récursive des dépendances).
+-- Dépôts d'abord (un seul pacman -S), puis toutes les cibles AUR via un plan
+-- build.aur_many (résolution récursive + regroupement des split packages).
 function install.run(config, names, opts)
     local C            = color.new(config.color)
     opts               = opts or {
@@ -128,7 +129,6 @@ function install.run(config, names, opts)
     end
 
     local results      = {} -- résultats typés (build.result) pour le bilan
-    local built        = {} -- anti-doublon partagé entre les cibles AUR
 
     -- 1) Dépôts : un seul appel pacman pour tout le groupe (atomique).
     -- On transmet à pacman --needed et les flags inconnus (passthrough) tels
@@ -154,17 +154,12 @@ function install.run(config, names, opts)
         end
     end
 
-    -- 2) AUR : chaque cible via build.aur (retourne une liste de résultats, une
-    -- entrée par paquet construit, dépendances comprises). Si une interruption
-    -- (Ctrl+C) survient, on arrête net : inutile d'enchaîner les suivants.
-    local stop = false
-    for _, name in ipairs(auras) do
-        local res_list = build.aur(config, name, built, opts)
-        for _, r in ipairs(res_list) do
-            results[#results + 1] = r
-            if r.status == "interrupted" then stop = true end
-        end
-        if stop then break end
+    -- 2) AUR : toutes les cibles sont planifiées ensemble. Le plan regroupe les
+    -- sous-paquets par pkgbase afin qu'un dépôt partagé ne soit cloné, revu et
+    -- construit qu'une seule fois, puis filtre les artefacts à installer.
+    if #auras > 0 then
+        local res_list = build.aur_many(config, auras, opts)
+        for _, r in ipairs(res_list) do results[#results + 1] = r end
     end
 
     -- 3) Bilan groupé par statut.

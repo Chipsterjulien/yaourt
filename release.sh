@@ -15,7 +15,7 @@
 #
 # Prérequis : le binaire babet de CETTE architecture. build.sh le résout
 # automatiquement via bin/babet-<version>-linux-<uname -m> (par exemple
-# bin/babet-2.22.2-linux-x86_64), ou à défaut bin/babet, $BABET ou le PATH.
+# bin/babet-2.24.0-linux-x86_64), ou à défaut bin/babet, $BABET ou le PATH.
 # On peut donc copier le dossier tel quel sur chaque machine avec les binaires
 # d'architecture dans bin/ : chacune prendra le sien.
 
