@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.7.0\n"
+"Project-Id-Version: yaourt 0.8.0\n"
 "Language: bn\n"
 "Language-Team: বাংলা\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -42,6 +42,10 @@ msgstr "রিপোজিটরি ও AUR হালনাগাদ করু�
 msgctxt "help.clean"
 msgid "clean the build cache (soft | complete)"
 msgstr "বিল্ড ক্যাশ পরিষ্কার করুন (আংশিক | সম্পূর্ণ)"
+
+msgctxt "help.pacdiff"
+msgid "manage .pacnew, .pacsave and .pacorig files with pacdiff"
+msgstr "pacdiff দিয়ে .pacnew, .pacsave এবং .pacorig ফাইল পরিচালনা করুন"
 
 msgctxt "help.get_build_files"
 msgid "retrieve AUR build files (git clone)"
@@ -194,6 +198,10 @@ msgstr "{option} একটি অনুসন্ধান শব্দ আশা
 msgctxt "command.not_found"
 msgid "{command} was not found in PATH"
 msgstr "{command} PATH-এ পাওয়া যায়নি"
+
+msgctxt "pacdiff.not_found"
+msgid "pacdiff was not found. Install pacman-contrib to use yaourt -C."
+msgstr "pacdiff পাওয়া যায়নি। yaourt -C ব্যবহার করতে pacman-contrib ইনস্টল করুন।"
 
 msgctxt "common.cancelled"
 msgid "Cancelled."

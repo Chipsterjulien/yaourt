@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.7.0\n"
+"Project-Id-Version: yaourt 0.8.0\n"
 "Language: lt\n"
 "Language-Team: Lietuvių\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -42,6 +42,10 @@ msgstr "atnaujinti saugyklas ir AUR ([M]: rankiniu būdu pasirinkti AUR paketus)
 msgctxt "help.clean"
 msgid "clean the build cache (soft | complete)"
 msgstr "išvalyti kūrimo podėlį (dalinai | visiškai)"
+
+msgctxt "help.pacdiff"
+msgid "manage .pacnew, .pacsave and .pacorig files with pacdiff"
+msgstr "tvarkyti .pacnew, .pacsave ir .pacorig failus naudojant pacdiff"
 
 msgctxt "help.get_build_files"
 msgid "retrieve AUR build files (git clone)"
@@ -198,6 +202,10 @@ msgstr "{option} tikisi paieškos terminų"
 msgctxt "command.not_found"
 msgid "{command} was not found in PATH"
 msgstr "{command} nebuvo rastas PATH"
+
+msgctxt "pacdiff.not_found"
+msgid "pacdiff was not found. Install pacman-contrib to use yaourt -C."
+msgstr "pacdiff nerastas. Įdiekite pacman-contrib, kad galėtumėte naudoti yaourt -C."
 
 msgctxt "common.cancelled"
 msgid "Cancelled."

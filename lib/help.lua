@@ -13,6 +13,7 @@ local rows = {
     { "yaourt -Ss <term>",          "help.search" },
     { "yaourt -Syu | -Su",          "help.update" },
     { "yaourt -Sc | -Scc",          "help.clean" },
+    { "yaourt -C [pacdiff options]", "help.pacdiff" },
     { "yaourt -G <package>...",     "help.get_build_files" },
     { "yaourt -h | --help",         "help.show_help" },
     { "yaourt -V | --version",      "help.show_version" },

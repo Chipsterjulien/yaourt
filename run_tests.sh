@@ -47,6 +47,10 @@ fi
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
+mkdir -p "$TMP/bin"
+cp "$ROOT/tests/fixtures/bin/pacdiff" "$TMP/bin/pacdiff"
+chmod +x "$TMP/bin/pacdiff"
+
 echo "=== Babet ==="
 "$BABET" --version
 
@@ -93,6 +97,21 @@ if python3 "$ROOT/tools/compile_catalogs.py" \
 fi
 grep -Fq "structural marker '|' is missing" "$TMP/invalid-po.log"
 echo "[PASS] garde-fou des marqueurs structurels de l’aide"
+
+INVALID_PACDIFF_PO_DIR="$TMP/po-invalid-pacdiff"
+cp -r "$ROOT/po" "$INVALID_PACDIFF_PO_DIR"
+sed -i \
+  's/gère les fichiers \.pacnew, \.pacsave et \.pacorig avec pacdiff/gère les fichiers .pacnew et .pacsave avec pacdiff/' \
+  "$INVALID_PACDIFF_PO_DIR/fr.po"
+if python3 "$ROOT/tools/compile_catalogs.py" \
+    --po-dir "$INVALID_PACDIFF_PO_DIR" --check \
+    > "$TMP/invalid-pacdiff-po.log" 2>&1; then
+  echo "Erreur : un suffixe pacdiff manquant a été accepté." >&2
+  exit 1
+fi
+grep -Fq "interface token '.pacorig' is missing" \
+  "$TMP/invalid-pacdiff-po.log"
+echo "[PASS] garde-fou des suffixes de fichiers pacdiff"
 
 echo "=== Catalogue gettext externe ==="
 EXTERNAL_LOCALE="$TMP/locale/zz/LC_MESSAGES"
@@ -152,8 +171,24 @@ HELP_OUTPUT="$TMP/help-en.txt"
 XDG_CONFIG_HOME="$TMP/config" LANGUAGE=en "$TMP/yaourt" --help > "$HELP_OUTPUT"
 grep -Fq "yaourt $YAOURT_VERSION" "$HELP_OUTPUT"
 grep -Fq "  yaourt -Ss <term>" "$HELP_OUTPUT"
+grep -Fq "  yaourt -C [pacdiff options]" "$HELP_OUTPUT"
 grep -Fq "  yaourt -G <package>..." "$HELP_OUTPUT"
 echo "[PASS] binaire yaourt dossier/embarqué"
+
+PACDIFF_FOLDER_OUTPUT="$TMP/pacdiff-folder.txt"
+PACDIFF_EMBEDDED_OUTPUT="$TMP/pacdiff-embedded.txt"
+(
+  cd "$ROOT"
+  PATH="$TMP/bin:$PATH" XDG_CONFIG_HOME="$TMP/config" LANGUAGE=en \
+    "$BABET" . -C --output > "$PACDIFF_FOLDER_OUTPUT"
+)
+PATH="$TMP/bin:$PATH" XDG_CONFIG_HOME="$TMP/config" LANGUAGE=en \
+  "$TMP/yaourt" --pacdiff --output > "$PACDIFF_EMBEDDED_OUTPUT"
+grep -Fq "YAOURT_PACDIFF_STUB" "$PACDIFF_FOLDER_OUTPUT"
+grep -Fq "<--output>" "$PACDIFF_FOLDER_OUTPUT"
+grep -Fq "YAOURT_PACDIFF_STUB" "$PACDIFF_EMBEDDED_OUTPUT"
+grep -Fq "<--output>" "$PACDIFF_EMBEDDED_OUTPUT"
+echo "[PASS] pacdiff externe en modes dossier et embarqué"
 
 echo "=== Résultat ==="
 if [[ "${YAOURT_NETWORK_TESTS:-0}" == "1" ]]; then

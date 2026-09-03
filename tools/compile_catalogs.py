@@ -27,6 +27,8 @@ SUSPICIOUS_TRANSLATION_RE = re.compile(
 PROTECTED_TERMS = (
     "yaourt",
     "pacman",
+    "pacdiff",
+    "pacman-contrib",
     "AUR",
     "PKGBUILD",
     "makepkg",
@@ -41,6 +43,7 @@ HELP_DESCRIPTION_CONTEXTS = {
     "help.search",
     "help.update",
     "help.clean",
+    "help.pacdiff",
     "help.get_build_files",
     "help.show_help",
     "help.show_version",
@@ -49,6 +52,7 @@ HELP_DESCRIPTION_CONTEXTS = {
 HELP_REQUIRED_TOKENS = {
     "help.delegate": ("-Q", "-R", "-Sy"),
     "help.update": ("[M]",),
+    "help.pacdiff": (".pacnew", ".pacsave", ".pacorig"),
 }
 
 # CJK catalogues conventionally use full-width parentheses; they carry the
@@ -363,7 +367,7 @@ def generate_pot(base: Catalog) -> str:
         '# Translation template for yaourt.',
         'msgid ""',
         'msgstr ""',
-        '"Project-Id-Version: yaourt 0.7.0\\n"',
+        '"Project-Id-Version: yaourt 0.8.0\\n"',
         '"Content-Type: text/plain; charset=UTF-8\\n"',
         '"Content-Transfer-Encoding: 8bit\\n"',
         '"Plural-Forms: nplurals=2; plural=(n != 1);\\n"',

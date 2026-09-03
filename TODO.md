@@ -9,7 +9,8 @@
 - [x] Dépendances : gestion des `provides` et des contraintes de version
       (`pacman -T` local + `pacman -Sp` dépôts).
 - [x] `-Syu` approche « façon yaourt » : synchro réelle (`pacman -Sy` + `-Qu`),
-      suppression de la dépendance `pacman-contrib`.
+      sans passer par `checkupdates` (`pacman-contrib` n’est utilisé que par
+      `yaourt -C` depuis la version 0.8.0).
 - [x] Harmonisation `-S` / `-Syu` via `build.aur_many` (chemin de build unifié).
 - [x] Sélection manuelle `[M]` dans `-Syu` : inclusion (numéros + plages) et
       exclusion (`^4` = tout sauf 4). Invite `[O/n/M]` seulement s'il y a de
@@ -34,6 +35,9 @@
       conservation des raisons explicite/dépendance.
 - [x] `CheckDepends` : résolution récursive des dépendances de test, depuis les
       dépôts ou l'AUR, et installation avant `makepkg` (0.7.0).
+- [x] `-C` / `--pacdiff` : gestion interactive des fichiers `.pacnew`,
+      `.pacsave` et `.pacorig` via `pacdiff`, avec élévation limitée aux
+      modifications et transmission de toutes ses options (0.8.0).
 - [x] Marquage `--asdeps` des dépendances AUR construites (un `-Rcs` de la cible
       les retire si elles deviennent orphelines).
 - [x] Bilan typé (`build.result` : ok / refused / failed / install_failed /

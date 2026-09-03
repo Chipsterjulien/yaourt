@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.7.0\n"
+"Project-Id-Version: yaourt 0.8.0\n"
 "Language: fa\n"
 "Language-Team: فارسی\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -42,6 +42,10 @@ msgstr "به‌روزرسانی مخزن‌ها و AUR ([M]: انتخاب دست
 msgctxt "help.clean"
 msgid "clean the build cache (soft | complete)"
 msgstr "پاک‌کردن حافظهٔ نهان ساخت (جزئی | کامل)"
+
+msgctxt "help.pacdiff"
+msgid "manage .pacnew, .pacsave and .pacorig files with pacdiff"
+msgstr "مدیریت فایل‌های .pacnew، .pacsave و .pacorig با pacdiff"
 
 msgctxt "help.get_build_files"
 msgid "retrieve AUR build files (git clone)"
@@ -194,6 +198,10 @@ msgstr "{option} انتظار یک اصطلاح جستجو دارد"
 msgctxt "command.not_found"
 msgid "{command} was not found in PATH"
 msgstr "{command} در PATH یافت نشد"
+
+msgctxt "pacdiff.not_found"
+msgid "pacdiff was not found. Install pacman-contrib to use yaourt -C."
+msgstr "pacdiff یافت نشد. برای استفاده از yaourt -C بستهٔ pacman-contrib را نصب کنید."
 
 msgctxt "common.cancelled"
 msgid "Cancelled."

@@ -6,7 +6,7 @@ A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
 [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
 in Lua.
 
-> **Status: young, but suitable for daily use (`0.7.0`).**
+> **Status: young, but suitable for daily use (`0.8.0`).**
 > Search, installation (official repositories and AUR with recursive dependency
 > resolution), unified upgrades, and cache cleanup are functional. The project
 > is still evolving.
@@ -59,6 +59,10 @@ feature profile.
 - **`-Sc` / `-Scc`**: build-cache cleanup in addition to pacman's cache. Soft
   cleanup removes sources and artifacts; full cleanup removes every cloned
   repository.
+- **`-C [pacdiff options]`**: interactive management of `.pacnew`, `.pacsave`,
+  and `.pacorig` files through the official `pacdiff` tool. All options are
+  forwarded unchanged; for an unprivileged user, only file modifications are
+  elevated through `pacdiff --sudo`.
 - **`-G <package>…`**: retrieve AUR build files (Git clone/update).
 - **Pre-build review**: on the first clone, every version-controlled file in
   the repository (`PKGBUILD`, `.install` files, patches, scripts, etc.) is shown
@@ -100,10 +104,29 @@ commands as root, while a patch or local script can alter the sources being
 built. After the file presentation or diff, yaourt always asks for confirmation
 before starting the build.
 
+### System configuration updates
+
+After a package upgrade, `yaourt -C` delegates to `pacdiff` to find and review
+`.pacnew`, `.pacsave`, and `.pacorig` files. The normal interactive actions of
+`pacdiff` remain available: view, compare, merge, skip, remove, or overwrite.
+
+```sh
+yaourt -C
+yaourt -C --output
+yaourt -C --threeway --backup
+```
+
+Every argument after `-C` is passed directly to `pacdiff`, including its search
+modes (`--pacmandb`, `--find`, `--locate`) and merge options. When yaourt is not
+run as root, it adds `--sudo`; `pacdiff` can therefore inspect files without
+privileges and invokes `sudo` or `sudoedit` only for operations that modify the
+system. `--pacdiff` is accepted as a long alias for `-C`.
+
 ## Requirements
 
 - [Arch Linux](https://archlinux.org/) or a compatible pacman-based derivative.
-- `pacman`, `git`, and `base-devel` (for `makepkg`).
+- `pacman`, `pacman-contrib` (for `pacdiff`), `git`, and `base-devel` (for
+  `makepkg`).
 - `sudo` (for pacman operations when yaourt is not started as root).
 - Python 3 to build from source; GNU gettext to validate or install external
   translation catalogues. Neither is required by the standalone binary.
@@ -117,8 +140,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-0.7.0-x86_64
-sudo install -Dm755 yaourt-0.7.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.8.0-x86_64
+sudo install -Dm755 yaourt-0.8.0-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
@@ -159,9 +182,10 @@ The offline suite exercises process and filesystem helpers against the real
 Babet runtime, validates recursive `CheckDepends` handling, split-package
 planning and artifact selection, tests the AUR client against a local HTTP
 server using `chunked` responses, validates the interactive parent/child chain
-under a real pseudo-terminal, checks both directory and embedded modes, and
-builds the final executable. The integration tests use the Python 3 standard
-library and GNU gettext (`msgfmt`) to validate every translation catalogue:
+under a real pseudo-terminal, checks `pacdiff` delegation in both directory and
+embedded modes, and builds the final executable. The integration tests use the
+Python 3 standard library and GNU gettext (`msgfmt`) to validate every
+translation catalogue:
 
 ```sh
 BABET=/path/to/babet-2.24.0-linux-x86_64 ./run_tests.sh

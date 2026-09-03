@@ -1,7 +1,7 @@
 # Translation template for yaourt.
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.7.0\n"
+"Project-Id-Version: yaourt 0.8.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -32,6 +32,10 @@ msgstr ""
 
 msgctxt "help.clean"
 msgid "clean the build cache (soft | complete)"
+msgstr ""
+
+msgctxt "help.pacdiff"
+msgid "manage .pacnew, .pacsave and .pacorig files with pacdiff"
 msgstr ""
 
 msgctxt "help.get_build_files"
@@ -184,6 +188,10 @@ msgstr ""
 
 msgctxt "command.not_found"
 msgid "{command} was not found in PATH"
+msgstr ""
+
+msgctxt "pacdiff.not_found"
+msgid "pacdiff was not found. Install pacman-contrib to use yaourt -C."
 msgstr ""
 
 msgctxt "common.cancelled"

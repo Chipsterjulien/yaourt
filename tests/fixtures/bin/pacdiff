@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+printf 'YAOURT_PACDIFF_STUB'
+for argument do
+    printf ' <%s>' "$argument"
+done
+printf '\n'

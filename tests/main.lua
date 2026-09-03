@@ -56,6 +56,102 @@ test("configuration : récapitulatif AUR notable par défaut", function()
     assert_equal(config.defaults().language, "auto")
 end)
 
+test("pacdiff : dépendance absente signalée clairement", function()
+    local pacdiff = require("lib.pacdiff")
+    local log = require("lib.log")
+    local original_which = babet.which
+    local original_passthrough = util.passthrough
+    local original_error = log.error
+    local calls, errors = 0, {}
+
+    local ok, err = pcall(function()
+        babet.which = function(command)
+            assert_equal(command, "pacdiff")
+            return nil
+        end
+        util.passthrough = function()
+            calls = calls + 1
+            return 0
+        end
+        log.error = function(message)
+            errors[#errors + 1] = message
+        end
+
+        assert_equal(pacdiff.run({ color = true }, {}), 1)
+        assert_equal(calls, 0)
+        assert_equal(#errors, 1)
+        assert(errors[1]:find("pacdiff", 1, true))
+        assert(errors[1]:find("pacman-contrib", 1, true))
+    end)
+
+    babet.which = original_which
+    util.passthrough = original_passthrough
+    log.error = original_error
+    assert(ok, err)
+end)
+
+test("pacdiff : arguments et code de sortie préservés en root", function()
+    local pacdiff = require("lib.pacdiff")
+    local original_which = babet.which
+    local original_is_root = util.is_root
+    local original_passthrough = util.passthrough
+
+    local ok, err = pcall(function()
+        babet.which = function(command)
+            assert_equal(command, "pacdiff")
+            return "/usr/bin/pacdiff"
+        end
+        util.is_root = function() return true end
+        util.passthrough = function(argv)
+            assert_equal(table.concat(argv, " "),
+                "pacdiff --threeway --backup --output")
+            return 7
+        end
+
+        assert_equal(pacdiff.run({ color = true }, {
+            "--threeway", "--backup", "--output",
+        }), 7)
+    end)
+
+    babet.which = original_which
+    util.is_root = original_is_root
+    util.passthrough = original_passthrough
+    assert(ok, err)
+end)
+
+test("pacdiff : privilèges limités et options non dupliquées", function()
+    local pacdiff = require("lib.pacdiff")
+    local original_which = babet.which
+    local original_is_root = util.is_root
+    local original_passthrough = util.passthrough
+    local calls = {}
+
+    local ok, err = pcall(function()
+        babet.which = function() return "/usr/bin/pacdiff" end
+        util.is_root = function() return false end
+        util.passthrough = function(argv)
+            calls[#calls + 1] = table.concat(argv, " ")
+            return 0
+        end
+
+        assert_equal(pacdiff.run({ color = false }, { "--backup" }), 0)
+        assert_equal(calls[1], "pacdiff --sudo --nocolor --backup")
+
+        assert_equal(pacdiff.run({ color = false }, {
+            "--sudo", "--nocolor", "--output",
+        }), 0)
+        assert_equal(calls[2], "pacdiff --sudo --nocolor --output")
+
+        assert_equal(pacdiff.run({ color = true }, { "-s", "--find" }), 0)
+        assert_equal(calls[3], "pacdiff -s --find")
+    end)
+
+    babet.which = original_which
+    util.is_root = original_is_root
+    util.passthrough = original_passthrough
+    assert(ok, err)
+end)
+
 test("i18n : 43 catalogues complets et découvrables", function()
     local expected = {
         "ar", "ast", "bg", "bn", "br", "ca", "cs_CZ", "da", "de", "el",
@@ -133,11 +229,10 @@ test("i18n : aide protégée contre un catalogue externe mal formé", function()
     i18n.t = original_t
     assert(ok, err)
 
-    assert(rendered:find(
-        "yaourt -Ss <term>           description externe ligne injectée",
-        1,
-        true
-    ))
+    local search_line = rendered:match("[^\n]*yaourt %-Ss <term>[^\n]*")
+    assert(search_line)
+    assert(search_line:find("  yaourt -Ss <term>", 1, true))
+    assert(search_line:find("description externe ligne injectée", 1, true))
     assert(not rendered:find("\nligne injectée", 1, true))
 end)
 
@@ -1164,7 +1259,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.7.0")
+        assert_equal(opts.headers["User-Agent"], "yaourt/0.8.0")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then

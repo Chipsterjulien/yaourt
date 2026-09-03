@@ -19,6 +19,7 @@ local fetch   = require("lib.fetch")
 local install = require("lib.install")
 local log     = require("lib.log")
 local pacman  = require("lib.pacman")
+local pacdiff = require("lib.pacdiff")
 local search  = require("lib.search")
 local update  = require("lib.update")
 local version = require("lib.version")
@@ -91,6 +92,15 @@ local function main()
     if first == "-V" or first == "--version" then
         io.write(version.name .. " " .. version.version .. "\n")
         return 0
+    end
+
+    -- Gestion des fichiers .pacnew/.pacsave/.pacorig avec l'outil officiel
+    -- pacdiff. Cette commande ne construit rien : elle reste utilisable sans
+    -- l'utilisateur système de build yaourt.
+    if first == "-C" or first == "--pacdiff" then
+        local opts = {}
+        for i = 2, #args do opts[#opts + 1] = args[i] end
+        return pacdiff.run(config, opts)
     end
 
     if not babet.user.exists("yaourt") then

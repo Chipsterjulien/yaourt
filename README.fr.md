@@ -5,7 +5,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.7.0`).**
+> **Statut : jeune mais utilisable au quotidien (`0.8.0`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -58,6 +58,10 @@ profil de fonctionnalités particulier.
   `1-4`) et exclusion (`^4` pour tout sauf le 4).
 - **`-Sc` / `-Scc`** : nettoyage du cache de build (doux : sources et artefacts ;
   complet : tous les dépôts clonés), en complément du cache pacman.
+- **`-C [options pacdiff]`** : gestion interactive des fichiers `.pacnew`,
+  `.pacsave` et `.pacorig` avec l’outil officiel `pacdiff`. Toutes les options
+  sont transmises sans modification ; pour un utilisateur non privilégié,
+  seules les modifications de fichiers sont élevées via `pacdiff --sudo`.
 - **`-G <paquet>…`** : récupération des fichiers de build AUR (clone/màj git).
 - **Revue avant compilation** : au premier clone, tous les fichiers versionnés
   du dépôt (PKGBUILD, `.install`, patches, scripts…) sont présentés un par un
@@ -102,10 +106,31 @@ ou un script local peut modifier les sources construites. Après la présentatio
 ou le diff, yaourt demande toujours confirmation avant de lancer la
 construction.
 
+### Mise à jour des fichiers de configuration système
+
+Après la mise à jour d’un paquet, `yaourt -C` délègue à `pacdiff` la recherche
+et l’examen des fichiers `.pacnew`, `.pacsave` et `.pacorig`. Les actions
+interactives habituelles de `pacdiff` restent disponibles : afficher, comparer,
+fusionner, ignorer, supprimer ou remplacer.
+
+```sh
+yaourt -C
+yaourt -C --output
+yaourt -C --threeway --backup
+```
+
+Tous les arguments placés après `-C` sont transmis directement à `pacdiff`, y
+compris ses modes de recherche (`--pacmandb`, `--find`, `--locate`) et ses
+options de fusion. Lorsque yaourt n’est pas lancé en root, il ajoute `--sudo` :
+`pacdiff` peut ainsi examiner les fichiers sans privilège et ne fait appel à
+`sudo` ou `sudoedit` que pour les opérations qui modifient le système.
+`--pacdiff` est accepté comme alias long de `-C`.
+
 ## Prérequis
 
 - [Arch Linux](https://archlinux.org/) (ou dérivé compatible `pacman`).
-- `pacman`, `git`, `base-devel` (pour `makepkg`).
+- `pacman`, `pacman-contrib` (pour `pacdiff`), `git`, `base-devel` (pour
+  `makepkg`).
 - `sudo` (opérations pacman lorsqu'il n'est pas lancé en root).
 - Python 3 pour construire depuis les sources ; GNU gettext pour valider ou
   installer les catalogues externes. Le binaire autonome n'en dépend pas.
@@ -119,8 +144,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.7.0-x86_64
-sudo install -Dm755 yaourt-0.7.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.8.0-x86_64
+sudo install -Dm755 yaourt-0.8.0-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
@@ -162,10 +187,10 @@ La suite hors ligne vérifie les helpers de processus et de fichiers avec le
 vrai runtime Babet, la gestion récursive de `CheckDepends`, le plan de
 construction et la sélection des artefacts des split packages, exerce le client
 AUR sur un serveur HTTP local avec des réponses `chunked`, teste la chaîne
-interactive parent/enfant sous un véritable pseudo-terminal, puis contrôle les
-modes dossier et embarqué et construit le binaire final. Les tests d'intégration
-utilisent la bibliothèque standard de Python 3 et GNU gettext (`msgfmt`) pour
-valider chaque catalogue :
+interactive parent/enfant sous un véritable pseudo-terminal, contrôle la
+délégation à `pacdiff` dans les modes dossier et embarqué, puis construit le
+binaire final. Les tests d'intégration utilisent la bibliothèque standard de
+Python 3 et GNU gettext (`msgfmt`) pour valider chaque catalogue :
 
 ```sh
 BABET=/chemin/vers/babet-2.24.0-linux-x86_64 ./run_tests.sh

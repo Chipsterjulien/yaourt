@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.7.0\n"
+"Project-Id-Version: yaourt 0.8.0\n"
 "Language: vi\n"
 "Language-Team: Tiếng Việt\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -42,6 +42,10 @@ msgstr "cập nhật kho phần mềm và AUR ([M]: chọn thủ công các gói
 msgctxt "help.clean"
 msgid "clean the build cache (soft | complete)"
 msgstr "dọn bộ nhớ đệm bản dựng (một phần | toàn bộ)"
+
+msgctxt "help.pacdiff"
+msgid "manage .pacnew, .pacsave and .pacorig files with pacdiff"
+msgstr "quản lý các tệp .pacnew, .pacsave và .pacorig bằng pacdiff"
 
 msgctxt "help.get_build_files"
 msgid "retrieve AUR build files (git clone)"
@@ -190,6 +194,10 @@ msgstr "{option} mong đợi một thuật ngữ tìm kiếm"
 msgctxt "command.not_found"
 msgid "{command} was not found in PATH"
 msgstr "{command} không được tìm thấy trong PATH"
+
+msgctxt "pacdiff.not_found"
+msgid "pacdiff was not found. Install pacman-contrib to use yaourt -C."
+msgstr "Không tìm thấy pacdiff. Hãy cài đặt pacman-contrib để sử dụng yaourt -C."
 
 msgctxt "common.cancelled"
 msgid "Cancelled."

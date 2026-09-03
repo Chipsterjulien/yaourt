@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.7.0\n"
+"Project-Id-Version: yaourt 0.8.0\n"
 "Language: ja\n"
 "Language-Team: 日本語\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -42,6 +42,10 @@ msgstr "リポジトリと AUR を更新する ([M]: AUR パッケージを手�
 msgctxt "help.clean"
 msgid "clean the build cache (soft | complete)"
 msgstr "ビルドキャッシュを消去する (部分 | 完全)"
+
+msgctxt "help.pacdiff"
+msgid "manage .pacnew, .pacsave and .pacorig files with pacdiff"
+msgstr "pacdiff で .pacnew、.pacsave、.pacorig ファイルを管理する"
 
 msgctxt "help.get_build_files"
 msgid "retrieve AUR build files (git clone)"
@@ -190,6 +194,10 @@ msgstr "{option}は検索を期待しています"
 msgctxt "command.not_found"
 msgid "{command} was not found in PATH"
 msgstr "{command} は PATH で見つかりませんでした"
+
+msgctxt "pacdiff.not_found"
+msgid "pacdiff was not found. Install pacman-contrib to use yaourt -C."
+msgstr "pacdiff が見つかりません。yaourt -C を使用するには pacman-contrib をインストールしてください。"
 
 msgctxt "common.cancelled"
 msgid "Cancelled."
