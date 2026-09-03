@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.8.0\n"
+"Project-Id-Version: yaourt 0.9.0\n"
 "Language: fi\n"
 "Language-Team: Suomi\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -484,6 +484,22 @@ msgstr "Päivitettävät numerot (esim. 1 3 5, 1-4, ^2 kaikkien lukuun ottamatta
 msgctxt "update.sync_failed"
 msgid "failed to synchronize databases (pacman -Sy)"
 msgstr "ei synkronoitu tietokantoja (pacman -Sy)"
+
+msgctxt "deps.providers_heading"
+msgid "AUR providers for {dependency}:"
+msgstr "AUR-tarjoajat riippuvuudelle {dependency}:"
+
+msgctxt "deps.provider_choice"
+msgid "Choose a provider (1-{count}, 0 to cancel):"
+msgstr "Valitse tarjoaja (1-{count}, 0 peruuttaa):"
+
+msgctxt "deps.providers_noninteractive"
+msgid "multiple AUR providers satisfy {dependency}: {providers}; rerun without --noconfirm to choose one"
+msgstr "useat AUR-tarjoajat täyttävät riippuvuuden {dependency}: {providers}; suorita uudelleen ilman --noconfirm-valitsinta valitaksesi yhden"
+
+msgctxt "deps.unsatisfied"
+msgid "no AUR package or provider satisfies {dependency}"
+msgstr "mikään AUR-paketti tai -tarjoaja ei täytä riippuvuutta {dependency}"
 
 msgctxt "update.up_to_date"
 msgid "The system is up to date."

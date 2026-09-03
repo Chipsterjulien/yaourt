@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.8.0\n"
+"Project-Id-Version: yaourt 0.9.0\n"
 "Language: bn\n"
 "Language-Team: বাংলা\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -484,6 +484,22 @@ msgstr "আপডেট করার জন্য নম্বর (উদাহ�
 msgctxt "update.sync_failed"
 msgid "failed to synchronize databases (pacman -Sy)"
 msgstr "ডাটাবেস সিঙ্ক্রোনাইজ করতে ব্যর্থ হয়েছে (pacman -Sy)"
+
+msgctxt "deps.providers_heading"
+msgid "AUR providers for {dependency}:"
+msgstr "{dependency}-এর জন্য AUR প্রদানকারী:"
+
+msgctxt "deps.provider_choice"
+msgid "Choose a provider (1-{count}, 0 to cancel):"
+msgstr "একটি প্রদানকারী নির্বাচন করুন (1-{count}, বাতিল করতে 0):"
+
+msgctxt "deps.providers_noninteractive"
+msgid "multiple AUR providers satisfy {dependency}: {providers}; rerun without --noconfirm to choose one"
+msgstr "একাধিক AUR প্রদানকারী {dependency} পূরণ করে: {providers}; একটি বেছে নিতে --noconfirm ছাড়া আবার চালান"
+
+msgctxt "deps.unsatisfied"
+msgid "no AUR package or provider satisfies {dependency}"
+msgstr "কোনো AUR প্যাকেজ বা প্রদানকারী {dependency} পূরণ করে না"
 
 msgctxt "update.up_to_date"
 msgid "The system is up to date."

@@ -17,8 +17,10 @@
 -- Important : `pacman -T` ne consulte QUE la base installée, pas les dépôts ;
 -- d'où le second test `-Sp` pour ne pas prendre une dépendance dépôt encore
 -- non installée pour une dépendance AUR.
--- Le nom n'est nettoyé (strip_version) que pour interroger l'AUR, qui ne
--- comprend pas les contraintes de version.
+-- L'AUR est ensuite interrogé d'abord par nom exact, puis par `by=provides`.
+-- Les résultats de cette recherche sont revérifiés localement, y compris les
+-- contraintes de version : une recherche RPC peut être plus large que la
+-- capacité exacte demandée.
 
 local util = require("lib.util")
 local aur  = require("lib.aur")
@@ -26,11 +28,188 @@ local i18n = require("lib.i18n")
 
 local deps = {}
 
+local function trim(value)
+    return (tostring(value or ""):match("^%s*(.-)%s*$"))
+end
+
+-- parse_requirement(dep) -> { raw, name, op?, version? }
+-- « libalpm.so>=14 » -> { name="libalpm.so", op=">=", version="14" }.
+-- Les noms de paquet ne contiennent aucun des caractères de comparaison.
+local function parse_requirement(dep)
+    local raw = trim(dep)
+    local position = raw:find("[<>=]")
+    if not position then
+        return { raw = raw, name = raw }
+    end
+
+    local name = trim(raw:sub(1, position - 1))
+    local rest = trim(raw:sub(position))
+    local op, version = rest:match("^([<>=]+)%s*(.-)%s*$")
+    if not ({ ["="] = true, ["<"] = true, [">"] = true,
+              ["<="] = true, [">="] = true })[op] or version == "" then
+        return { raw = raw, name = name ~= "" and name or raw }
+    end
+    return { raw = raw, name = name, op = op, version = version }
+end
+
 -- strip_version(dep) -> nom nu, sans contrainte de version.
--- « libalpm.so>=14 » -> « libalpm.so », « foo=1.0 » -> « foo », « git » -> « git ».
--- Sert uniquement à interroger l'AUR (le RPC ne gère pas « foo>=1.2 »).
 local function strip_version(dep)
-    return dep:match("^[^<>=]+") or dep
+    return parse_requirement(dep).name
+end
+
+local function version_satisfies(actual, requirement)
+    if not requirement.op then return true end
+    if type(actual) ~= "string" or actual == "" then return false end
+
+    local comparison, err = util.vercmp(actual, requirement.version)
+    if comparison == nil then return nil, err end
+    if requirement.op == "=" then return comparison == 0 end
+    if requirement.op == "<" then return comparison < 0 end
+    if requirement.op == ">" then return comparison > 0 end
+    if requirement.op == "<=" then return comparison <= 0 end
+    return comparison >= 0
+end
+
+-- entry_satisfies(entry, requirement) -> ok, provide_affiché | nil, err
+-- Un paquet portant directement le nom demandé expose sa propre Version. Pour
+-- une capacité virtuelle versionnée, seule une entrée Provides elle-même
+-- versionnée (« capacité=2 ») peut prouver que la contrainte est satisfaite.
+local function entry_satisfies(entry, requirement)
+    if type(entry) ~= "table" then return false end
+
+    if entry.Name == requirement.name then
+        local ok, err = version_satisfies(entry.Version, requirement)
+        if ok == nil then return nil, err end
+        if ok then
+            local label = entry.Name
+            if entry.Version then label = label .. "=" .. entry.Version end
+            return true, label
+        end
+    end
+
+    if type(entry.Provides) == "table" then
+        for _, value in ipairs(entry.Provides) do
+            local provided = parse_requirement(value)
+            if provided.name == requirement.name then
+                if not requirement.op then return true, trim(value) end
+                if provided.op == "=" and provided.version then
+                    local ok, err = version_satisfies(provided.version, requirement)
+                    if ok == nil then return nil, err end
+                    if ok then return true, trim(value) end
+                end
+            end
+        end
+    end
+    return false
+end
+
+local function noninteractive(opts)
+    if opts and opts.noconfirm then return true end
+    for _, flag in ipairs(opts and opts.passthrough or {}) do
+        if flag == "--noconfirm" then return true end
+    end
+    return false
+end
+
+local function provider_names(candidates)
+    local names = {}
+    for _, candidate in ipairs(candidates) do
+        names[#names + 1] = candidate.entry.Name
+    end
+    return table.concat(names, ", ")
+end
+
+local function choose_provider(requirement, candidates, opts)
+    table.sort(candidates, function(a, b)
+        return tostring(a.entry.Name) < tostring(b.entry.Name)
+    end)
+    if #candidates == 1 then return candidates[1] end
+    if noninteractive(opts) then
+        return nil, i18n.t("deps.providers_noninteractive", {
+            dependency = requirement.raw,
+            providers = provider_names(candidates),
+        })
+    end
+
+    print("")
+    print("==> " .. i18n.t("deps.providers_heading", {
+        dependency = requirement.raw,
+    }))
+    for index, candidate in ipairs(candidates) do
+        print(string.format(
+            "  %d. %s %s [%s]",
+            index,
+            candidate.entry.Name,
+            candidate.entry.Version or "?",
+            candidate.provided or requirement.name
+        ))
+    end
+
+    while true do
+        io.write("==> " .. i18n.t("deps.provider_choice", {
+            count = #candidates,
+        }) .. " ")
+        io.flush()
+        local answer = trim(io.read("l"))
+        local choice = tonumber(answer)
+        if choice == 0 or answer == "" then
+            return nil, i18n.t("common.cancelled")
+        end
+        if choice and choice == math.floor(choice)
+                and choice >= 1 and choice <= #candidates then
+            return candidates[choice]
+        end
+    end
+end
+
+-- resolve_candidate(config, requirement, exact, opts, state)
+-- Conserve un choix unique par capacité virtuelle pendant tout le plan. Cela
+-- empêche deux branches du graphe de sélectionner silencieusement deux
+-- fournisseurs concurrents pour le même nom.
+local function resolve_candidate(config, requirement, exact, opts, state)
+    local selected = state.providers[requirement.name]
+    if selected then
+        local ok, err = entry_satisfies(selected.entry, requirement)
+        if ok == nil then return nil, err end
+        if ok then return selected.entry.Name end
+        return nil, i18n.t("deps.unsatisfied", {
+            dependency = requirement.raw,
+        })
+    end
+
+    local exact_entry = exact[requirement.name]
+    if exact_entry then
+        local ok, err = entry_satisfies(exact_entry, requirement)
+        if ok == nil then return nil, err end
+        if ok then
+            state.providers[requirement.name] = { entry = exact_entry }
+            return exact_entry.Name
+        end
+    end
+
+    local entries, err = aur.providers(config, requirement.name)
+    if not entries then return nil, err end
+    local candidates, seen = {}, {}
+    for _, entry in ipairs(entries) do
+        if entry.Name and not seen[entry.Name] then
+            local ok, why = entry_satisfies(entry, requirement)
+            if ok == nil then return nil, why end
+            if ok then
+                seen[entry.Name] = true
+                candidates[#candidates + 1] = { entry = entry, provided = why }
+            end
+        end
+    end
+    if #candidates == 0 then
+        return nil, i18n.t("deps.unsatisfied", {
+            dependency = requirement.raw,
+        })
+    end
+
+    local chosen, choice_err = choose_provider(requirement, candidates, opts)
+    if not chosen then return nil, choice_err end
+    state.providers[requirement.name] = chosen
+    return chosen.entry.Name
 end
 
 -- satisfied_locally(dep) -> bool : la dépendance (BRUTE) est-elle déjà
@@ -75,7 +254,7 @@ end
 -- CheckDepends via le RPC, on écarte celles que pacman sait déjà satisfaire
 -- (installées, dépôt, provides, version), puis un seul aur.info groupé confirme
 -- lesquelles existent en AUR.
-function deps.aur_deps_of(config, name)
+function deps.aur_deps_of(config, name, opts, state)
     local info, err = aur.info(config, { name })
     if not info then return nil, err end
 
@@ -88,14 +267,17 @@ function deps.aur_deps_of(config, name)
     -- Candidates AUR : dépendances ni satisfaites localement, ni disponibles
     -- dans les dépôts (provides + version testés sur la dépendance brute). On
     -- retient le nom nettoyé pour interroger l'AUR. Déduplication au passage.
+    state = state or { providers = {} }
+    state.providers = state.providers or {}
+
     local seen = {}
     local candidates = {}
     for _, d in ipairs(raw_deps(entry)) do
         if not satisfied_locally(d) and not available_in_repos(d) then
-            local n = strip_version(d)
-            if n and n ~= "" and not seen[n] then
-                seen[n] = true
-                candidates[#candidates + 1] = n
+            local requirement = parse_requirement(d)
+            if requirement.name ~= "" and not seen[requirement.raw] then
+                seen[requirement.raw] = true
+                candidates[#candidates + 1] = requirement
             end
         end
     end
@@ -104,12 +286,27 @@ function deps.aur_deps_of(config, name)
 
     -- Confirmation : un seul aur.info groupé. Ne survivent que les candidates
     -- réellement présentes dans l'AUR (les autres n'existent nulle part).
-    local found, ferr = aur.info(config, candidates)
+    local names = {}
+    local name_seen = {}
+    for _, requirement in ipairs(candidates) do
+        if not name_seen[requirement.name] then
+            name_seen[requirement.name] = true
+            names[#names + 1] = requirement.name
+        end
+    end
+    local found, ferr = aur.info(config, names)
     if not found then return nil, ferr end
 
-    local result = {}
-    for _, n in ipairs(candidates) do
-        if found[n] then result[#result + 1] = n end
+    local result, result_seen = {}, {}
+    for _, requirement in ipairs(candidates) do
+        local package, rerr = resolve_candidate(
+            config, requirement, found, opts, state
+        )
+        if not package then return nil, rerr end
+        if not result_seen[package] then
+            result_seen[package] = true
+            result[#result + 1] = package
+        end
     end
     return result, nil
 end
@@ -152,8 +349,8 @@ end
 -- on visite les dépendances d'un paquet avant de l'ajouter, donc les feuilles
 -- se retrouvent en tête et les paquets les plus proches de la cible en fin.
 -- L'ensemble `visited` évite les doublons et neutralise les cycles éventuels.
-function deps.resolve(config, target)
-    local plan, err = deps.resolve_many(config, { target })
+function deps.resolve(config, target, opts)
+    local plan, err = deps.resolve_many(config, { target }, opts)
     if not plan then return nil, err end
 
     local order = {}
@@ -169,11 +366,12 @@ end
 -- paquets requis par une même transaction. `direct[pkg]` conserve les arêtes
 -- du graphe ; build.lua les regroupe ensuite par PackageBase pour construire
 -- une seule fois les split packages partageant le même dépôt AUR.
-function deps.resolve_many(config, targets)
+function deps.resolve_many(config, targets, opts)
     local order    = {}
     local direct   = {}
     local visited  = {}
     local visiting = {}
+    local state    = { providers = {} }
     local rerr
 
     local function visit(pkg)
@@ -183,7 +381,7 @@ function deps.resolve_many(config, targets)
         if visiting[pkg] then return true end
         visiting[pkg] = true
 
-        local pkg_deps, err = deps.aur_deps_of(config, pkg)
+        local pkg_deps, err = deps.aur_deps_of(config, pkg, opts, state)
         if not pkg_deps then
             rerr = err
             return false

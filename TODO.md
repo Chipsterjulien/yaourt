@@ -6,8 +6,9 @@
 - [x] Limite configurable des résultats de recherche (`search_limit`).
 - [x] Installation directe `-S` : routage dépôt/AUR, groupement des paquets
       dépôt, résolution récursive des dépendances AUR.
-- [x] Dépendances : gestion des `provides` et des contraintes de version
-      (`pacman -T` local + `pacman -Sp` dépôts).
+- [x] Dépendances : gestion des `provides` et des contraintes de version via
+      `pacman -T` (local), `pacman -Sp` (dépôts), puis le RPC AUR
+      `by=provides` avec sélection déterministe ou explicite (0.9.0).
 - [x] `-Syu` approche « façon yaourt » : synchro réelle (`pacman -Sy` + `-Qu`),
       sans passer par `checkupdates` (`pacman-contrib` n’est utilisé que par
       `yaourt -C` depuis la version 0.8.0).

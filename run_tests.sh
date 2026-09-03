@@ -113,6 +113,20 @@ grep -Fq "interface token '.pacorig' is missing" \
   "$TMP/invalid-pacdiff-po.log"
 echo "[PASS] garde-fou des suffixes de fichiers pacdiff"
 
+INVALID_PROVIDER_PO_DIR="$TMP/po-invalid-provider"
+cp -r "$ROOT/po" "$INVALID_PROVIDER_PO_DIR"
+sed -i 's/relancez sans --noconfirm/relancez sans confirmation/' \
+  "$INVALID_PROVIDER_PO_DIR/fr.po"
+if python3 "$ROOT/tools/compile_catalogs.py" \
+    --po-dir "$INVALID_PROVIDER_PO_DIR" --check \
+    > "$TMP/invalid-provider-po.log" 2>&1; then
+  echo "Erreur : la perte de --noconfirm a été acceptée." >&2
+  exit 1
+fi
+grep -Fq "protected term '--noconfirm' was altered" \
+  "$TMP/invalid-provider-po.log"
+echo "[PASS] garde-fou de l’option --noconfirm des fournisseurs"
+
 echo "=== Catalogue gettext externe ==="
 EXTERNAL_LOCALE="$TMP/locale/zz/LC_MESSAGES"
 mkdir -p "$EXTERNAL_LOCALE"

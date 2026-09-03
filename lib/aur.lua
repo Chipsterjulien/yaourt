@@ -127,4 +127,35 @@ function aur.search(config, term, by)
     return data.results or {}
 end
 
+-- providers(config, capability) -> (entries[], nil) | (nil, err)
+--
+-- La recherche RPC `by=provides` ne garantit pas que ses résultats contiennent
+-- tous les champs de /info (notamment Provides). On l'utilise donc uniquement
+-- pour découvrir des noms, puis on recharge les fiches complètes en une requête
+-- groupée. Le tri rend le choix interactif reproductible.
+function aur.providers(config, capability)
+    local results, err = aur.search(config, capability, "provides")
+    if not results then return nil, err end
+
+    local seen, names = {}, {}
+    for _, entry in ipairs(results) do
+        local name = entry and entry.Name
+        if type(name) == "string" and name ~= "" and not seen[name] then
+            seen[name] = true
+            names[#names + 1] = name
+        end
+    end
+    table.sort(names)
+    if #names == 0 then return {}, nil end
+
+    local infos, ierr = aur.info(config, names)
+    if not infos then return nil, ierr end
+
+    local providers = {}
+    for _, name in ipairs(names) do
+        if infos[name] then providers[#providers + 1] = infos[name] end
+    end
+    return providers, nil
+end
+
 return aur

@@ -1,7 +1,7 @@
 # Translation template for yaourt.
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.8.0\n"
+"Project-Id-Version: yaourt 0.9.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -474,6 +474,22 @@ msgstr ""
 
 msgctxt "update.sync_failed"
 msgid "failed to synchronize databases (pacman -Sy)"
+msgstr ""
+
+msgctxt "deps.providers_heading"
+msgid "AUR providers for {dependency}:"
+msgstr ""
+
+msgctxt "deps.provider_choice"
+msgid "Choose a provider (1-{count}, 0 to cancel):"
+msgstr ""
+
+msgctxt "deps.providers_noninteractive"
+msgid "multiple AUR providers satisfy {dependency}: {providers}; rerun without --noconfirm to choose one"
+msgstr ""
+
+msgctxt "deps.unsatisfied"
+msgid "no AUR package or provider satisfies {dependency}"
 msgstr ""
 
 msgctxt "update.up_to_date"

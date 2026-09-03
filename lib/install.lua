@@ -34,6 +34,7 @@ function install.parse_opts(args)
     local opts  = {
         force = false,
         needed = false,
+        noconfirm = false,
         download_only = false,
         passthrough = {},
     }
@@ -59,6 +60,10 @@ function install.parse_opts(args)
                 opts.force = true
             elseif arg == "-w" or arg == "--downloadonly" then
                 opts.download_only = true
+            elseif arg == "--noconfirm" then
+                -- Conservé aussi dans passthrough pour les cibles dépôt.
+                opts.noconfirm = true
+                opts.passthrough[#opts.passthrough + 1] = arg
             else
                 opts.passthrough[#opts.passthrough + 1] = arg
             end
@@ -99,6 +104,7 @@ function install.run(config, names, opts)
     opts               = opts or {
         force = false,
         needed = false,
+        noconfirm = false,
         download_only = false,
         passthrough = {},
     }

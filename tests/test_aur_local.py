@@ -67,6 +67,32 @@ class AurHandler(BaseHTTPRequestHandler):
             })
             return
 
+        if (
+            request.path == "/rpc/v5/search/virtual-tool"
+            and query == {"by": ["provides"]}
+        ):
+            self.send_chunked_json({
+                "type": "search",
+                "resultcount": 1,
+                "results": [{"Name": "tool-provider", "Version": "2.0.0"}],
+            })
+            return
+
+        if (
+            request.path == "/rpc/v5/info"
+            and query == {"arg[]": ["tool-provider"]}
+        ):
+            self.send_chunked_json({
+                "type": "multiinfo",
+                "resultcount": 1,
+                "results": [{
+                    "Name": "tool-provider",
+                    "Version": "2.0.0",
+                    "Provides": ["virtual-tool=2"],
+                }],
+            })
+            return
+
         self.send_error(404)
 
 

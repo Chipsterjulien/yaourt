@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.8.0\n"
+"Project-Id-Version: yaourt 0.9.0\n"
 "Language: zh_TW\n"
 "Language-Team: 繁體中文\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -465,6 +465,22 @@ msgstr "必須更新的數字 (例如1 3 5,1-4, ^2除 2):"
 msgctxt "update.sync_failed"
 msgid "failed to synchronize databases (pacman -Sy)"
 msgstr "沒有同步資料庫 (pacman - Sy)"
+
+msgctxt "deps.providers_heading"
+msgid "AUR providers for {dependency}:"
+msgstr "{dependency} 的 AUR 提供者："
+
+msgctxt "deps.provider_choice"
+msgid "Choose a provider (1-{count}, 0 to cancel):"
+msgstr "選擇一個提供者（1-{count}，輸入 0 取消）："
+
+msgctxt "deps.providers_noninteractive"
+msgid "multiple AUR providers satisfy {dependency}: {providers}; rerun without --noconfirm to choose one"
+msgstr "多個 AUR 提供者滿足 {dependency}：{providers}；請在不使用 --noconfirm 的情況下重新執行以選擇一個"
+
+msgctxt "deps.unsatisfied"
+msgid "no AUR package or provider satisfies {dependency}"
+msgstr "沒有 AUR 軟體包或提供者滿足 {dependency}"
 
 msgctxt "update.up_to_date"
 msgid "The system is up to date."

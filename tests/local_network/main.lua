@@ -33,4 +33,11 @@ assert(#results == 1)
 assert(results[1].Name == "yay")
 assert(results[1].Version == "12.0.0")
 
+local providers, providers_err = aur.providers(config, "virtual-tool")
+assert(providers, providers_err)
+assert(#providers == 1)
+assert(providers[1].Name == "tool-provider")
+assert(providers[1].Version == "2.0.0")
+assert(providers[1].Provides[1] == "virtual-tool=2")
+
 print("YAOURT_LOCAL_AUR_OK")

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.8.0\n"
+"Project-Id-Version: yaourt 0.9.0\n"
 "Language: cs_CZ\n"
 "Language-Team: Čeština\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -503,6 +503,22 @@ msgstr "Čísla k aktualizaci (např. 1 3 5, 1-4, ^2 pro všechny kromě 2):"
 msgctxt "update.sync_failed"
 msgid "failed to synchronize databases (pacman -Sy)"
 msgstr "selhal synchronizovat databáze (pacman -Sy)"
+
+msgctxt "deps.providers_heading"
+msgid "AUR providers for {dependency}:"
+msgstr "Poskytovatelé z AUR pro {dependency}:"
+
+msgctxt "deps.provider_choice"
+msgid "Choose a provider (1-{count}, 0 to cancel):"
+msgstr "Vyberte poskytovatele (1-{count}, 0 pro zrušení):"
+
+msgctxt "deps.providers_noninteractive"
+msgid "multiple AUR providers satisfy {dependency}: {providers}; rerun without --noconfirm to choose one"
+msgstr "více poskytovatelů z AUR splňuje {dependency}: {providers}; spusťte znovu bez --noconfirm a jednoho vyberte"
+
+msgctxt "deps.unsatisfied"
+msgid "no AUR package or provider satisfies {dependency}"
+msgstr "žádný balíček ani poskytovatel v AUR nesplňuje {dependency}"
 
 msgctxt "update.up_to_date"
 msgid "The system is up to date."

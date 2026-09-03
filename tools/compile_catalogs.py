@@ -35,6 +35,7 @@ PROTECTED_TERMS = (
     "Babet",
     "git clone",
     "git",
+    "--noconfirm",
 )
 
 HELP_DESCRIPTION_CONTEXTS = {
@@ -367,7 +368,7 @@ def generate_pot(base: Catalog) -> str:
         '# Translation template for yaourt.',
         'msgid ""',
         'msgstr ""',
-        '"Project-Id-Version: yaourt 0.8.0\\n"',
+        '"Project-Id-Version: yaourt 0.9.0\\n"',
         '"Content-Type: text/plain; charset=UTF-8\\n"',
         '"Content-Transfer-Encoding: 8bit\\n"',
         '"Plural-Forms: nplurals=2; plural=(n != 1);\\n"',

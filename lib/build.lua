@@ -532,8 +532,8 @@ end
 -- graphe sur les pkgbase. Deux sous-paquets frères partagent alors une seule
 -- étape clone, revue et makepkg, sans perdre la liste précise des artefacts à
 -- installer.
-function build.plan(config, targets)
-    local resolved, rerr = deps.resolve_many(config, targets)
+function build.plan(config, targets, opts)
+    local resolved, rerr = deps.resolve_many(config, targets, opts)
     if not resolved then return nil, rerr end
     if #resolved.order == 0 then
         return { order = {}, bases = {}, missing = {} }, nil
@@ -619,7 +619,7 @@ end
 function build.aur_many(config, targets, opts)
     opts = opts or {}
     local results = {}
-    local plan, rerr = build.plan(config, targets)
+    local plan, rerr = build.plan(config, targets, opts)
     if not plan then
         for _, name in ipairs(targets) do
             results[#results + 1] = result("failed", name,

@@ -430,6 +430,7 @@ test("installation : analyse de -Sw et --downloadonly", function()
     assert_equal(table.concat(names, ","), "paquet")
     assert_equal(opts.force, true)
     assert_equal(opts.needed, true)
+    assert_equal(opts.noconfirm, true)
     assert_equal(opts.download_only, true)
     assert_equal(table.concat(opts.passthrough, ","), "--noconfirm")
 end)
@@ -544,12 +545,16 @@ test("dépendances : CheckDepends AUR participe au graphe", function()
                         CheckDepends = { "cadre-test>=2" },
                     }
                 elseif name == "cadre-test" then
-                    out[name] = { Name = name }
+                    out[name] = { Name = name, Version = "2.1" }
                 end
             end
             return out
         end
         util.run = function(argv)
+            if argv[1] == "vercmp" then
+                assert_equal(table.concat(argv, " "), "vercmp 2.1 2")
+                return { code = 0, stdout = "1\n", stderr = "" }
+            end
             assert_equal(argv[1], "pacman")
             assert(argv[2] == "-T" or argv[2] == "-Sp")
             assert_equal(argv[3], "cadre-test>=2")
@@ -565,6 +570,304 @@ test("dépendances : CheckDepends AUR participe au graphe", function()
     end)
 
     aur.info = original_info
+    util.run = original_run
+    assert(ok, err)
+end)
+
+test("dépendances : paquet AUR exact prioritaire sur Provides", function()
+    local deps = require("lib.deps")
+    local aur = require("lib.aur")
+    local original_info = aur.info
+    local original_providers = aur.providers
+    local original_run = util.run
+    local provider_calls = 0
+
+    local ok, err = pcall(function()
+        aur.info = function(_, names)
+            local out = {}
+            for _, name in ipairs(names) do
+                if name == "application" then
+                    out[name] = {
+                        Name = name,
+                        Depends = { "moteur>=2" },
+                    }
+                elseif name == "moteur" then
+                    out[name] = { Name = name, Version = "2.4" }
+                end
+            end
+            return out
+        end
+        aur.providers = function()
+            provider_calls = provider_calls + 1
+            return {
+                { Name = "moteur-alternatif", Version = "9", Provides = { "moteur=9" } },
+            }
+        end
+        util.run = function(argv)
+            if argv[1] == "vercmp" then
+                assert_equal(table.concat(argv, " "), "vercmp 2.4 2")
+                return { code = 0, stdout = "1\n", stderr = "" }
+            end
+            assert_equal(argv[1], "pacman")
+            return { code = 1, stdout = "", stderr = "" }
+        end
+
+        local plan = assert(deps.resolve_many({}, { "application" }))
+        assert_equal(table.concat(plan.order, ","), "moteur,application")
+        assert_equal(table.concat(plan.direct.application, ","), "moteur")
+        assert_equal(provider_calls, 0)
+    end)
+
+    aur.info = original_info
+    aur.providers = original_providers
+    util.run = original_run
+    assert(ok, err)
+end)
+
+test("client AUR : fournisseurs rechargés et triés", function()
+    local aur = require("lib.aur")
+    local original_search = aur.search
+    local original_info = aur.info
+
+    local ok, err = pcall(function()
+        aur.search = function(_, capability, by)
+            assert_equal(capability, "moteur-virtuel")
+            assert_equal(by, "provides")
+            return {
+                { Name = "moteur-b" },
+                { Name = "moteur-a" },
+                { Name = "moteur-b" },
+            }
+        end
+        aur.info = function(_, names)
+            assert_equal(table.concat(names, ","), "moteur-a,moteur-b")
+            return {
+                ["moteur-a"] = {
+                    Name = "moteur-a",
+                    Version = "1.0",
+                    Provides = { "moteur-virtuel" },
+                },
+                ["moteur-b"] = {
+                    Name = "moteur-b",
+                    Version = "2.0",
+                    Provides = { "moteur-virtuel=2" },
+                },
+            }
+        end
+
+        local providers = assert(aur.providers({}, "moteur-virtuel"))
+        assert_equal(#providers, 2)
+        assert_equal(providers[1].Name, "moteur-a")
+        assert_equal(providers[2].Name, "moteur-b")
+        assert_equal(providers[2].Provides[1], "moteur-virtuel=2")
+    end)
+
+    aur.search = original_search
+    aur.info = original_info
+    assert(ok, err)
+end)
+
+test("dépendances : fournisseur AUR unique et contrainte de version", function()
+    local deps = require("lib.deps")
+    local aur = require("lib.aur")
+    local original_info = aur.info
+    local original_providers = aur.providers
+    local original_run = util.run
+
+    local ok, err = pcall(function()
+        aur.info = function(_, names)
+            local out = {}
+            for _, name in ipairs(names) do
+                if name == "application" then
+                    out[name] = {
+                        Name = name,
+                        Depends = { "moteur-virtuel>=2" },
+                    }
+                elseif name == "moteur-moderne" then
+                    out[name] = {
+                        Name = name,
+                        Version = "5.0",
+                        Provides = { "moteur-virtuel=2.5" },
+                    }
+                end
+            end
+            return out
+        end
+        aur.providers = function(_, capability)
+            assert_equal(capability, "moteur-virtuel")
+            return {
+                { Name = "hors-sujet", Version = "9", Provides = { "autre=9" } },
+                { Name = "sans-version", Version = "9", Provides = { "moteur-virtuel" } },
+                { Name = "moteur-ancien", Version = "9", Provides = { "moteur-virtuel=1" } },
+                {
+                    Name = "moteur-moderne",
+                    Version = "5.0",
+                    Provides = { "moteur-virtuel=2.5" },
+                },
+            }
+        end
+        util.run = function(argv)
+            if argv[1] == "vercmp" then
+                local value = argv[2] == "2.5" and 1 or -1
+                return { code = 0, stdout = tostring(value) .. "\n", stderr = "" }
+            end
+            assert_equal(argv[1], "pacman")
+            return { code = 1, stdout = "", stderr = "" }
+        end
+
+        local plan = assert(deps.resolve_many({}, { "application" }))
+        assert_equal(table.concat(plan.order, ","), "moteur-moderne,application")
+        assert_equal(
+            table.concat(plan.direct.application, ","),
+            "moteur-moderne"
+        )
+    end)
+
+    aur.info = original_info
+    aur.providers = original_providers
+    util.run = original_run
+    assert(ok, err)
+end)
+
+test("dépendances : choix explicite entre plusieurs fournisseurs AUR", function()
+    local deps = require("lib.deps")
+    local aur = require("lib.aur")
+    local original_info = aur.info
+    local original_providers = aur.providers
+    local original_run = util.run
+    local original_read = io.read
+    local reads = 0
+
+    local ok, err = pcall(function()
+        aur.info = function(_, names)
+            local out = {}
+            for _, name in ipairs(names) do
+                if name == "application" then
+                    out[name] = { Name = name, Depends = { "moteur-virtuel" } }
+                elseif name == "moteur-a" or name == "moteur-b" then
+                    out[name] = {
+                        Name = name,
+                        Version = "1.0",
+                        Provides = { "moteur-virtuel" },
+                    }
+                end
+            end
+            return out
+        end
+        aur.providers = function()
+            return {
+                { Name = "moteur-b", Version = "1.0", Provides = { "moteur-virtuel" } },
+                { Name = "moteur-a", Version = "1.0", Provides = { "moteur-virtuel" } },
+            }
+        end
+        util.run = function(argv)
+            assert_equal(argv[1], "pacman")
+            return { code = 1, stdout = "", stderr = "" }
+        end
+        io.read = function()
+            reads = reads + 1
+            return "1"
+        end
+
+        local plan = assert(deps.resolve_many({}, { "application" }))
+        assert_equal(table.concat(plan.order, ","), "moteur-a,application")
+        assert_equal(table.concat(plan.direct.application, ","), "moteur-a")
+        assert_equal(reads, 1)
+    end)
+
+    aur.info = original_info
+    aur.providers = original_providers
+    util.run = original_run
+    io.read = original_read
+    assert(ok, err)
+end)
+
+test("dépendances : fournisseurs ambigus refusés avec --noconfirm", function()
+    local deps = require("lib.deps")
+    local aur = require("lib.aur")
+    local original_info = aur.info
+    local original_providers = aur.providers
+    local original_run = util.run
+    local original_read = io.read
+
+    local ok, err = pcall(function()
+        aur.info = function(_, names)
+            if names[1] == "application" then
+                return {
+                    application = {
+                        Name = "application",
+                        Depends = { "moteur-virtuel" },
+                    },
+                }
+            end
+            return {}
+        end
+        aur.providers = function()
+            return {
+                { Name = "moteur-b", Version = "1.0", Provides = { "moteur-virtuel" } },
+                { Name = "moteur-a", Version = "1.0", Provides = { "moteur-virtuel" } },
+            }
+        end
+        util.run = function(argv)
+            assert_equal(argv[1], "pacman")
+            return { code = 1, stdout = "", stderr = "" }
+        end
+        io.read = function()
+            error("aucune lecture interactive attendue")
+        end
+
+        local plan, resolution_err = deps.resolve_many(
+            {}, { "application" }, { noconfirm = true }
+        )
+        assert_equal(plan, nil)
+        assert(resolution_err:find("moteur%-a, moteur%-b"))
+        assert(resolution_err:find("%-%-noconfirm"))
+    end)
+
+    aur.info = original_info
+    aur.providers = original_providers
+    util.run = original_run
+    io.read = original_read
+    assert(ok, err)
+end)
+
+test("dépendances : absence de fournisseur signalée", function()
+    local deps = require("lib.deps")
+    local aur = require("lib.aur")
+    local original_info = aur.info
+    local original_providers = aur.providers
+    local original_run = util.run
+
+    local ok, err = pcall(function()
+        aur.info = function(_, names)
+            if names[1] == "application" then
+                return {
+                    application = {
+                        Name = "application",
+                        Depends = { "moteur-introuvable>=3" },
+                    },
+                }
+            end
+            return {}
+        end
+        aur.providers = function(_, capability)
+            assert_equal(capability, "moteur-introuvable")
+            return {
+                { Name = "hors-sujet", Provides = { "autre-capacite=9" } },
+            }
+        end
+        util.run = function(argv)
+            assert_equal(argv[1], "pacman")
+            return { code = 1, stdout = "", stderr = "" }
+        end
+
+        local plan, resolution_err = deps.resolve_many({}, { "application" })
+        assert_equal(plan, nil)
+        assert(resolution_err:find("moteur%-introuvable>=3"))
+    end)
+
+    aur.info = original_info
+    aur.providers = original_providers
     util.run = original_run
     assert(ok, err)
 end)
@@ -671,8 +974,9 @@ test("split packages : plan groupé par pkgbase", function()
     local original_info = aur.info
 
     local ok, err = pcall(function()
-        deps.resolve_many = function(_, targets)
+        deps.resolve_many = function(_, targets, opts)
             assert_equal(table.concat(targets, ","), "outil,outils-doc")
+            assert(opts and opts.noconfirm)
             return {
                 order = { "bibliotheque", "outil", "outils-doc" },
                 direct = {
@@ -691,7 +995,9 @@ test("split packages : plan groupé par pkgbase", function()
             }
         end
 
-        local plan = assert(build.plan({}, { "outil", "outils-doc" }))
+        local plan = assert(build.plan(
+            {}, { "outil", "outils-doc" }, { noconfirm = true }
+        ))
         assert_equal(table.concat(plan.order, ","), "bibliotheque,suite-outils")
         assert_equal(
             table.concat(plan.bases["suite-outils"].packages, ","),
@@ -1259,7 +1565,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.8.0")
+        assert_equal(opts.headers["User-Agent"], "yaourt/0.9.0")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then

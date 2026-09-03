@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.8.0\n"
+"Project-Id-Version: yaourt 0.9.0\n"
 "Language: is\n"
 "Language-Team: Íslenska\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -484,6 +484,22 @@ msgstr "Númer til að uppfæra (t.d. 1 3 5, 1-4, ^2 fyrir alla nema 2):"
 msgctxt "update.sync_failed"
 msgid "failed to synchronize databases (pacman -Sy)"
 msgstr "ekki hafa samræmt gagnagrunna (pacman -Sy)"
+
+msgctxt "deps.providers_heading"
+msgid "AUR providers for {dependency}:"
+msgstr "AUR-veitendur fyrir {dependency}:"
+
+msgctxt "deps.provider_choice"
+msgid "Choose a provider (1-{count}, 0 to cancel):"
+msgstr "Veldu veitanda (1-{count}, 0 til að hætta við):"
+
+msgctxt "deps.providers_noninteractive"
+msgid "multiple AUR providers satisfy {dependency}: {providers}; rerun without --noconfirm to choose one"
+msgstr "fleiri en einn AUR-veitandi uppfyllir {dependency}: {providers}; keyrðu aftur án --noconfirm til að velja einn"
+
+msgctxt "deps.unsatisfied"
+msgid "no AUR package or provider satisfies {dependency}"
+msgstr "enginn AUR-pakki eða -veitandi uppfyllir {dependency}"
 
 msgctxt "update.up_to_date"
 msgid "The system is up to date."

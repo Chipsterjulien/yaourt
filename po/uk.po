@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.8.0\n"
+"Project-Id-Version: yaourt 0.9.0\n"
 "Language: uk\n"
 "Language-Team: Українська\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -503,6 +503,22 @@ msgstr "Номери для оновлення (наприклад, 1 3 5, 1-4, 
 msgctxt "update.sync_failed"
 msgid "failed to synchronize databases (pacman -Sy)"
 msgstr "не змогли синхронізувати бази даних (pacman -Sy)"
+
+msgctxt "deps.providers_heading"
+msgid "AUR providers for {dependency}:"
+msgstr "Постачальники AUR для {dependency}:"
+
+msgctxt "deps.provider_choice"
+msgid "Choose a provider (1-{count}, 0 to cancel):"
+msgstr "Виберіть постачальника (1-{count}, 0 для скасування):"
+
+msgctxt "deps.providers_noninteractive"
+msgid "multiple AUR providers satisfy {dependency}: {providers}; rerun without --noconfirm to choose one"
+msgstr "кілька постачальників AUR задовольняють {dependency}: {providers}; запустіть знову без --noconfirm, щоб вибрати одного"
+
+msgctxt "deps.unsatisfied"
+msgid "no AUR package or provider satisfies {dependency}"
+msgstr "жоден пакунок або постачальник AUR не задовольняє {dependency}"
 
 msgctxt "update.up_to_date"
 msgid "The system is up to date."

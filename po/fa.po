@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.8.0\n"
+"Project-Id-Version: yaourt 0.9.0\n"
 "Language: fa\n"
 "Language-Team: فارسی\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -484,6 +484,22 @@ msgstr "شماره هایی که باید به روز شوند (به عنوان 
 msgctxt "update.sync_failed"
 msgid "failed to synchronize databases (pacman -Sy)"
 msgstr "عدم همبستگی پایگاه های داده (pacman - Sy)"
+
+msgctxt "deps.providers_heading"
+msgid "AUR providers for {dependency}:"
+msgstr "ارائه‌دهندگان AUR برای {dependency}:"
+
+msgctxt "deps.provider_choice"
+msgid "Choose a provider (1-{count}, 0 to cancel):"
+msgstr "یک ارائه‌دهنده انتخاب کنید (1-{count}، 0 برای لغو):"
+
+msgctxt "deps.providers_noninteractive"
+msgid "multiple AUR providers satisfy {dependency}: {providers}; rerun without --noconfirm to choose one"
+msgstr "چند ارائه‌دهنده AUR وابستگی {dependency} را برآورده می‌کنند: {providers}؛ برای انتخاب یکی، دوباره بدون --noconfirm اجرا کنید"
+
+msgctxt "deps.unsatisfied"
+msgid "no AUR package or provider satisfies {dependency}"
+msgstr "هیچ بسته یا ارائه‌دهنده AUR وابستگی {dependency} را برآورده نمی‌کند"
 
 msgctxt "update.up_to_date"
 msgid "The system is up to date."
