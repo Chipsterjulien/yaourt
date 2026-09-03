@@ -528,9 +528,10 @@ end
 
 -- plan(config, targets) -> plan de construction groupé par PackageBase.
 -- Le solveur travaille d'abord avec les noms de paquets (car ce sont eux qui
--- portent Depends/MakeDepends), puis cette fonction replie le graphe sur les
--- pkgbase. Deux sous-paquets frères partagent alors une seule étape clone,
--- revue et makepkg, sans perdre la liste précise des artefacts à installer.
+-- portent Depends/MakeDepends/CheckDepends), puis cette fonction replie le
+-- graphe sur les pkgbase. Deux sous-paquets frères partagent alors une seule
+-- étape clone, revue et makepkg, sans perdre la liste précise des artefacts à
+-- installer.
 function build.plan(config, targets)
     local resolved, rerr = deps.resolve_many(config, targets)
     if not resolved then return nil, rerr end

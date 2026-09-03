@@ -52,10 +52,16 @@ local function available_in_repos(dep)
     return res ~= nil and res.code == 0
 end
 
--- raw_deps(entry) -> liste des dépendances brutes (Depends + MakeDepends).
+-- raw_deps(entry) -> liste des dépendances brutes nécessaires au build.
+--
+-- CheckDepends est volontairement traité au même niveau que Depends et
+-- MakeDepends : yaourt laisse makepkg exécuter check() et doit donc résoudre
+-- les outils de test avant la compilation. Comme pour les autres dépendances,
+-- elles seront installées avec --asdeps et ne deviendront pas des paquets
+-- explicitement installés.
 local function raw_deps(entry)
     local raw = {}
-    for _, field in ipairs({ "Depends", "MakeDepends" }) do
+    for _, field in ipairs({ "Depends", "MakeDepends", "CheckDepends" }) do
         local arr = entry[field]
         if type(arr) == "table" then
             for _, d in ipairs(arr) do raw[#raw + 1] = d end
@@ -65,9 +71,10 @@ local function raw_deps(entry)
 end
 
 -- aur_deps_of(config, name) -> (liste, nil) | (nil, err)
--- Dépendances AUR DIRECTES de `name` : on lit Depends + MakeDepends via le RPC,
--- on écarte celles que pacman sait déjà satisfaire (installées, dépôt, provides,
--- version), puis un seul aur.info groupé confirme lesquelles existent en AUR.
+-- Dépendances AUR DIRECTES de `name` : on lit Depends + MakeDepends +
+-- CheckDepends via le RPC, on écarte celles que pacman sait déjà satisfaire
+-- (installées, dépôt, provides, version), puis un seul aur.info groupé confirme
+-- lesquelles existent en AUR.
 function deps.aur_deps_of(config, name)
     local info, err = aur.info(config, { name })
     if not info then return nil, err end

@@ -431,6 +431,143 @@ test("installation : -Sw refuse globalement toute cible AUR", function()
     assert(ok, err)
 end)
 
+test("dépendances : CheckDepends AUR participe au graphe", function()
+    local deps = require("lib.deps")
+    local aur = require("lib.aur")
+    local original_info = aur.info
+    local original_run = util.run
+    local requests = {}
+
+    local ok, err = pcall(function()
+        aur.info = function(_, names)
+            requests[#requests + 1] = table.concat(names, ",")
+            local out = {}
+            for _, name in ipairs(names) do
+                if name == "application" then
+                    out[name] = {
+                        Name = name,
+                        CheckDepends = { "cadre-test>=2" },
+                    }
+                elseif name == "cadre-test" then
+                    out[name] = { Name = name }
+                end
+            end
+            return out
+        end
+        util.run = function(argv)
+            assert_equal(argv[1], "pacman")
+            assert(argv[2] == "-T" or argv[2] == "-Sp")
+            assert_equal(argv[3], "cadre-test>=2")
+            return { code = 1, stdout = "", stderr = "" }
+        end
+
+        local plan = assert(deps.resolve_many({}, { "application" }))
+        assert_equal(table.concat(plan.order, ","), "cadre-test,application")
+        assert_equal(table.concat(plan.direct.application, ","), "cadre-test")
+        assert_equal(table.concat(plan.direct["cadre-test"], ","), "")
+        assert_equal(table.concat(requests, ";"),
+            "application;cadre-test;cadre-test")
+    end)
+
+    aur.info = original_info
+    util.run = original_run
+    assert(ok, err)
+end)
+
+test("dépendances : CheckDepends dépôt est détecté", function()
+    local deps = require("lib.deps")
+    local aur = require("lib.aur")
+    local original_info = aur.info
+    local original_run = util.run
+
+    local ok, err = pcall(function()
+        aur.info = function(_, names)
+            assert_equal(table.concat(names, ","), "application")
+            return {
+                application = {
+                    Name = "application",
+                    CheckDepends = { "cadre-test>=2" },
+                },
+            }
+        end
+        util.run = function(argv)
+            assert_equal(argv[1], "pacman")
+            assert_equal(argv[3], "cadre-test>=2")
+            if argv[2] == "-T" then
+                return { code = 1, stdout = "", stderr = "" }
+            end
+            assert_equal(argv[2], "-Sp")
+            return {
+                code = 0,
+                stdout = "https://repo/cadre-test.pkg.tar.zst\n",
+                stderr = "",
+            }
+        end
+
+        local found = assert(deps.repo_deps_of({}, "application"))
+        assert_equal(table.concat(found, ","), "cadre-test")
+    end)
+
+    aur.info = original_info
+    util.run = original_run
+    assert(ok, err)
+end)
+
+test("dépendances : CheckDepends dépôt installé avant makepkg", function()
+    local build = require("lib.build")
+    local deps = require("lib.deps")
+    local pacman = require("lib.pacman")
+    local original_plan = build.plan
+    local original_one_group = build.one_group
+    local original_repo_deps = deps.repo_deps_of
+    local original_passthrough = pacman.passthrough
+    local events = {}
+
+    local ok, err = pcall(function()
+        build.plan = function()
+            return {
+                order = { "application" },
+                bases = {
+                    application = {
+                        base = "application",
+                        representative = "application",
+                        packages = { "application" },
+                        explicit = { application = true },
+                        dependencies = {},
+                    },
+                },
+                missing = {},
+            }
+        end
+        deps.repo_deps_of = function(_, name)
+            assert_equal(name, "application")
+            return { "cadre-test" }
+        end
+        pacman.passthrough = function(_, argv)
+            events[#events + 1] = "checkdepends"
+            assert_equal(table.concat(argv, " "),
+                "-S --asdeps --needed cadre-test")
+            return 0
+        end
+        build.one_group = function(_, group)
+            events[#events + 1] = "makepkg"
+            assert_equal(group.representative, "application")
+            return { build.result("ok", "application", "ok") }
+        end
+
+        local results = build.aur_many({}, { "application" })
+        assert_equal(table.concat(events, ","), "checkdepends,makepkg")
+        assert_equal(#results, 1)
+        assert(results[1].ok)
+    end)
+
+    build.plan = original_plan
+    build.one_group = original_one_group
+    deps.repo_deps_of = original_repo_deps
+    pacman.passthrough = original_passthrough
+    assert(ok, err)
+end)
+
 test("split packages : plan groupé par pkgbase", function()
     local build = require("lib.build")
     local deps = require("lib.deps")
@@ -1027,7 +1164,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.6.0")
+        assert_equal(opts.headers["User-Agent"], "yaourt/0.7.0")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then

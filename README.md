@@ -6,7 +6,7 @@ A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
 [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
 in Lua.
 
-> **Status: young, but suitable for daily use (`0.6.0`).**
+> **Status: young, but suitable for daily use (`0.7.0`).**
 > Search, installation (official repositories and AUR with recursive dependency
 > resolution), unified upgrades, and cache cleanup are functional. The project
 > is still evolving.
@@ -46,6 +46,9 @@ feature profile.
   reviewed, and built only once. yaourt installs only the requested or required
   subpackages—not every artifact produced by the `PKGBUILD`—while preserving
   explicit and dependency installation reasons.
+- **Test dependencies:** AUR `CheckDepends` entries are resolved recursively
+  alongside runtime and build dependencies. Missing repository dependencies are
+  installed with `--asdeps` before `makepkg`; AUR-only ones are built first.
 - **`-Sw <package>…` / `-S --downloadonly <package>…`**: pacman's native
   download-only mode for repository packages. Commands containing an AUR
   target are rejected as a whole before any download or build.
@@ -114,8 +117,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-0.6.0-x86_64
-sudo install -Dm755 yaourt-0.6.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.7.0-x86_64
+sudo install -Dm755 yaourt-0.7.0-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
@@ -153,12 +156,12 @@ BABET=/path/to/babet-2.24.0-linux-x86_64 ./build.sh
 ## Tests
 
 The offline suite exercises process and filesystem helpers against the real
-Babet runtime, validates split-package planning and artifact selection, tests
-the AUR client against a local HTTP server using `chunked` responses, validates
-the interactive parent/child chain under a real pseudo-terminal, checks both
-directory and embedded modes, and builds the final executable. The integration
-tests use the Python 3 standard library and GNU gettext (`msgfmt`) to validate
-every translation catalogue:
+Babet runtime, validates recursive `CheckDepends` handling, split-package
+planning and artifact selection, tests the AUR client against a local HTTP
+server using `chunked` responses, validates the interactive parent/child chain
+under a real pseudo-terminal, checks both directory and embedded modes, and
+builds the final executable. The integration tests use the Python 3 standard
+library and GNU gettext (`msgfmt`) to validate every translation catalogue:
 
 ```sh
 BABET=/path/to/babet-2.24.0-linux-x86_64 ./run_tests.sh

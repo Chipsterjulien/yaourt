@@ -32,6 +32,8 @@
 - [x] Split packages : plan global `pkgbase -> pkgname[]`, un seul clone/revue/
       build par `PackageBase`, installation limitée aux sous-paquets requis et
       conservation des raisons explicite/dépendance.
+- [x] `CheckDepends` : résolution récursive des dépendances de test, depuis les
+      dépôts ou l'AUR, et installation avant `makepkg` (0.7.0).
 - [x] Marquage `--asdeps` des dépendances AUR construites (un `-Rcs` de la cible
       les retire si elles deviennent orphelines).
 - [x] Bilan typé (`build.result` : ok / refused / failed / install_failed /
@@ -45,7 +47,7 @@
       récursif `-Scc`, intégration HTTP `chunked` locale et test PTY réel.
 - [x] Migration Babet 2.24.0 : runtime officiel complet, OpenSSL 3.5.8 et
       campagne yaourt validée en modes dossier et embarqué.
-- [x] Releases 0.1.0 à 0.5.1 publiées, x86_64 + aarch64.
+- [x] Releases 0.1.0 à 0.6.0 publiées, x86_64 + aarch64.
 - [x] i18n extensible : catalogues gettext, détection POSIX de la locale,
       replis déterministes, pluriels, variables nommées, catalogues externes
       sûrs et 43 langues intégrées.
@@ -63,8 +65,6 @@
 
 ## Robustesse
 
-- [ ] Intégrer `CheckDepends` au solveur pour installer les dépendances de test
-      avant `makepkg` (objectif 0.7.0).
 - [ ] Nettoyage optionnel des dépendances de build devenues orphelines après
       compilation.
 - [ ] Cache des résolutions (aur.info / pacman répétés) pour les gros graphes.
