@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.9.0\n"
+"Project-Id-Version: yaourt 0.10.0\n"
 "Language: ru\n"
 "Language-Team: Русский\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -38,6 +38,10 @@ msgstr "искать в репозиториях и AUR"
 msgctxt "help.update"
 msgid "update repositories and AUR ([M]: manually select AUR packages)"
 msgstr "обновить репозитории и AUR ([M]: выбрать пакеты AUR вручную)"
+
+msgctxt "help.update_devel"
+msgid "also check development packages (VCS)"
+msgstr "также проверять пакеты разработки (VCS)"
 
 msgctxt "help.clean"
 msgid "clean the build cache (soft | complete)"
@@ -82,6 +86,10 @@ msgstr "Составление программного обеспечения {
 msgctxt "build.heading_update"
 msgid "Build package {package} ({old_version} -> {new_version})"
 msgstr "Составление программного обеспечения {package} ({old_version} -> {new_version})"
+
+msgctxt "build.heading_vcs"
+msgid "Build package {package} ({version}, new VCS revisions)"
+msgstr "Сборка пакета {package} ({version}, новые ревизии VCS)"
 
 msgctxt "build.heading_new"
 msgid "Build package {package} (new installation {version})"
@@ -406,6 +414,10 @@ msgctxt "status.out_of_date"
 msgid "(out of date)"
 msgstr "(постарело)"
 
+msgctxt "status.vcs_update"
+msgid "new VCS revisions"
+msgstr "новые ревизии VCS"
+
 msgctxt "status.up_to_date"
 msgid "up to date"
 msgstr "до настоящего времени"
@@ -448,6 +460,10 @@ msgstr[2] "Отказ пользователя ({count}):"
 msgctxt "update.aur_check_skipped"
 msgid "{error} — AUR package check skipped for this run"
 msgstr "{error} - проверка программного пакета AUR пропущена для этой работы"
+
+msgctxt "update.vcs_check_skipped"
+msgid "VCS check skipped: {error}"
+msgstr "Проверка VCS пропущена: {error}"
 
 msgctxt "update.aur_managed"
 msgid "Package managed by the AUR ({count})"

@@ -25,6 +25,7 @@ local log     = require("lib.log")
 local util    = require("lib.util")
 local display = require("lib.display")
 local i18n    = require("lib.i18n")
+local vcs     = require("lib.vcs")
 
 local update  = {}
 
@@ -86,7 +87,7 @@ end
 --   { name, repo="aur", oldver, in_aur, newver, has_update, orphan, outofdate }
 -- On interroge l'AUR en une passe groupée ; les MAJ ET la liste complète en
 -- dérivent (le client RPC découpe seulement si l'URL deviendrait trop longue).
-local function aur_status(config)
+local function aur_status(config, check_devel)
     local res = util.run({ "pacman", "-Qm" }, { env = { LC_ALL = "C" } })
     if not res or res.code ~= 0 then return {} end
 
@@ -112,6 +113,7 @@ local function aur_status(config)
 
         if entry then
             e.newver     = entry.Version
+            e.pkgbase    = entry.PackageBase or entry.Name
             e.orphan     = not util.isset(entry.Maintainer)
             e.outofdate  = util.isset(entry.OutOfDate)
             e.has_update = util.vercmp(installed[name], entry.Version) == -1
@@ -122,16 +124,22 @@ local function aur_status(config)
         end
     end
     table.sort(list, function(a, b) return a.name < b.name end)
-    return list, nil
+    local vcs_errors = {}
+    if check_devel then vcs_errors = vcs.mark_updates(config, list) end
+    return list, nil, vcs_errors
 end
 
--- check(config) -> (repos[], auras[], aurall[], aurerr)
+-- check(config, opts) -> (repos[], auras[], aurall[], aurerr, vcs_errors[])
 --   repos  : MAJ des dépôts (champ .repo renseigné)
 --   auras  : paquets AUR à mettre à jour (sous-ensemble de aurall)
 --   aurall : statut de TOUS les paquets AUR installés (pour la liste optionnelle)
 --   aurerr : erreur RPC éventuelle ; dans ce cas aurall est vide et aucun
 --            paquet n'est faussement déclaré « non géré par AUR ».
-function update.check(config)
+--   vcs_errors : contrôles VCS impossibles ; ils n'annulent pas les autres MAJ.
+function update.check(config, opts)
+    opts = opts or {}
+    local check_devel = opts.devel
+    if check_devel == nil then check_devel = config.devel == true end
     local repos = repo_updates(config)
     if #repos > 0 then
         local rmap = repo_map()
@@ -142,14 +150,14 @@ function update.check(config)
         return a.name < b.name
     end)
 
-    local aurall, aurerr = aur_status(config)
+    local aurall, aurerr, vcs_errors = aur_status(config, check_devel)
     aurall = aurall or {}
     local auras = {}
     for _, e in ipairs(aurall) do
         if e.has_update then auras[#auras + 1] = e end
     end
 
-    return repos, auras, aurall, aurerr
+    return repos, auras, aurall, aurerr, vcs_errors or {}
 end
 
 --------------------------------------------------------------------------
@@ -169,6 +177,11 @@ local function is_revision(oldv, newv)
     return ver_part(oldv) == ver_part(newv)
 end
 
+local function displayed_version(entry)
+    if entry.vcs_only then return i18n.t("status.vcs_update") end
+    return entry.newver
+end
+
 function update.display(config, repos, auras)
     local C = color.new(config.color)
 
@@ -184,7 +197,7 @@ function update.display(config, repos, auras)
     -- Partition : révisions (bump de pkgrel) vs vraies nouvelles versions.
     local revs, vers = {}, {}
     for _, u in ipairs(all) do
-        if is_revision(u.oldver, u.newver) then
+        if not u.vcs_only and is_revision(u.oldver, u.newver) then
             revs[#revs + 1] = u
         else
             vers[#vers + 1] = u
@@ -198,7 +211,8 @@ function update.display(config, repos, auras)
         local label = u.repo .. "/" .. u.name
         if #label > wname then wname = #label end
         if #u.oldver > wold then wold = #u.oldver end
-        if #u.newver > wnew then wnew = #u.newver end
+        local shown = displayed_version(u)
+        if #shown > wnew then wnew = #shown end
     end
 
     local function line(u)
@@ -207,13 +221,14 @@ function update.display(config, repos, auras)
         local label   = rc(u.repo .. "/") .. u.name
         local namepad = string.rep(" ", wname - visible)
         local oldpad  = string.rep(" ", wold - #u.oldver)
-        local newpad  = string.rep(" ", wnew - #u.newver)
+        local shown   = displayed_version(u)
+        local newpad  = string.rep(" ", wnew - #shown)
         -- Drapeaux à droite (AUR uniquement) : bien visibles.
         local flags   = ""
         if u.orphan then flags = flags .. "  " .. C.yellow(i18n.t("status.orphan")) end
         if u.outofdate then flags = flags .. "  " .. C.red(i18n.t("status.out_of_date")) end
         print(string.format("  %s%s  %s%s %s %s%s%s",
-            label, namepad, u.oldver, oldpad, C.dim("->"), C.green(u.newver), newpad, flags))
+            label, namepad, u.oldver, oldpad, C.dim("->"), C.green(shown), newpad, flags))
     end
 
     if #revs > 0 then
@@ -248,7 +263,9 @@ function update.list_aur(config, aurall)
     local function line(e, wname)
         local pad = string.rep(" ", wname - #e.name)
         local status
-        if e.has_update then
+        if e.vcs_only then
+            status = C.green(e.oldver .. " -> " .. i18n.t("status.vcs_update"))
+        elseif e.has_update then
             status = C.green(e.oldver .. " -> " .. e.newver)
         else
             status = i18n.t("status.up_to_date")
@@ -381,7 +398,8 @@ local function select_auras(config, auras)
     for i, u in ipairs(auras) do
         local ver = ""
         if u.oldver and u.newver then
-            ver = "  " .. C.dim(u.oldver) .. " -> " .. C.green(u.newver)
+            ver = "  " .. C.dim(u.oldver) .. " -> "
+                .. C.green(displayed_version(u))
         end
         print(string.format("  %2d. %s%s", i, C.magenta(u.name), ver))
     end
@@ -397,10 +415,26 @@ local function select_auras(config, auras)
     return filtered
 end
 
-function update.run(config)
-    local repos, auras, aurall, aurerr = update.check(config)
+function update.parse_opts(args, config)
+    local opts = { devel = config and config.devel == true or false }
+    for i = 2, #(args or {}) do
+        if args[i] == "--devel" then
+            opts.devel = true
+        elseif args[i] == "--no-devel" then
+            opts.devel = false
+        end
+    end
+    return opts
+end
+
+function update.run(config, opts)
+    opts = opts or { devel = config.devel == true }
+    local repos, auras, aurall, aurerr, vcs_errors = update.check(config, opts)
     if aurerr then
         log.warn(i18n.t("update.aur_check_skipped", { error = tostring(aurerr) }))
+    end
+    for _, err in ipairs(vcs_errors or {}) do
+        log.warn(i18n.t("update.vcs_check_skipped", { error = tostring(err) }))
     end
     -- Option : afficher les paquets AUR notables ou la liste complète.
     if aur_list_mode(config.list_aur) ~= "none" then
@@ -447,12 +481,16 @@ function update.run(config)
 
     if #auras > 0 then
         local names = {}
+        local vcs_packages = {}
         for _, u in ipairs(auras) do
             names[#names + 1] = u.name
+            if u.vcs_only then vcs_packages[u.name] = true end
         end
         -- Plan global : plusieurs sous-paquets installés provenant du même
         -- pkgbase sont mis à jour par une seule compilation.
-        local results = build.aur_many(config, names)
+        local results = build.aur_many(config, names, {
+            vcs_packages = vcs_packages,
+        })
         return display.build_summary(C, results, "updated")
     end
 

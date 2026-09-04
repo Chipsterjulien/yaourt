@@ -157,7 +157,7 @@ local function main()
 
     -- Mise à jour système unifiée (dépôts + AUR).
     if is_sysupgrade(args) then
-        return update.run(config)
+        return update.run(config, update.parse_opts(args, config))
     end
 
     -- Installation directe (-S <paquet>...) : route chaque paquet vers les

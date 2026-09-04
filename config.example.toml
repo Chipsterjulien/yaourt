@@ -29,6 +29,12 @@
 # The legacy value true remains accepted as an alias for "all".
 # list_aur = "notable"
 
+# Check development packages whose version may change without an AUR version
+# bump (-git, -hg, -svn and -bzr) during unified upgrades. This adds one
+# .SRCINFO request and VCS reference checks per candidate PackageBase.
+# The same check can be enabled once with: yaourt -Syu --devel
+# devel = false
+
 # Maximum number of results displayed in each search section (-Ss).
 # AUR and repository results are each limited to this value. For the AUR, the
 # highest-rated packages are retained. 0 means unlimited (display everything).

@@ -40,4 +40,9 @@ assert(providers[1].Name == "tool-provider")
 assert(providers[1].Version == "2.0.0")
 assert(providers[1].Provides[1] == "virtual-tool=2")
 
+local srcinfo, srcinfo_err = aur.srcinfo(config, "yay-git")
+assert(srcinfo, srcinfo_err)
+assert(srcinfo:find("pkgbase = yay-git", 1, true))
+assert(srcinfo:find("git+https://example.test/yay.git", 1, true))
+
 print("YAOURT_LOCAL_AUR_OK")

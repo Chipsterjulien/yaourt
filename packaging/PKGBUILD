@@ -5,7 +5,7 @@
 # distribution, ajouter une source VCS (git+...) et bâtir depuis $srcdir.
 
 pkgname=yaourt
-pkgver=0.9.0
+pkgver=0.10.0
 pkgrel=1
 pkgdesc="Wrapper pacman + assistant AUR (réécriture Lua/babet)"
 arch=('x86_64' 'aarch64')

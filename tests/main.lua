@@ -54,6 +54,204 @@ test("configuration : récapitulatif AUR notable par défaut", function()
     local config = require("lib.config")
     assert_equal(config.defaults().list_aur, "notable")
     assert_equal(config.defaults().language, "auto")
+    assert_equal(config.defaults().devel, false)
+end)
+
+test("VCS : analyse des options --devel", function()
+    local update = require("lib.update")
+    assert_equal(update.parse_opts({ "-Syu" }, { devel = false }).devel, false)
+    assert_equal(update.parse_opts({ "-Syu", "--devel" }, {}).devel, true)
+    assert_equal(update.parse_opts({ "-Syu" }, { devel = true }).devel, true)
+    assert_equal(update.parse_opts({
+        "-Syu", "--devel", "--no-devel",
+    }, { devel = true }).devel, false)
+end)
+
+test("VCS : sources mobiles extraites sans exécuter le PKGBUILD", function()
+    local vcs = require("lib.vcs")
+    local sources = vcs.sources([[
+pkgbase = outil-git
+    source = outil::git+https://example.test/outil.git#branch=next
+    source = fixe::git+https://example.test/fixe.git#commit=012345
+    source = version::git+https://example.test/version.git#tag=v1
+    source_x86_64 = mercurial::hg+https://example.test/code#branch=stable
+    source_aarch64 = ignore::svn+https://example.test/ignore
+pkgname = outil-git
+]], "x86_64")
+
+    assert_equal(#sources, 2)
+    assert_equal(sources[1].kind, "git")
+    assert_equal(sources[1].url, "https://example.test/outil.git")
+    assert_equal(sources[1].ref, "refs/heads/next")
+    assert_equal(sources[2].kind, "hg")
+    assert_equal(sources[2].ref, "stable")
+    assert(vcs.is_candidate("outil-git"))
+    assert(vcs.is_candidate("outil-svn"))
+    assert(not vcs.is_candidate("outil-bin"))
+end)
+
+test("VCS : interrogation distante sans shell et instantané déterministe", function()
+    local vcs = require("lib.vcs")
+    local original_run = util.run
+    local calls = {}
+    local ok, err = pcall(function()
+        util.run = function(argv, opts)
+            calls[#calls + 1] = table.concat(argv, " ")
+            assert_equal(opts.env.LC_ALL, "C")
+            assert_equal(opts.env.GIT_TERMINAL_PROMPT, "0")
+            assert_equal(opts.timeout, 20)
+            if argv[1] == "git" then
+                return { code = 0, stdout = "abcdef12\tHEAD\n", stderr = "" }
+            end
+            if argv[1] == "svn" then
+                return { code = 0, stdout = "42\n", stderr = "" }
+            end
+            error("commande inattendue : " .. table.concat(argv, " "))
+        end
+
+        local unsafe, unsafe_err = vcs.query({
+            kind = "git", url = "ext::sh -c 'touch /tmp/forbidden'", ref = "HEAD",
+        })
+        assert_equal(unsafe, nil)
+        assert(unsafe_err:find("unsafe", 1, true))
+        assert_equal(#calls, 0)
+
+        local snapshot = assert(vcs.snapshot_from_srcinfo({ vcs_arch = "x86_64" }, [[
+pkgbase = outil-git
+    source = z::svn+https://example.test/svn/trunk
+    source = a::git+https://example.test/git.git
+]]))
+        assert_equal(calls[1], table.concat({
+            "git -c protocol.ext.allow=never -c protocol.file.allow=never",
+            "ls-remote --exit-code -- https://example.test/git.git HEAD",
+        }, " "))
+        assert_equal(calls[2],
+            "svn info --show-item revision -- https://example.test/svn/trunk")
+        assert(snapshot:find("abcdef12", 1, true))
+        assert(snapshot:find("42", 1, true))
+        assert(snapshot:find("git", 1, true) < snapshot:find("svn", 1, true))
+    end)
+    util.run = original_run
+    assert(ok, err)
+end)
+
+test("VCS : première détection, stabilité et nouvelle révision", function()
+    local vcs = require("lib.vcs")
+    local root = "/tmp/yaourt-tests-vcs-" .. tostring(babet.pid())
+    local state_file = babet.joinPath(root, "state")
+    if babet.isDir(root) then assert(babet.rmdirAll(root)) end
+
+    local config = { vcs_state_file = state_file }
+    local original_snapshot = vcs.snapshot
+    local current = "git\thttps://example.test/code.git\tHEAD\tabc"
+    local ok, err = pcall(function()
+        vcs.snapshot = function(_, base)
+            assert_equal(base, "outil-git")
+            return current
+        end
+
+        local entries = {
+            {
+                name = "outil-git", pkgbase = "outil-git", in_aur = true,
+                oldver = "1-1", newver = "1-1", has_update = false,
+            },
+        }
+        assert_equal(#vcs.mark_updates(config, entries), 0)
+        assert(entries[1].has_update and entries[1].vcs_only)
+
+        assert(vcs.remember(config, "outil-git", current))
+        local loaded = assert(vcs.load(config))
+        assert_equal(loaded["outil-git"], current)
+
+        entries[1].has_update = false
+        entries[1].vcs_update = nil
+        entries[1].vcs_only = nil
+        assert_equal(#vcs.mark_updates(config, entries), 0)
+        assert_equal(entries[1].has_update, false)
+
+        current = current .. "def"
+        assert_equal(#vcs.mark_updates(config, entries), 0)
+        assert(entries[1].has_update and entries[1].vcs_only)
+    end)
+    vcs.snapshot = original_snapshot
+    if babet.isDir(root) then assert(babet.rmdirAll(root)) end
+    assert(ok, err)
+end)
+
+test("VCS : état enregistré seulement après installation réussie", function()
+    local build = require("lib.build")
+    local aur = require("lib.aur")
+    local vcs = require("lib.vcs")
+    local originals = {
+        run = util.run,
+        is_root = util.is_root,
+        info = aur.info,
+        resolve = build.resolve_builddir,
+        prepare = build.prepare,
+        review = build.review,
+        clean_stale = build.clean_stale,
+        make = build.make,
+        install = build.install,
+        clean = build.clean,
+        snapshot_file = vcs.snapshot_file,
+        remember = vcs.remember,
+    }
+    local install_ok, remembered = false, 0
+    local ok, err = pcall(function()
+        util.run = function(argv)
+            assert_equal(table.concat(argv, " "), "pacman -Q outil-git")
+            return { code = 0, stdout = "outil-git 1-1\n", stderr = "" }
+        end
+        util.is_root = function() return false end
+        aur.info = function() return { ["outil-git"] = { Version = "1-1" } } end
+        build.resolve_builddir = function() return "/tmp/build" end
+        build.prepare = function() return { path = "/tmp/build/outil-git" } end
+        build.review = function() return true end
+        build.clean_stale = function() end
+        build.make = function() return true, 0 end
+        build.install = function()
+            if install_ok then return true, { "/tmp/outil.pkg.tar.zst" }, 0 end
+            return false, {}, 1
+        end
+        build.clean = function() return true end
+        vcs.snapshot_file = function(_, path)
+            assert_equal(path, "/tmp/build/outil-git/.SRCINFO")
+            return "snapshot"
+        end
+        vcs.remember = function(_, base, snapshot)
+            remembered = remembered + 1
+            assert_equal(base, "outil-git")
+            assert_equal(snapshot, "snapshot")
+            return true
+        end
+
+        local group = {
+            base = "outil-git", representative = "outil-git",
+            packages = { "outil-git" }, explicit = { ["outil-git"] = true },
+        }
+        local failed = build.one_group({ color = false }, group)
+        assert_equal(failed[1].status, "install_failed")
+        assert_equal(remembered, 0)
+
+        install_ok = true
+        local succeeded = build.one_group({ color = false }, group)
+        assert_equal(succeeded[1].status, "ok")
+        assert_equal(remembered, 1)
+    end)
+
+    util.run = originals.run
+    util.is_root = originals.is_root
+    aur.info = originals.info
+    build.resolve_builddir = originals.resolve
+    build.prepare = originals.prepare
+    build.review = originals.review
+    build.clean_stale = originals.clean_stale
+    build.make = originals.make
+    build.install = originals.install
+    build.clean = originals.clean
+    vcs.snapshot_file = originals.snapshot_file
+    vcs.remember = originals.remember
+    assert(ok, err)
 end)
 
 test("pacdiff : dépendance absente signalée clairement", function()
@@ -408,6 +606,94 @@ test("mise à jour : récapitulatif AUR respecté par l'orchestration", function
     update.list_aur = original_list_aur
     update.display = original_display
     assert(ok, err)
+end)
+
+test("VCS : contrôle activé dans la collecte des mises à jour", function()
+    local update = require("lib.update")
+    local aur = require("lib.aur")
+    local vcs = require("lib.vcs")
+    local originals = {
+        run = util.run,
+        passthrough = util.passthrough,
+        info = aur.info,
+        mark_updates = vcs.mark_updates,
+    }
+    local checked = 0
+    local ok, err = pcall(function()
+        util.passthrough = function() return 0 end
+        util.run = function(argv)
+            local command = table.concat(argv, " ")
+            if command == "id -u" then
+                return { code = 0, stdout = "0\n", stderr = "" }
+            elseif command == "pacman -Qu" then
+                return { code = 1, stdout = "", stderr = "" }
+            elseif command == "pacman -Qm" then
+                return { code = 0, stdout = "outil-git 1-1\n", stderr = "" }
+            elseif command == "vercmp 1-1 1-1" then
+                return { code = 0, stdout = "0\n", stderr = "" }
+            end
+            error("commande inattendue : " .. command)
+        end
+        aur.info = function(_, names)
+            assert_equal(table.concat(names, ","), "outil-git")
+            return {
+                ["outil-git"] = {
+                    Name = "outil-git", PackageBase = "outil-git",
+                    Version = "1-1", Maintainer = "dev",
+                },
+            }
+        end
+        vcs.mark_updates = function(_, entries)
+            checked = checked + 1
+            assert_equal(entries[1].pkgbase, "outil-git")
+            entries[1].has_update = true
+            entries[1].vcs_update = true
+            entries[1].vcs_only = true
+            return {}
+        end
+
+        local _, disabled = update.check({}, { devel = false })
+        assert_equal(#disabled, 0)
+        assert_equal(checked, 0)
+
+        local _, enabled = update.check({}, { devel = true })
+        assert_equal(#enabled, 1)
+        assert(enabled[1].vcs_only)
+        assert_equal(checked, 1)
+    end)
+    util.run = originals.run
+    util.passthrough = originals.passthrough
+    aur.info = originals.info
+    vcs.mark_updates = originals.mark_updates
+    assert(ok, err)
+end)
+
+test("affichage : nouvelle révision VCS sans fausse version", function()
+    local update = require("lib.update")
+    local original_print = print
+    local lines = {}
+    local ok, err = pcall(function()
+        _G.print = function(...)
+            local values = {}
+            for i = 1, select("#", ...) do
+                values[#values + 1] = tostring(select(i, ...))
+            end
+            lines[#lines + 1] = table.concat(values, "\t")
+        end
+        update.display({ color = false }, {}, {
+            {
+                name = "outil-git", repo = "aur",
+                oldver = "1.r10-1", newver = "1.r10-1",
+                has_update = true, vcs_update = true, vcs_only = true,
+            },
+        })
+    end)
+    _G.print = original_print
+    assert(ok, err)
+    local rendered = table.concat(lines, "\n")
+    assert(rendered:find("outil-git", 1, true))
+    assert(rendered:find("nouvelles révisions VCS", 1, true))
+    assert(not rendered:find("1.r10-1 -> 1.r10-1", 1, true))
 end)
 
 test("installation : analyse de -Sw et --downloadonly", function()
@@ -1265,9 +1551,10 @@ test("split packages : installation planifiée en une transaction AUR", function
             assert_equal(argv[2], "-Si")
             return { code = 1, stdout = "", stderr = "" }
         end
-        build.aur_many = function(_, names)
+        build.aur_many = function(_, names, opts)
             calls = calls + 1
             assert_equal(table.concat(names, ","), "outil,outils-doc")
+            assert(type(opts.passthrough) == "table")
             return {
                 build.result("ok", "outil", "ok"),
                 build.result("ok", "outils-doc", "ok"),
@@ -1299,16 +1586,21 @@ test("split packages : mise à jour planifiée en une transaction AUR", function
     local ok, err = pcall(function()
         update.check = function()
             local auras = {
-                { name = "outil", oldver = "1-1", newver = "2-1" },
+                {
+                    name = "outil", oldver = "1-1", newver = "1-1",
+                    vcs_only = true,
+                },
                 { name = "outils-doc", oldver = "1-1", newver = "2-1" },
             }
             return {}, auras, auras, nil
         end
         update.display = function() end
         io.read = function() return "o" end
-        build.aur_many = function(_, names)
+        build.aur_many = function(_, names, opts)
             calls = calls + 1
             assert_equal(table.concat(names, ","), "outil,outils-doc")
+            assert_equal(opts.vcs_packages.outil, true)
+            assert_equal(opts.vcs_packages["outils-doc"], nil)
             return {
                 build.result("ok", "outil", "ok"),
                 build.result("ok", "outils-doc", "ok"),
@@ -1565,7 +1857,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.9.0")
+        assert_equal(opts.headers["User-Agent"], "yaourt/0.10.0")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then

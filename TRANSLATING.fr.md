@@ -94,6 +94,9 @@ catalogues refuse ces éléments structurels s'ils apparaissent dans une
 description. Conserver également les marqueurs structurels présents dans la
 description source : les parenthèses, `|`, `[M]` et les exemples d'options
 comme `-Q`, `-R` et `-Sy`. Les parenthèses CJK pleine largeur sont acceptées.
+Les termes d'interface comme `VCS`, `AUR`, `pacman` et `PKGBUILD` doivent rester
+inchangés ; le compilateur des catalogues les vérifie dès que la source anglaise
+les emploie.
 
 ## Valider et régénérer
 

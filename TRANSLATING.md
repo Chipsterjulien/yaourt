@@ -88,6 +88,9 @@ rendered by the program. The catalogue compiler rejects those structural
 elements if they leak into a description. Preserve the structural markers
 present in the source description as well: parentheses, `|`, `[M]`, and option
 examples such as `-Q`, `-R`, and `-Sy`. Full-width CJK parentheses are accepted.
+Interface terms such as `VCS`, `AUR`, `pacman`, and `PKGBUILD` must remain
+unchanged; the catalogue compiler checks them whenever the English source uses
+them.
 
 ## Validate and regenerate
 

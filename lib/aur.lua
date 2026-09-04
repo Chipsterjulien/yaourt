@@ -22,6 +22,10 @@ local function rpc_base(config)
     return (config.aur_url or "https://aur.archlinux.org") .. "/rpc/v5"
 end
 
+local function aur_base(config)
+    return config.aur_url or "https://aur.archlinux.org"
+end
+
 local function request_headers()
     return {
         ["Accept"]     = "application/json",
@@ -156,6 +160,27 @@ function aur.providers(config, capability)
         if infos[name] then providers[#providers + 1] = infos[name] end
     end
     return providers, nil
+end
+
+-- srcinfo(config, pkgbase) -> (texte, nil) | (nil, err)
+--
+-- Le fichier .SRCINFO est une représentation déclarative générée par
+-- makepkg. Le lire depuis cgit permet d'identifier les sources VCS sans
+-- cloner le paquet et surtout sans exécuter son PKGBUILD avant la revue.
+function aur.srcinfo(config, pkgbase)
+    local res, err = get_with_retry(
+        aur_base(config) .. "/cgit/aur.git/plain/.SRCINFO",
+        {
+            headers = request_headers(),
+            query = { h = pkgbase },
+            timeout = REQUEST_TIMEOUT,
+        }
+    )
+    if not res then return nil, "aur: " .. tostring(err) end
+    if res.status ~= 200 then
+        return nil, "aur: HTTP " .. tostring(res.status)
+    end
+    return res.body or "", nil
 end
 
 return aur

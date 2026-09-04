@@ -127,6 +127,19 @@ grep -Fq "protected term '--noconfirm' was altered" \
   "$TMP/invalid-provider-po.log"
 echo "[PASS] garde-fou de l’option --noconfirm des fournisseurs"
 
+INVALID_VCS_PO_DIR="$TMP/po-invalid-vcs"
+cp -r "$ROOT/po" "$INVALID_VCS_PO_DIR"
+sed -i 's/nouvelles révisions VCS/nouvelles révisions/' \
+  "$INVALID_VCS_PO_DIR/fr.po"
+if python3 "$ROOT/tools/compile_catalogs.py" \
+    --po-dir "$INVALID_VCS_PO_DIR" --check \
+    > "$TMP/invalid-vcs-po.log" 2>&1; then
+  echo "Erreur : la perte du terme VCS a été acceptée." >&2
+  exit 1
+fi
+grep -Fq "protected term 'VCS' was altered" "$TMP/invalid-vcs-po.log"
+echo "[PASS] garde-fou du terme VCS"
+
 echo "=== Catalogue gettext externe ==="
 EXTERNAL_LOCALE="$TMP/locale/zz/LC_MESSAGES"
 mkdir -p "$EXTERNAL_LOCALE"
@@ -167,6 +180,9 @@ cp -r "$ROOT/lib" "$TEST_STAGE/lib"
 echo "=== Intégration HTTP locale AUR ==="
 python3 "$ROOT/tests/test_aur_local.py" "$BABET" "$ROOT"
 
+echo "=== Intégration VCS locale ==="
+python3 "$ROOT/tests/test_vcs_local.py" "$BABET" "$ROOT"
+
 echo "=== Test interactif sous pseudo-terminal ==="
 python3 "$ROOT/tests/test_interactive_pty.py" "$BABET" "$ROOT"
 
@@ -185,6 +201,7 @@ HELP_OUTPUT="$TMP/help-en.txt"
 XDG_CONFIG_HOME="$TMP/config" LANGUAGE=en "$TMP/yaourt" --help > "$HELP_OUTPUT"
 grep -Fq "yaourt $YAOURT_VERSION" "$HELP_OUTPUT"
 grep -Fq "  yaourt -Ss <term>" "$HELP_OUTPUT"
+grep -Fq "  yaourt -Syu --devel" "$HELP_OUTPUT"
 grep -Fq "  yaourt -C [pacdiff options]" "$HELP_OUTPUT"
 grep -Fq "  yaourt -G <package>..." "$HELP_OUTPUT"
 echo "[PASS] binaire yaourt dossier/embarqué"

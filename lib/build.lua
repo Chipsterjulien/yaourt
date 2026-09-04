@@ -15,6 +15,7 @@ local pacman     = require("lib.pacman")
 local color      = require("lib.color")
 local aur        = require("lib.aur")
 local i18n       = require("lib.i18n")
+local vcs        = require("lib.vcs")
 
 local BUILD_USER = "yaourt"
 
@@ -264,6 +265,7 @@ end
 function build.one_group(config, group, opts)
     opts = opts or {}
     local name = group.representative
+    local pkgbase = group.base or name
     local packages = group.packages
     local C = color.new(config.color)
 
@@ -288,9 +290,21 @@ function build.one_group(config, group, opts)
     local heading = "build.heading"
     if target then
         if installed then
-            heading = "build.heading_update"
-            variables.old_version = C.dim(installed)
-            variables.new_version = C.green(target)
+            local vcs_only = false
+            for _, package in ipairs(packages) do
+                if opts.vcs_packages and opts.vcs_packages[package] then
+                    vcs_only = true
+                    break
+                end
+            end
+            if vcs_only then
+                heading = "build.heading_vcs"
+                variables.version = C.dim(installed)
+            else
+                heading = "build.heading_update"
+                variables.old_version = C.dim(installed)
+                variables.new_version = C.green(target)
+            end
         else
             heading = "build.heading_new"
             variables.version = C.green(target)
@@ -339,6 +353,25 @@ function build.one_group(config, group, opts)
         return results_for(packages, "failed", "result.review_failed")
     end
 
+    -- Capturer la révision après la revue mais avant la compilation. La lecture
+    -- du .SRCINFO est inerte ; aucune fonction du PKGBUILD n'est exécutée ici.
+    -- L'état ne sera toutefois écrit qu'après une installation réussie.
+    local vcs_snapshot
+    if vcs.is_candidate(pkgbase) or vcs.is_candidate(name) then
+        local snapshot, snapshot_err = vcs.snapshot_file(
+            bcfg,
+            babet.joinPath(dest, ".SRCINFO")
+        )
+        if snapshot_err then
+            log.warn(i18n.t("common.named_error", {
+                name = pkgbase,
+                error = tostring(snapshot_err),
+            }))
+        else
+            vcs_snapshot = snapshot
+        end
+    end
+
     -- Repartir d'un terrain propre : supprimer un éventuel paquet déjà construit
     -- (résidu d'une compilation/installation précédente interrompue), sinon
     -- makepkg refuserait de réécrire.
@@ -363,6 +396,19 @@ function build.one_group(config, group, opts)
             return results_for(packages, "interrupted", "result.install_interrupted")
         end
         return results_for(packages, "install_failed", "result.install_failed")
+    end
+    if vcs_snapshot then
+        local remembered, remember_err = vcs.remember(
+            bcfg,
+            pkgbase,
+            vcs_snapshot
+        )
+        if not remembered then
+            log.warn(i18n.t("common.named_error", {
+                name = pkgbase,
+                error = tostring(remember_err),
+            }))
+        end
     end
 
     build.clean(bcfg, dest, pkgs) -- On ne va pas vérifier le retour car on fait déjà une alerte lors du nettoyage

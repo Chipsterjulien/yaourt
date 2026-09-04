@@ -32,10 +32,15 @@ class AurHandler(BaseHTTPRequestHandler):
         return
 
     def send_chunked_json(self, payload: dict[str, object]) -> None:
-        body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+        self.send_chunked(
+            json.dumps(payload, separators=(",", ":")).encode("utf-8"),
+            "application/json",
+        )
+
+    def send_chunked(self, body: bytes, content_type: str) -> None:
         midpoint = max(1, len(body) // 2)
         self.send_response(200)
-        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Type", content_type)
         self.send_header("Transfer-Encoding", "chunked")
         self.send_header("Connection", "close")
         self.end_headers()
@@ -50,6 +55,18 @@ class AurHandler(BaseHTTPRequestHandler):
         request = urlparse(self.path)
         query = parse_qs(request.query)
         entry = {"Name": "yay", "Version": "12.0.0"}
+
+        if (
+            request.path == "/cgit/aur.git/plain/.SRCINFO"
+            and query == {"h": ["yay-git"]}
+        ):
+            self.send_chunked(
+                b"pkgbase = yay-git\n"
+                b"\tsource = yay::git+https://example.test/yay.git\n"
+                b"pkgname = yay-git\n",
+                "text/plain; charset=utf-8",
+            )
+            return
 
         if request.path == "/rpc/v5/info" and query == {"arg[]": ["yay"]}:
             self.send_chunked_json({

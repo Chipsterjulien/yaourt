@@ -6,7 +6,7 @@ A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
 [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
 in Lua.
 
-> **Status: young, but suitable for daily use (`0.9.0`).**
+> **Status: young, but suitable for daily use (`0.10.0`).**
 > Search, installation (official repositories and AUR with recursive dependency
 > resolution), unified upgrades, and cache cleanup are functional. The project
 > is still evolving.
@@ -61,6 +61,10 @@ feature profile.
   with revision, orphan, and out-of-date detection. The `[M]` option provides
   manual AUR package selection, with inclusion (`1 3 5`, `1-4`) and exclusion
   (`^4` for everything except item 4).
+- **Development package tracking:** `yaourt -Syu --devel` also detects new
+  remote revisions for installed `-git`, `-hg`, `-svn`, and `-bzr` packages,
+  even when their AUR version string has not changed. The same check can be
+  enabled permanently with `devel = true`.
 - **`-Sc` / `-Scc`**: build-cache cleanup in addition to pacman's cache. Soft
   cleanup removes sources and artifacts; full cleanup removes every cloned
   repository.
@@ -109,6 +113,29 @@ commands as root, while a patch or local script can alter the sources being
 built. After the file presentation or diff, yaourt always asks for confirmation
 before starting the build.
 
+### Development package updates
+
+With `--devel`, yaourt reads each candidate `PackageBase`'s declarative
+`.SRCINFO` file and queries the moving Git, Mercurial, Subversion, or Bazaar
+references it declares. Sources pinned to a tag, commit, or revision are not
+treated as development sources.
+
+```sh
+yaourt -Syu --devel
+```
+
+The first check proposes every supported installed development package for
+which yaourt has no recorded revision yet. After a successful installation,
+the observed revision is saved in the invoking user's cache. A cancelled or
+failed build does not advance that state, so the update is proposed again next
+time. Packages sharing a `PackageBase` are checked only once.
+
+This detection never runs `makepkg`, `pkgver()`, `prepare()`, or any other
+`PKGBUILD` code. The normal file review still happens before the first package
+code is executed. If a VCS client or remote service is unavailable, yaourt
+warns about that candidate and continues with repository and ordinary AUR
+updates.
+
 ### System configuration updates
 
 After a package upgrade, `yaourt -C` delegates to `pacdiff` to find and review
@@ -132,6 +159,8 @@ system. `--pacdiff` is accepted as a long alias for `-C`.
 - [Arch Linux](https://archlinux.org/) or a compatible pacman-based derivative.
 - `pacman`, `pacman-contrib` (for `pacdiff`), `git`, and `base-devel` (for
   `makepkg`).
+- `mercurial`, `subversion`, or `breezy` only when `--devel` must inspect a
+  corresponding `-hg`, `-svn`, or `-bzr` package.
 - `sudo` (for pacman operations when yaourt is not started as root).
 - Python 3 to build from source; GNU gettext to validate or install external
   translation catalogues. Neither is required by the standalone binary.
@@ -145,8 +174,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-0.9.0-x86_64
-sudo install -Dm755 yaourt-0.9.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.10.0-x86_64
+sudo install -Dm755 yaourt-0.10.0-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
@@ -184,8 +213,9 @@ BABET=/path/to/babet-2.24.0-linux-x86_64 ./build.sh
 ## Tests
 
 The offline suite exercises process and filesystem helpers against the real
-Babet runtime, validates recursive `CheckDepends` handling, split-package
-planning and artifact selection, tests the AUR client against a local HTTP
+Babet runtime, validates recursive `CheckDepends` handling, VCS reference
+tracking against a real local Git repository, split-package planning and
+artifact selection, tests the AUR client against a local HTTP
 server using `chunked` responses, validates the interactive parent/child chain
 under a real pseudo-terminal, checks `pacdiff` delegation in both directory and
 embedded modes, and builds the final executable. The integration tests use the
@@ -217,8 +247,9 @@ or [`config.example.fr.toml`](config.example.fr.toml) for the French version.
 During `-Syu`, `list_aur = "notable"` displays orphaned, out-of-date, or
 non-AUR-managed packages by default. `"all"` displays the complete list, while
 `false` hides the summary. The legacy value `true` remains accepted as an alias
-for `"all"`. The `search_limit` option controls the number of displayed search
-results.
+for `"all"`. `devel = true` enables VCS revision checks on every unified
+upgrade; `--devel` and `--no-devel` override it for one run. The `search_limit`
+option controls the number of displayed search results.
 
 ### Interface language
 

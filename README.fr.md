@@ -5,7 +5,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.9.0`).**
+> **Statut : jeune mais utilisable au quotidien (`0.10.0`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -62,6 +62,10 @@ profil de fonctionnalités particulier.
   révisions, des orphelins et des paquets périmés. L'option `[M]` permet de
   choisir à la carte les paquets AUR à mettre à jour : inclusion (`1 3 5`,
   `1-4`) et exclusion (`^4` pour tout sauf le 4).
+- **Suivi des paquets de développement** : `yaourt -Syu --devel` détecte aussi
+  les nouvelles révisions distantes des paquets `-git`, `-hg`, `-svn` et
+  `-bzr`, même lorsque leur version AUR n'a pas changé. Le contrôle peut être
+  activé en permanence avec `devel = true`.
 - **`-Sc` / `-Scc`** : nettoyage du cache de build (doux : sources et artefacts ;
   complet : tous les dépôts clonés), en complément du cache pacman.
 - **`-C [options pacdiff]`** : gestion interactive des fichiers `.pacnew`,
@@ -112,6 +116,31 @@ ou un script local peut modifier les sources construites. Après la présentatio
 ou le diff, yaourt demande toujours confirmation avant de lancer la
 construction.
 
+### Mise à jour des paquets de développement
+
+Avec `--devel`, yaourt lit le fichier déclaratif `.SRCINFO` de chaque
+`PackageBase` candidat puis interroge les références Git, Mercurial,
+Subversion ou Bazaar mobiles qu'il déclare. Les sources fixées sur un tag, un
+commit ou une révision ne sont pas considérées comme des sources de
+développement.
+
+```sh
+yaourt -Syu --devel
+```
+
+Le premier contrôle propose tous les paquets de développement installés pris
+en charge pour lesquels yaourt n'a encore enregistré aucune révision. Après
+une installation réussie, la révision observée est conservée dans le cache de
+l'utilisateur qui a lancé yaourt. Un build annulé ou en échec ne modifie pas
+cet état : la mise à jour sera donc reproposée. Les paquets qui partagent un
+même `PackageBase` ne sont contrôlés qu'une fois.
+
+Cette détection ne lance jamais `makepkg`, `pkgver()`, `prepare()` ni aucun
+autre code du `PKGBUILD`. La revue normale des fichiers reste placée avant la
+première exécution de code du paquet. Si un client VCS ou un service distant
+est indisponible, yaourt avertit pour ce candidat et poursuit les mises à jour
+des dépôts et de l'AUR classique.
+
 ### Mise à jour des fichiers de configuration système
 
 Après la mise à jour d’un paquet, `yaourt -C` délègue à `pacdiff` la recherche
@@ -137,6 +166,8 @@ options de fusion. Lorsque yaourt n’est pas lancé en root, il ajoute `--sudo`
 - [Arch Linux](https://archlinux.org/) (ou dérivé compatible `pacman`).
 - `pacman`, `pacman-contrib` (pour `pacdiff`), `git`, `base-devel` (pour
   `makepkg`).
+- `mercurial`, `subversion` ou `breezy` uniquement si `--devel` doit examiner
+  un paquet `-hg`, `-svn` ou `-bzr` correspondant.
 - `sudo` (opérations pacman lorsqu'il n'est pas lancé en root).
 - Python 3 pour construire depuis les sources ; GNU gettext pour valider ou
   installer les catalogues externes. Le binaire autonome n'en dépend pas.
@@ -150,8 +181,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.9.0-x86_64
-sudo install -Dm755 yaourt-0.9.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.10.0-x86_64
+sudo install -Dm755 yaourt-0.10.0-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
@@ -190,8 +221,9 @@ BABET=/chemin/vers/babet-2.24.0-linux-x86_64 ./build.sh
 ## Tests
 
 La suite hors ligne vérifie les helpers de processus et de fichiers avec le
-vrai runtime Babet, la gestion récursive de `CheckDepends`, le plan de
-construction et la sélection des artefacts des split packages, exerce le client
+vrai runtime Babet, la gestion récursive de `CheckDepends`, le suivi des
+références VCS contre un vrai dépôt Git local, le plan de construction et la
+sélection des artefacts des split packages, exerce le client
 AUR sur un serveur HTTP local avec des réponses `chunked`, teste la chaîne
 interactive parent/enfant sous un véritable pseudo-terminal, contrôle la
 délégation à `pacdiff` dans les modes dossier et embarqué, puis construit le
@@ -222,8 +254,9 @@ en français, ou [`config.example.toml`](config.example.toml) en anglais). Lors
 d'un `-Syu`, `list_aur = "notable"` affiche par défaut les paquets orphelins,
 périmés ou non gérés par l'AUR. La valeur `"all"` affiche la liste complète et
 `false` masque le récapitulatif ; l'ancienne valeur `true` reste acceptée comme
-alias de `"all"`. L'option `search_limit` règle le nombre de résultats de
-recherche.
+alias de `"all"`. `devel = true` active le contrôle des révisions VCS à chaque
+mise à jour unifiée ; `--devel` et `--no-devel` le remplacent pour une seule
+exécution. L'option `search_limit` règle le nombre de résultats de recherche.
 
 ### Langue de l'interface
 

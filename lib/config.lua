@@ -41,6 +41,10 @@ function config.defaults()
         -- paquets à surveiller, "all" la liste complète, false masque tout.
         -- La valeur historique true reste acceptée comme alias de "all".
         list_aur     = "notable",
+        -- Vérifier les nouvelles révisions des paquets AUR de développement
+        -- (-git, -hg, -svn, -bzr) pendant -Syu. Désactivé par défaut pour ne
+        -- pas ajouter de requêtes réseau à la mise à jour ordinaire.
+        devel        = false,
         -- Nombre maximal de résultats affichés par section lors d'une recherche
         -- (-Ss) : AUR et dépôts limités chacun à cette valeur. 0 = illimité.
         -- Pour l'AUR, ce sont les mieux notés qui sont conservés.
@@ -82,6 +86,9 @@ function config.load()
 
     -- Expansion du ~ sur les chemins.
     conf.builddir = util.expanduser(conf.builddir)
+    if conf.vcs_state_file then
+        conf.vcs_state_file = util.expanduser(conf.vcs_state_file)
+    end
 
     return conf
 end

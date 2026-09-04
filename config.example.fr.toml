@@ -30,6 +30,12 @@
 # La valeur true reste acceptée comme alias de "all".
 # list_aur = "notable"
 
+# Contrôler pendant les mises à jour unifiées les paquets de développement
+# dont la version peut changer sans nouvelle version AUR (-git, -hg, -svn et
+# -bzr). Cela ajoute une requête .SRCINFO et des contrôles de références VCS
+# par PackageBase candidat. Activation ponctuelle : yaourt -Syu --devel
+# devel = false
+
 # Nombre maximal de résultats affichés par section lors d'une recherche (-Ss).
 # AUR et dépôts sont limités chacun à cette valeur (pour l'AUR, ce sont les
 # paquets les mieux notés qui sont conservés). 0 = aucune limite (tout afficher).

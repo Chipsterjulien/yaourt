@@ -39,6 +39,10 @@
 - [x] `-C` / `--pacdiff` : gestion interactive des fichiers `.pacnew`,
       `.pacsave` et `.pacorig` via `pacdiff`, avec élévation limitée aux
       modifications et transmission de toutes ses options (0.8.0).
+- [x] Paquets de développement : suivi sûr des références Git, Mercurial,
+      Subversion et Bazaar via `--devel`, état validé uniquement après une
+      installation réussie et aucune exécution du `PKGBUILD` pendant la
+      détection (0.10.0).
 - [x] Marquage `--asdeps` des dépendances AUR construites (un `-Rcs` de la cible
       les retire si elles deviennent orphelines).
 - [x] Bilan typé (`build.result` : ok / refused / failed / install_failed /
@@ -52,7 +56,8 @@
       récursif `-Scc`, intégration HTTP `chunked` locale et test PTY réel.
 - [x] Migration Babet 2.24.0 : runtime officiel complet, OpenSSL 3.5.8 et
       campagne yaourt validée en modes dossier et embarqué.
-- [x] Releases 0.1.0 à 0.6.0 publiées, x86_64 + aarch64.
+- [x] Releases 0.1.0 à 0.6.0 publiées, x86_64 + aarch64 ; jalons techniques
+      0.7.0 à 0.10.0 tagués au fil de la feuille de route.
 - [x] i18n extensible : catalogues gettext, détection POSIX de la locale,
       replis déterministes, pluriels, variables nommées, catalogues externes
       sûrs et 43 langues intégrées.

@@ -1,7 +1,7 @@
 # Translation template for yaourt.
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.9.0\n"
+"Project-Id-Version: yaourt 0.10.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -28,6 +28,10 @@ msgstr ""
 
 msgctxt "help.update"
 msgid "update repositories and AUR ([M]: manually select AUR packages)"
+msgstr ""
+
+msgctxt "help.update_devel"
+msgid "also check development packages (VCS)"
 msgstr ""
 
 msgctxt "help.clean"
@@ -72,6 +76,10 @@ msgstr ""
 
 msgctxt "build.heading_update"
 msgid "Build package {package} ({old_version} -> {new_version})"
+msgstr ""
+
+msgctxt "build.heading_vcs"
+msgid "Build package {package} ({version}, new VCS revisions)"
 msgstr ""
 
 msgctxt "build.heading_new"
@@ -388,6 +396,10 @@ msgctxt "status.out_of_date"
 msgid "(out of date)"
 msgstr ""
 
+msgctxt "status.vcs_update"
+msgid "new VCS revisions"
+msgstr ""
+
 msgctxt "status.up_to_date"
 msgid "up to date"
 msgstr ""
@@ -424,6 +436,10 @@ msgstr[1] ""
 
 msgctxt "update.aur_check_skipped"
 msgid "{error} — AUR package check skipped for this run"
+msgstr ""
+
+msgctxt "update.vcs_check_skipped"
+msgid "VCS check skipped: {error}"
 msgstr ""
 
 msgctxt "update.aur_managed"
