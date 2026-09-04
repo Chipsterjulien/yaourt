@@ -16,6 +16,7 @@ local color      = require("lib.color")
 local aur        = require("lib.aur")
 local i18n       = require("lib.i18n")
 local vcs        = require("lib.vcs")
+local builddeps  = require("lib.builddeps")
 
 local BUILD_USER = "yaourt"
 
@@ -665,6 +666,7 @@ end
 function build.aur_many(config, targets, opts)
     opts = opts or {}
     local results = {}
+    local cleanup_state = builddeps.start(config)
     local plan, rerr = build.plan(config, targets, opts)
     if not plan then
         for _, name in ipairs(targets) do
@@ -674,6 +676,7 @@ function build.aur_many(config, targets, opts)
                     error = tostring(rerr),
                 }))
         end
+        builddeps.finish(config, cleanup_state, opts)
         return results
     end
 
@@ -683,6 +686,7 @@ function build.aur_many(config, targets, opts)
     end
 
     local status = {}
+    local interrupted = false
     for _, base in ipairs(plan.order) do
         local group = plan.bases[base]
         local failed_dependency
@@ -732,16 +736,25 @@ function build.aur_many(config, targets, opts)
             end
 
             local ok = true
-            local interrupted = false
+            local group_interrupted = false
             for _, item in ipairs(group_results) do
                 results[#results + 1] = item
                 if not item.ok then ok = false end
-                if item.status == "interrupted" then interrupted = true end
+                if item.status == "interrupted" then
+                    group_interrupted = true
+                    interrupted = true
+                end
             end
             status[base] = ok
-            if interrupted then break end
+            if group_interrupted then break end
         end
     end
+
+    builddeps.finish(config, cleanup_state, {
+        noconfirm = opts.noconfirm,
+        passthrough = opts.passthrough,
+        interrupted = interrupted,
+    })
 
     return results
 end

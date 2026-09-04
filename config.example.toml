@@ -35,6 +35,12 @@
 # The same check can be enabled once with: yaourt -Syu --devel
 # devel = false
 
+# Remove build dependencies that were installed by the current AUR operation
+# and are orphaned when it ends. Packages already installed before the build
+# are never selected. Values: false (default), "ask", or "always".
+# With "ask", the default answer is no; --noconfirm keeps the packages.
+# cleanup_build_deps = "ask"
+
 # Maximum number of results displayed in each search section (-Ss).
 # AUR and repository results are each limited to this value. For the AUR, the
 # highest-rated packages are retained. 0 means unlimited (display everything).

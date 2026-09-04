@@ -520,11 +520,16 @@ local function current_prompt_token(kind)
     return prompt_fallbacks[kind]
 end
 
-local function prompt_choices(include_manual)
+local function prompt_choices(include_manual, default_choice)
     -- La majuscule ASCII signale uniquement le choix par défaut. Les autres
     -- choix restent en minuscules ; les écritures sans casse sont inchangées.
-    local yes = current_prompt_token("yes"):upper()
+    local yes = current_prompt_token("yes"):lower()
     local no = current_prompt_token("no"):lower()
+    if default_choice == "no" then
+        no = no:upper()
+    else
+        yes = yes:upper()
+    end
     local choices = { yes, no }
     if include_manual then
         choices[#choices + 1] = current_prompt_token("manual"):lower()
@@ -532,9 +537,9 @@ local function prompt_choices(include_manual)
     return "[" .. table.concat(choices, "/") .. "]"
 end
 
-function i18n.prompt(key, include_manual)
+function i18n.prompt(key, include_manual, default_choice)
     local value = trim(i18n.t(key):gsub("[%c]+", " "):gsub("%s+", " "))
-    local choices = prompt_choices(include_manual)
+    local choices = prompt_choices(include_manual, default_choice)
 
     -- Compatibilité avec les catalogues existants : leur éventuel bloc de
     -- choix est remplacé là où le traducteur l'avait placé. Les catalogues

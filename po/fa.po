@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: fa\n"
 "Language-Team: فارسی\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,30 @@ msgstr "نتوانست بسته نرم افزاری قدیمی {path} را حذ�
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "کاربر {user} یافت نشد: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} وابستگی ساخت یتیم جدید"
+msgstr[1] "{count} وابستگی ساخت یتیم جدید"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "این وابستگی‌های ساخت حذف شوند؟"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "وابستگی‌های ساخت یتیم نگه داشته شدند."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "وابستگی‌های ساخت یتیم نگه داشته شدند، زیرا --noconfirm نمی‌تواند به پرسش پاک‌سازی پاسخ دهد."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "{count} وابستگی ساخت یتیم حذف شد."
+msgstr[1] "{count} وابستگی ساخت یتیم حذف شدند."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

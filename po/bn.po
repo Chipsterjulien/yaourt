@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: bn\n"
 "Language-Team: বাংলা\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,30 @@ msgstr "পুরানো সফটওয়্যার প্যাকেজ 
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "{user} ব্যবহারকারী খুঁজে পাওয়া যায়নিঃ {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count}টি নতুন অনাথ বিল্ড নির্ভরতা"
+msgstr[1] "{count}টি নতুন অনাথ বিল্ড নির্ভরতা"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "এই বিল্ড নির্ভরতাগুলি সরাবেন?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "অনাথ বিল্ড নির্ভরতাগুলি রাখা হয়েছে।"
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "--noconfirm পরিষ্কারের প্রশ্নের উত্তর দিতে পারে না বলে অনাথ বিল্ড নির্ভরতাগুলি রাখা হয়েছে।"
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "{count}টি অনাথ বিল্ড নির্ভরতা সরানো হয়েছে।"
+msgstr[1] "{count}টি অনাথ বিল্ড নির্ভরতা সরানো হয়েছে।"
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

@@ -71,6 +71,14 @@ local function parse_source(value)
     end
 
     local url, fragment = rest:match("^([^#]+)#?(.*)$")
+    -- makepkg accepte le marqueur de vérification Git aussi bien avant
+    -- qu'après le fragment : url?signed#branch=main ou
+    -- url#branch=main?signed. Ce marqueur décrit la source du PKGBUILD ; il
+    -- ne fait pas partie de l'URL ni du nom de la branche à interroger.
+    if kind == "git" then
+        url = url:gsub("%?signed$", "")
+        fragment = fragment:gsub("%?signed$", "")
+    end
     local params = fragment_map(fragment)
     local ref = "HEAD"
 

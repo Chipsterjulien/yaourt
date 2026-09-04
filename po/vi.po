@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: vi\n"
 "Language-Team: Tiếng Việt\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,28 @@ msgstr "không thể loại bỏ gói phần mềm cũ {path}: {error}"
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "Người dùng {user} không thể tìm thấy: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} phụ thuộc bản dựng mồ côi mới"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "Xóa các phụ thuộc bản dựng này?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "Đã giữ lại các phụ thuộc bản dựng mồ côi."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "Đã giữ lại các phụ thuộc bản dựng mồ côi vì --noconfirm không thể trả lời lời nhắc dọn dẹp."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "Đã xóa {count} phụ thuộc bản dựng mồ côi."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

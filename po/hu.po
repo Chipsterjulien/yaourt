@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: hu\n"
 "Language-Team: Magyar\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,30 @@ msgstr "Nem tudta eltávolítani a régimódi szoftvercsomagot {path}: {error}"
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "A {user} felhasználót nem találták: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} új árva fordítási függőség"
+msgstr[1] "{count} új árva fordítási függőség"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "Eltávolítja ezeket a fordítási függőségeket?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "Az árva fordítási függőségek megmaradtak."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "Az árva fordítási függőségek megmaradtak, mert a --noconfirm nem tud válaszolni a tisztítási kérdésre."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "{count} árva fordítási függőség eltávolítva."
+msgstr[1] "{count} árva fordítási függőség eltávolítva."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

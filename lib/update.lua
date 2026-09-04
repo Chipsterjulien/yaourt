@@ -416,12 +416,17 @@ local function select_auras(config, auras)
 end
 
 function update.parse_opts(args, config)
-    local opts = { devel = config and config.devel == true or false }
+    local opts = {
+        devel = config and config.devel == true or false,
+        noconfirm = false,
+    }
     for i = 2, #(args or {}) do
         if args[i] == "--devel" then
             opts.devel = true
         elseif args[i] == "--no-devel" then
             opts.devel = false
+        elseif args[i] == "--noconfirm" then
+            opts.noconfirm = true
         end
     end
     return opts
@@ -490,6 +495,7 @@ function update.run(config, opts)
         -- pkgbase sont mis à jour par une seule compilation.
         local results = build.aur_many(config, names, {
             vcs_packages = vcs_packages,
+            noconfirm = opts.noconfirm,
         })
         return display.build_summary(C, results, "updated")
     end

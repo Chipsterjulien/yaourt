@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: th\n"
 "Language-Team: ไทย\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,28 @@ msgstr "ไม่สามารถลบโปรแกรมแพคเกต
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "ไม่พบผู้ใช้ {user}: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "การขึ้นต่อกันสำหรับการสร้างที่ไม่ถูกใช้งานใหม่ {count} รายการ"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "นำการขึ้นต่อกันสำหรับการสร้างเหล่านี้ออกหรือไม่?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "เก็บการขึ้นต่อกันสำหรับการสร้างที่ไม่ถูกใช้งานไว้"
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "เก็บการขึ้นต่อกันสำหรับการสร้างที่ไม่ถูกใช้งานไว้ เนื่องจาก --noconfirm ไม่สามารถตอบคำถามการล้างข้อมูลได้"
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "นำการขึ้นต่อกันสำหรับการสร้างที่ไม่ถูกใช้งานออกแล้ว {count} รายการ"
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

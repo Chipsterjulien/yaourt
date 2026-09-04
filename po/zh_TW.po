@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: zh_TW\n"
 "Language-Team: 繁體中文\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,28 @@ msgstr "沒有辦法移除舊軟體包 {path}: {error}"
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "沒有找到 {user} 的使用者: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} 個新的孤立建置相依套件"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "移除這些建置相依套件嗎？"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "已保留孤立的建置相依套件。"
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "由於 --noconfirm 無法回答清理提示，已保留孤立的建置相依套件。"
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "已移除 {count} 個孤立建置相依套件。"
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

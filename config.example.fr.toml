@@ -36,6 +36,12 @@
 # par PackageBase candidat. Activation ponctuelle : yaourt -Syu --devel
 # devel = false
 
+# Supprimer les dépendances de build installées pendant l'opération AUR et
+# devenues orphelines à sa fin. Les paquets déjà installés avant le build ne
+# sont jamais sélectionnés. Valeurs : false (défaut), "ask" ou "always".
+# Avec "ask", la réponse par défaut est non ; --noconfirm les conserve.
+# cleanup_build_deps = "ask"
+
 # Nombre maximal de résultats affichés par section lors d'une recherche (-Ss).
 # AUR et dépôts sont limités chacun à cette valeur (pour l'AUR, ce sont les
 # paquets les mieux notés qui sont conservés). 0 = aucune limite (tout afficher).

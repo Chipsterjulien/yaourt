@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: ja\n"
 "Language-Team: 日本語\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,28 @@ msgstr "古いソフトウェアパッケージ {path} を削除できません�
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "{user}ユーザが見つかりませんでした: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "新しい孤立ビルド依存関係: {count} 件"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "これらのビルド依存関係を削除しますか？"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "孤立したビルド依存関係を保持しました。"
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "--noconfirm ではクリーンアップの確認に応答できないため、孤立したビルド依存関係を保持しました。"
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "孤立したビルド依存関係を {count} 件削除しました。"
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

@@ -1,7 +1,7 @@
 # Translation template for yaourt.
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -109,6 +109,30 @@ msgstr ""
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr ""
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] ""
+msgstr[1] ""
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr ""
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr ""
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr ""
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] ""
+msgstr[1] ""
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

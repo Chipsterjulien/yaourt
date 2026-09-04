@@ -6,7 +6,7 @@ A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
 [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
 in Lua.
 
-> **Status: young, but suitable for daily use (`0.10.0`).**
+> **Status: young, but suitable for daily use (`0.11.0`).**
 > Search, installation (official repositories and AUR with recursive dependency
 > resolution), unified upgrades, and cache cleanup are functional. The project
 > is still evolving.
@@ -54,6 +54,10 @@ feature profile.
 - **Test dependencies:** AUR `CheckDepends` entries are resolved recursively
   alongside runtime and build dependencies. Missing repository dependencies are
   installed with `--asdeps` before `makepkg`; AUR-only ones are built first.
+- **Optional build-dependency cleanup:** after an AUR operation, yaourt can
+  identify dependencies installed during that operation which have since become
+  orphaned. Existing packages and pre-existing orphans are never selected.
+  Cleanup is disabled by default and supports confirmation or automatic modes.
 - **`-Sw <package>…` / `-S --downloadonly <package>…`**: pacman's native
   download-only mode for repository packages. Commands containing an AUR
   target are rejected as a whole before any download or build.
@@ -174,8 +178,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-0.10.0-x86_64
-sudo install -Dm755 yaourt-0.10.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.11.0-x86_64
+sudo install -Dm755 yaourt-0.11.0-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
@@ -250,6 +254,12 @@ non-AUR-managed packages by default. `"all"` displays the complete list, while
 for `"all"`. `devel = true` enables VCS revision checks on every unified
 upgrade; `--devel` and `--no-devel` override it for one run. The `search_limit`
 option controls the number of displayed search results.
+
+`cleanup_build_deps` controls cleanup of dependencies newly installed by an
+AUR operation and left orphaned afterwards. Its values are `false` (default),
+`"ask"` (show candidates and ask with no as the default), and `"always"`
+(remove them automatically). With `"ask"`, `--noconfirm` safely keeps the
+packages instead of opening an interactive prompt.
 
 ### Interface language
 

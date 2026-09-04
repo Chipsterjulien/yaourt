@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: ru\n"
 "Language-Team: Русский\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,32 @@ msgstr "Не удалось удалить устаревший пакет пр�
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "Не удалось найти пользователя {user}: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} новая осиротевшая зависимость сборки"
+msgstr[1] "{count} новые осиротевшие зависимости сборки"
+msgstr[2] "{count} новых осиротевших зависимостей сборки"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "Удалить эти зависимости сборки?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "Осиротевшие зависимости сборки сохранены."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "Осиротевшие зависимости сборки сохранены, поскольку --noconfirm не может ответить на запрос очистки."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "Удалена {count} осиротевшая зависимость сборки."
+msgstr[1] "Удалены {count} осиротевшие зависимости сборки."
+msgstr[2] "Удалено {count} осиротевших зависимостей сборки."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

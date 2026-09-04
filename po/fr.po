@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: fr\n"
 "Language-Team: Français\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -116,6 +116,30 @@ msgstr "impossible de supprimer le paquet résiduel {path} : {error}"
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "L’utilisateur {user} est introuvable : {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} nouvelle dépendance de build orpheline"
+msgstr[1] "{count} nouvelles dépendances de build orphelines"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "Supprimer ces dépendances de build ?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "Dépendances de build orphelines conservées."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "dépendances de build orphelines conservées car --noconfirm ne peut pas répondre à l’invite de nettoyage"
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "{count} dépendance de build orpheline supprimée."
+msgstr[1] "{count} dépendances de build orphelines supprimées."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

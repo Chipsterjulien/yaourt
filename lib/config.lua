@@ -45,6 +45,9 @@ function config.defaults()
         -- (-git, -hg, -svn, -bzr) pendant -Syu. Désactivé par défaut pour ne
         -- pas ajouter de requêtes réseau à la mise à jour ordinaire.
         devel        = false,
+        -- Nettoyage des dépendances de build devenues orphelines pendant une
+        -- opération AUR : false (défaut), "ask" ou "always".
+        cleanup_build_deps = false,
         -- Nombre maximal de résultats affichés par section lors d'une recherche
         -- (-Ss) : AUR et dépôts limités chacun à cette valeur. 0 = illimité.
         -- Pour l'AUR, ce sont les mieux notés qui sont conservés.

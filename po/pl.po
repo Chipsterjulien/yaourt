@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: pl\n"
 "Language-Team: Polski\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,32 @@ msgstr "nie udało się usunąć przestarzałego pakietu oprogramowania {path}: 
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "Użytkownik {user} nie można znaleźć: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} nowa osierocona zależność budowania"
+msgstr[1] "{count} nowe osierocone zależności budowania"
+msgstr[2] "{count} nowych osieroconych zależności budowania"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "Usunąć te zależności budowania?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "Osierocone zależności budowania zostały zachowane."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "Osierocone zależności budowania zostały zachowane, ponieważ --noconfirm nie może odpowiedzieć na pytanie o czyszczenie."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "Usunięto {count} osieroconą zależność budowania."
+msgstr[1] "Usunięto {count} osierocone zależności budowania."
+msgstr[2] "Usunięto {count} osieroconych zależności budowania."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

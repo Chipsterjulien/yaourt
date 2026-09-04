@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: ko\n"
 "Language-Team: 한국어\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,28 @@ msgstr "오래된 소프트웨어 패키지 {path}: {error}"
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "{user} 사용자를 찾을 수 없었습니다: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "새 고립 빌드 의존성 {count}개"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "이 빌드 의존성을 제거하시겠습니까?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "고립된 빌드 의존성을 유지했습니다."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "--noconfirm은 정리 질문에 답할 수 없으므로 고립된 빌드 의존성을 유지했습니다."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "고립된 빌드 의존성 {count}개를 제거했습니다."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

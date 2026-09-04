@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: nb\n"
 "Language-Team: Norsk bokmål\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,30 @@ msgstr "ikke kunne fjerne gammeldags programvarepakke {path}: {error}"
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "{user}-brukeren ble ikke funnet: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} ny foreldreløs byggeavhengighet"
+msgstr[1] "{count} nye foreldreløse byggeavhengigheter"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "Fjerne disse byggeavhengighetene?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "Foreldreløse byggeavhengigheter ble beholdt."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "Foreldreløse byggeavhengigheter ble beholdt fordi --noconfirm ikke kan svare på oppryddingsspørsmålet."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "{count} foreldreløs byggeavhengighet ble fjernet."
+msgstr[1] "{count} foreldreløse byggeavhengigheter ble fjernet."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

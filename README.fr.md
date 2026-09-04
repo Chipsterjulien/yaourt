@@ -5,7 +5,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.10.0`).**
+> **Statut : jeune mais utilisable au quotidien (`0.11.0`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -55,6 +55,11 @@ profil de fonctionnalités particulier.
   récursivement avec les dépendances d'exécution et de compilation. Celles des
   dépôts qui manquent sont installées avec `--asdeps` avant `makepkg` ; celles
   disponibles uniquement dans l'AUR sont construites en premier.
+- **Nettoyage optionnel des dépendances de build** : après une opération AUR,
+  yaourt peut identifier les dépendances installées pendant cette opération et
+  devenues orphelines. Les paquets et orphelins déjà présents auparavant ne
+  sont jamais sélectionnés. Le nettoyage est désactivé par défaut et propose
+  un mode avec confirmation ou un mode automatique.
 - **`-Sw <paquet>…` / `-S --downloadonly <paquet>…`** : mode natif de pacman
   pour télécharger sans installer les paquets des dépôts. Toute commande qui
   contient une cible AUR est refusée en entier avant téléchargement ou build.
@@ -181,8 +186,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.10.0-x86_64
-sudo install -Dm755 yaourt-0.10.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.11.0-x86_64
+sudo install -Dm755 yaourt-0.11.0-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes
@@ -257,6 +262,12 @@ périmés ou non gérés par l'AUR. La valeur `"all"` affiche la liste complète
 alias de `"all"`. `devel = true` active le contrôle des révisions VCS à chaque
 mise à jour unifiée ; `--devel` et `--no-devel` le remplacent pour une seule
 exécution. L'option `search_limit` règle le nombre de résultats de recherche.
+
+`cleanup_build_deps` contrôle le nettoyage des dépendances nouvellement
+installées par une opération AUR et devenues orphelines à sa fin. Les valeurs
+sont `false` (défaut), `"ask"` (affichage puis confirmation, avec non comme
+réponse par défaut) et `"always"` (suppression automatique). Avec `"ask"`,
+`--noconfirm` conserve prudemment les paquets au lieu d'ouvrir une invite.
 
 ### Langue de l'interface
 

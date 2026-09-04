@@ -55,16 +55,235 @@ test("configuration : récapitulatif AUR notable par défaut", function()
     assert_equal(config.defaults().list_aur, "notable")
     assert_equal(config.defaults().language, "auto")
     assert_equal(config.defaults().devel, false)
+    assert_equal(config.defaults().cleanup_build_deps, false)
+end)
+
+test("dépendances de build : modes de nettoyage explicites", function()
+    local builddeps = require("lib.builddeps")
+    assert_equal(builddeps.mode(nil), "never")
+    assert_equal(builddeps.mode(false), "never")
+    assert_equal(builddeps.mode("ask"), "ask")
+    assert_equal(builddeps.mode("always"), "always")
+    assert_equal(builddeps.mode(true), "always")
+    assert_equal(builddeps.mode("valeur-inconnue"), "never")
+end)
+
+test("dépendances de build : seuls les nouveaux orphelins sont supprimés", function()
+    local builddeps = require("lib.builddeps")
+    local pacman = require("lib.pacman")
+    local original_run = util.run
+    local original_passthrough = pacman.passthrough
+    local query_count = 0
+    local removal
+
+    local ok, err = pcall(function()
+        util.run = function(argv, opts)
+            query_count = query_count + 1
+            assert_equal(opts.env.LC_ALL, "C")
+            if query_count == 1 then
+                assert_equal(table.concat(argv, " "), "pacman -Qq")
+                return {
+                    code = 0,
+                    stdout = "base\nancien-orphelin\n",
+                    stderr = "",
+                }
+            end
+            if query_count == 2 then
+                assert_equal(table.concat(argv, " "), "pacman -Qdtq")
+                return {
+                    code = 0,
+                    stdout = "nouveau-outil\nancien-orphelin\nnouveau-cadre\n",
+                    stderr = "",
+                }
+            end
+            assert_equal(table.concat(argv, " "), table.concat({
+                "pacman -Rs --print-format %n",
+                "nouveau-cadre nouveau-outil",
+            }, " "))
+            return {
+                code = 0,
+                stdout = table.concat({
+                    "nouveau-outil",
+                    "ancien-orphelin",
+                    "nouvelle-bibliotheque",
+                    "nouveau-cadre",
+                    "",
+                }, "\n"),
+                stderr = "",
+            }
+        end
+        pacman.passthrough = function(_, argv)
+            removal = table.concat(argv, " ")
+            return 0
+        end
+
+        local state = builddeps.start({ cleanup_build_deps = "always" })
+        local outcome = builddeps.finish({}, state, {})
+        assert_equal(outcome.status, "removed")
+        assert_equal(
+            table.concat(outcome.packages, ","),
+            "nouveau-cadre,nouveau-outil,nouvelle-bibliotheque"
+        )
+        assert_equal(
+            removal,
+            "-Rn --noconfirm nouveau-cadre nouveau-outil nouvelle-bibliotheque"
+        )
+        assert(not removal:find("ancien%-orphelin"))
+    end)
+
+    util.run = original_run
+    pacman.passthrough = original_passthrough
+    assert(ok, err)
+end)
+
+test("dépendances de build : confirmation prudente et mode non interactif", function()
+    local builddeps = require("lib.builddeps")
+    local pacman = require("lib.pacman")
+    local original_run = util.run
+    local original_read = io.read
+    local original_passthrough = pacman.passthrough
+    local read_count, removal_count = 0, 0
+
+    local ok, err = pcall(function()
+        i18n.set_language("fr")
+        assert_equal(
+            i18n.prompt("build_deps.remove_confirm", false, "no"),
+            "Supprimer ces dépendances de build ? [o/N]"
+        )
+        util.run = function(argv, opts)
+            assert_equal(opts.env.LC_ALL, "C")
+            if argv[2] == "-Qdtq" then
+                return { code = 0, stdout = "nouveau-outil\n", stderr = "" }
+            end
+            assert_equal(table.concat(argv, " "),
+                "pacman -Rs --print-format %n nouveau-outil")
+            return { code = 0, stdout = "nouveau-outil\n", stderr = "" }
+        end
+        io.read = function()
+            read_count = read_count + 1
+            return ""
+        end
+        pacman.passthrough = function()
+            removal_count = removal_count + 1
+            return 0
+        end
+
+        local state = { mode = "ask", before = {} }
+        local refused = builddeps.finish({}, state, {})
+        assert_equal(refused.status, "kept")
+        assert_equal(read_count, 1)
+        assert_equal(removal_count, 0)
+
+        local noninteractive = builddeps.finish({}, state, {
+            noconfirm = true,
+        })
+        assert_equal(noninteractive.status, "kept")
+        assert_equal(read_count, 1)
+        assert_equal(removal_count, 0)
+    end)
+
+    util.run = original_run
+    io.read = original_read
+    pacman.passthrough = original_passthrough
+    assert(ok, err)
+end)
+
+test("dépendances de build : aucun nettoyage après interruption", function()
+    local builddeps = require("lib.builddeps")
+    local original_run = util.run
+    local calls = 0
+
+    local ok, err = pcall(function()
+        util.run = function()
+            calls = calls + 1
+            error("aucune requête attendue après interruption")
+        end
+        local outcome = builddeps.finish({}, {
+            mode = "always",
+            before = {},
+        }, { interrupted = true })
+        assert_equal(outcome.status, "interrupted")
+        assert_equal(calls, 0)
+    end)
+
+    util.run = original_run
+    assert(ok, err)
+end)
+
+test("dépendances de build : nettoyage orchestré après le plan AUR", function()
+    local build = require("lib.build")
+    local builddeps = require("lib.builddeps")
+    local deps = require("lib.deps")
+    local original_plan = build.plan
+    local original_one_group = build.one_group
+    local original_repo_deps = deps.repo_deps_of
+    local original_start = builddeps.start
+    local original_finish = builddeps.finish
+    local marker = { mode = "always", before = {} }
+    local finished = 0
+
+    local ok, err = pcall(function()
+        builddeps.start = function(config)
+            assert_equal(config.cleanup_build_deps, "always")
+            return marker
+        end
+        builddeps.finish = function(config, state, opts)
+            assert_equal(config.cleanup_build_deps, "always")
+            assert_equal(state, marker)
+            assert_equal(opts.interrupted, false)
+            finished = finished + 1
+            return { status = "none", packages = {} }
+        end
+        build.plan = function()
+            return {
+                order = { "application" },
+                bases = {
+                    application = {
+                        base = "application",
+                        representative = "application",
+                        packages = { "application" },
+                        explicit = { application = true },
+                        dependencies = {},
+                    },
+                },
+                missing = {},
+            }
+        end
+        deps.repo_deps_of = function() return {} end
+        build.one_group = function()
+            return { build.result("ok", "application", "ok") }
+        end
+
+        local results = build.aur_many(
+            { cleanup_build_deps = "always" },
+            { "application" }
+        )
+        assert_equal(#results, 1)
+        assert(results[1].ok)
+        assert_equal(finished, 1)
+    end)
+
+    build.plan = original_plan
+    build.one_group = original_one_group
+    deps.repo_deps_of = original_repo_deps
+    builddeps.start = original_start
+    builddeps.finish = original_finish
+    assert(ok, err)
 end)
 
 test("VCS : analyse des options --devel", function()
     local update = require("lib.update")
-    assert_equal(update.parse_opts({ "-Syu" }, { devel = false }).devel, false)
+    local defaults = update.parse_opts({ "-Syu" }, { devel = false })
+    assert_equal(defaults.devel, false)
+    assert_equal(defaults.noconfirm, false)
     assert_equal(update.parse_opts({ "-Syu", "--devel" }, {}).devel, true)
     assert_equal(update.parse_opts({ "-Syu" }, { devel = true }).devel, true)
     assert_equal(update.parse_opts({
         "-Syu", "--devel", "--no-devel",
     }, { devel = true }).devel, false)
+    assert_equal(update.parse_opts({
+        "-Syu", "--noconfirm",
+    }, {}).noconfirm, true)
 end)
 
 test("VCS : sources mobiles extraites sans exécuter le PKGBUILD", function()
@@ -85,6 +304,26 @@ pkgname = outil-git
     assert_equal(sources[1].ref, "refs/heads/next")
     assert_equal(sources[2].kind, "hg")
     assert_equal(sources[2].ref, "stable")
+
+    local signed_before_fragment = assert(vcs._parse_source(
+        "modctl::git+https://example.test/modctl?signed#branch=main"
+    ))
+    assert_equal(signed_before_fragment.url,
+        "https://example.test/modctl")
+    assert_equal(signed_before_fragment.ref, "refs/heads/main")
+
+    local signed_after_fragment = assert(vcs._parse_source(
+        "modctl::git+https://example.test/modctl#branch=main?signed"
+    ))
+    assert_equal(signed_after_fragment.url,
+        "https://example.test/modctl")
+    assert_equal(signed_after_fragment.ref, "refs/heads/main")
+
+    local signed_head = assert(vcs._parse_source(
+        "modctl::git+https://github.com/mfinelli/modctl?signed"
+    ))
+    assert_equal(signed_head.url, "https://github.com/mfinelli/modctl")
+    assert_equal(signed_head.ref, "HEAD")
     assert(vcs.is_candidate("outil-git"))
     assert(vcs.is_candidate("outil-svn"))
     assert(not vcs.is_candidate("outil-bin"))
@@ -1601,13 +1840,17 @@ test("split packages : mise à jour planifiée en une transaction AUR", function
             assert_equal(table.concat(names, ","), "outil,outils-doc")
             assert_equal(opts.vcs_packages.outil, true)
             assert_equal(opts.vcs_packages["outils-doc"], nil)
+            assert_equal(opts.noconfirm, true)
             return {
                 build.result("ok", "outil", "ok"),
                 build.result("ok", "outils-doc", "ok"),
             }
         end
 
-        assert_equal(update.run({ color = false, list_aur = false }), 0)
+        assert_equal(update.run(
+            { color = false, list_aur = false },
+            { devel = false, noconfirm = true }
+        ), 0)
         assert_equal(calls, 1)
     end)
 
@@ -1857,7 +2100,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.10.0")
+        assert_equal(opts.headers["User-Agent"], "yaourt/0.11.0")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then

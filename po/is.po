@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: is\n"
 "Language-Team: Íslenska\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,30 @@ msgstr "gat ekki fjarlægð úrelt hugbúnaðarpakka {path}: {error}"
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "Ekki fannst notandi {user}: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} ný munaðarlaus byggingarháð eining"
+msgstr[1] "{count} nýjar munaðarlausar byggingarháðar einingar"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "Fjarlægja þessar byggingarháðu einingar?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "Munaðarlausum byggingarháðum einingum var haldið."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "Munaðarlausum byggingarháðum einingum var haldið því --noconfirm getur ekki svarað hreinsunarfyrirspurninni."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "{count} munaðarlaus byggingarháð eining var fjarlægð."
+msgstr[1] "{count} munaðarlausar byggingarháðar einingar voru fjarlægðar."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

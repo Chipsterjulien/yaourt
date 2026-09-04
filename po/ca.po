@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: ca\n"
 "Language-Team: Català\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,30 @@ msgstr "no va poder eliminar el paquet de programari obsolet {path}: {error}"
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "No es va trobar l'usuari de {user}: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} dependència de compilació òrfena nova"
+msgstr[1] "{count} dependències de compilació òrfenes noves"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "Voleu eliminar aquestes dependències de compilació?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "S’han conservat les dependències de compilació òrfenes."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "S’han conservat les dependències de compilació òrfenes perquè --noconfirm no pot respondre a la confirmació de neteja."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "S’ha eliminat {count} dependència de compilació òrfena."
+msgstr[1] "S’han eliminat {count} dependències de compilació òrfenes."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."

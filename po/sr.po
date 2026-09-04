@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.10.0\n"
+"Project-Id-Version: yaourt 0.11.0\n"
 "Language: sr\n"
 "Language-Team: Српски\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -118,6 +118,32 @@ msgstr "није могао уклонити устарели софтверск
 msgctxt "build.user_missing"
 msgid "The {user} user could not be found: {error}"
 msgstr "Не могу пронаћи корисника {user}: {error}"
+
+msgctxt "build_deps.heading"
+msgid "{count} new orphan build dependency"
+msgid_plural "{count} new orphan build dependencies"
+msgstr[0] "{count} нова напуштена зависност изградње"
+msgstr[1] "{count} нове напуштене зависности изградње"
+msgstr[2] "{count} нових напуштених зависности изградње"
+
+msgctxt "build_deps.remove_confirm"
+msgid "Remove these build dependencies?"
+msgstr "Уклонити ове зависности изградње?"
+
+msgctxt "build_deps.kept"
+msgid "Orphan build dependencies kept."
+msgstr "Напуштене зависности изградње су задржане."
+
+msgctxt "build_deps.kept_noninteractive"
+msgid "orphan build dependencies kept because --noconfirm cannot answer the cleanup prompt"
+msgstr "Напуштене зависности изградње су задржане јер --noconfirm не може да одговори на упит за чишћење."
+
+msgctxt "build_deps.removed"
+msgid "{count} orphan build dependency removed."
+msgid_plural "{count} orphan build dependencies removed."
+msgstr[0] "Уклоњена је {count} напуштена зависност изградње."
+msgstr[1] "Уклоњене су {count} напуштене зависности изградње."
+msgstr[2] "Уклоњено је {count} напуштених зависности изградње."
 
 msgctxt "cache.absent"
 msgid "Build cache not found ({path}): nothing to clean."
