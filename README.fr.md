@@ -5,19 +5,24 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.12.0`).**
-> La recherche, l'installation (dépôts et AUR avec résolution récursive des
-> dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
-> Le projet reste en évolution.
+> **Version 2.0.0 — la génération Lua/Babet de yaourt.**
+> La recherche, l'installation, les mises à jour unifiées, la revue des fichiers
+> AUR et le nettoyage optionnel constituent le socle testé. La suite est suivie
+> dans [TODO.md](TODO.md).
 
 ## À propos
 
 Ce projet est une **réécriture en Lua** du yaourt original
 ([archlinuxfr/yaourt](https://github.com/archlinuxfr/yaourt)), aujourd'hui non
-maintenu. L'objectif est d'en reprendre l'esprit — un assistant pacman/AUR
-simple et lisible — sur une base de code moderne, en suivant une approche
-« Strangler Fig Pattern » (figuier étrangleur) : tout ce qui n'est pas encore
-porté nativement est délégué à `pacman`, puis remplacé progressivement.
+maintenu. L'objectif est d'en reprendre l'esprit : un assistant pacman/AUR
+simple et lisible. Les opérations natives restent déléguées à `pacman` ;
+yaourt ajoute la gestion de l'AUR.
+
+La version **2.0.0** marque cette nouvelle génération après la dernière version
+historique, [1.9](https://github.com/archlinuxfr/yaourt/releases/tag/1.9), et les
+jalons de développement 0.x de cette réécriture. Elle reprend le comportement
+validé dans la **0.12.0**. Les sources d'origine ont servi de point de départ ;
+ce dépôt indépendant possède son propre historique Git.
 
 Il s'appuie sur [Babet](https://github.com/Chipsterjulien/babet) **2.24.0 ou
 plus récent**,
@@ -235,8 +240,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.12.0-x86_64
-sudo install -Dm755 yaourt-0.12.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-2.0.0-x86_64
+sudo install -Dm755 yaourt-2.0.0-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes

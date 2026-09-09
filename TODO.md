@@ -84,7 +84,7 @@ d'une option dans Yay, Paru, Pikaur ou aurutils ne suffit pas à la justifier.
 - Chaque nouvelle fonction doit avoir des tests hors ligne et, lorsqu'elle
   modifie le système, un parcours réel sous Arch Linux.
 
-## 0.12.0 — Corrections de l'audit, avant publication
+## 0.12.0 — Corrections de l'audit validées
 
 - [x] Approbations liées au contenu, revues refusées persistantes, erreurs/EOF bloquants.
 - [x] Routage commun des options, refus des combinaisons non prises en charge.
@@ -94,9 +94,24 @@ d'une option dans Yay, Paru, Pikaur ou aurutils ne suffit pas à la justifier.
 - [x] Révisions VCS enregistrées par sous-paquet installé ; validation RPC avant cache.
 - [x] `--needed` traité dans le plan et dans la transaction d'installation.
 - [x] Tests de régression en modes dossier et embarqué, avec dépôts Git locaux.
-- [ ] Essais réels Arch des corrections, puis commit/tag de la 0.12.0.
+- [x] Essais réels Arch des corrections et push du commit `13788c8` : mise à
+      jour dépôts + AUR, 97 tests par mode, 13 régressions de revue par mode,
+      plan de nettoyage avec pacman réel et contrôle des privilèges.
 
-## 0.13.0 — Consultation unifiée
+## 2.0.0 — Nouvelle génération Lua/Babet
+
+- [x] Harmoniser la version du programme, du packaging et des catalogues.
+- [x] Documenter la filiation avec le yaourt historique 1.9 et l'historique Git
+      indépendant de cette réécriture.
+- [x] Reprendre le socle fonctionnel validé dans la 0.12.0.
+- [ ] Construire et vérifier les binaires x86_64 et aarch64 de la 2.0.0, puis
+      publier le tag et les artefacts.
+
+Les complétions, la consultation unifiée et le packaging AUR restent des
+améliorations à réaliser. Le passage en 2.0.0 marque la nouvelle génération ;
+il ne clôt pas la feuille de route.
+
+## Suite — Consultation unifiée
 
 - [ ] Étendre `-Si` aux paquets AUR tout en laissant les paquets des dépôts à
       `pacman`, y compris pour une liste de cibles mélangées.
@@ -107,7 +122,7 @@ d'une option dans Yay, Paru, Pikaur ou aurutils ne suffit pas à la justifier.
 Ces deux opérations complètent le cœur « pacman + AUR » sans introduire de
 nouveau sous-système.
 
-## 0.14.0 — Complétions shell
+## Suite — Complétions shell
 
 - [ ] Fournir les complétions Bash, Zsh et Fish pour les opérations et options
       propres à yaourt, en réutilisant les mécanismes pacman lorsqu'ils sont
@@ -117,7 +132,7 @@ nouveau sous-système.
 - [ ] Ne pas télécharger la liste entière de l'AUR à chaque tabulation et ne
       pas créer de cache global de noms de paquets dans cette première version.
 
-## 0.15.0 — PKGBUILD local
+## Suite — PKGBUILD local
 
 - [ ] Construire et installer un `PKGBUILD` local avec ses dépendances dépôts
       et AUR en réutilisant le solveur, l'utilisateur de build, la revue et le
@@ -125,7 +140,7 @@ nouveau sous-système.
 - [ ] Garder une commande explicite et limitée à un répertoire local ; ne pas
       introduire de dépôt binaire local ni de chroot dans ce chantier.
 
-## Packaging et stabilisation avant 2.0.0
+## Packaging et validation de la distribution
 
 - [ ] Deux paquets AUR : `yaourt` (compile tout depuis les sources, y compris
       le runtime) et `yaourt-bin` (récupère le binaire du runtime selon `$CARCH`
@@ -141,9 +156,6 @@ nouveau sous-système.
 - [ ] Rejouer les parcours réels `-S`, `-Syu`, `--devel`, split packages,
       fournisseurs, `-C`, nettoyage des dépendances et commandes de
       consultation avec le paquet installé, en x86_64 puis aarch64.
-- [ ] Utiliser le jalon 2.0.0 seulement lorsque ce socle est stabilisé ; le
-      numéro marquera alors clairement la nouvelle génération après le yaourt
-      historique 1.9.x, pas l'ajout d'une fonction isolée.
 
 ## Idées conditionnelles — seulement sur besoin réel
 

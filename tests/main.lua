@@ -2190,7 +2190,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.12.0")
+        assert_equal(opts.headers["User-Agent"], "yaourt/2.0.0")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then

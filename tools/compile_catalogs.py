@@ -370,7 +370,7 @@ def generate_pot(base: Catalog) -> str:
         '# Translation template for yaourt.',
         'msgid ""',
         'msgstr ""',
-        '"Project-Id-Version: yaourt 0.12.0\\n"',
+        '"Project-Id-Version: yaourt 2.0.0\\n"',
         '"Content-Type: text/plain; charset=UTF-8\\n"',
         '"Content-Transfer-Encoding: 8bit\\n"',
         '"Plural-Forms: nplurals=2; plural=(n != 1);\\n"',

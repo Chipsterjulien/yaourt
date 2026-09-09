@@ -6,19 +6,23 @@ A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
 [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
 in Lua.
 
-> **Status: young, but suitable for daily use (`0.12.0`).**
-> Search, installation (official repositories and AUR with recursive dependency
-> resolution), unified upgrades, and cache cleanup are functional. The project
-> is still evolving.
+> **Version 2.0.0 — the Lua/Babet generation of yaourt.**
+> Search, installation, unified upgrades, AUR file review, and optional cleanup
+> form the tested core. Further work is tracked in [TODO.md](TODO.md).
 
 ## About
 
 This project is a **Lua rewrite** of the original yaourt
 ([archlinuxfr/yaourt](https://github.com/archlinuxfr/yaourt)), which is no longer
-maintained. Its goal is to preserve the spirit of the original project—a simple,
-readable pacman/AUR helper—on top of a modern codebase. It follows a Strangler
-Fig approach: features that have not yet been ported natively are delegated to
-`pacman`, then progressively replaced.
+maintained. Its goal is to preserve the spirit of the original project: a simple,
+readable pacman/AUR helper. Native package operations remain delegated to
+`pacman`; yaourt adds the AUR workflow.
+
+Version **2.0.0** marks this new generation after the original project's last
+release, [1.9](https://github.com/archlinuxfr/yaourt/releases/tag/1.9), and this
+rewrite's 0.x development milestones. It carries forward the behavior validated
+in **0.12.0**. The original sources were used as a starting point; this
+independent repository has its own Git history.
 
 yaourt relies on [Babet](https://github.com/Chipsterjulien/babet) **2.24.0 or
 newer**, a self-contained Lua 5.5 runtime, and is distributed as a single
@@ -222,8 +226,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-0.12.0-x86_64
-sudo install -Dm755 yaourt-0.12.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-2.0.0-x86_64
+sudo install -Dm755 yaourt-2.0.0-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
