@@ -51,8 +51,8 @@ end
 local function confirm(C, prompt)
     io.write(C.cyan("==> ") .. prompt .. " " .. i18n.t("prompt.yes_no") .. " ")
     io.flush()
-    local ans = (io.read("l") or ""):lower()
-    return not i18n.is_answer(ans, "no")
+    local ans = io.read("l")
+    return ans ~= nil and (ans == "" or i18n.is_answer(ans:lower(), "yes"))
 end
 
 -- soft(config) : nettoyage doux. Pour chaque dépôt, `git clean -fdx` (supprime
@@ -77,6 +77,7 @@ function clean.soft(config)
                 -- ignorés par .gitignore (sources, artefacts).
                 local res = util.run_as(config.build_user,
                     { "git", "-C", dir, "clean", "-fdx" })
+                if res and util.is_interrupted(res.code) then return res.code end
                 if res and res.code == 0 then
                     cleaned = cleaned + 1
                 else
@@ -117,7 +118,14 @@ function clean.full(config)
         if confirm(C, i18n.t("cache.remove_confirm")) then
             local removed = 0
             for _, dir in ipairs(dirs) do
-                local ok, err = babet.rmdirAll(dir)
+                local ok, err
+                if config.build_user then
+                    local res, rerr = util.run_as(config.build_user, {"rm", "-rf", "--", dir})
+                    ok, err = util.complete(res), rerr or (res and res.stderr)
+                    if res and util.is_interrupted(res.code) then return res.code end
+                else
+                    ok, err = babet.rmdirAll(dir)
+                end
                 if ok then
                     removed = removed + 1
                 else

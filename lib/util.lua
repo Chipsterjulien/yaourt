@@ -87,7 +87,7 @@ end
 -- par l'utilisateur (Ctrl+C / SIGINT = 130). Centralisé ici pour que tous les
 -- appelants distinguent une interruption d'un échec applicatif.
 function util.is_interrupted(code)
-    return code == 130
+    return code == 130 or code == 143
 end
 
 --------------------------------------------------------------------------
@@ -154,9 +154,32 @@ end
 -- officiel d'Arch). Ne JAMAIS comparer les versions à la main.
 --------------------------------------------------------------------------
 -- Renvoie -1 si a<b, 0 si a==b, 1 si a>b ; (nil, err) si vercmp absent.
+-- Captured output is usable only when the whole command succeeded.
+function util.complete(res)
+    return res ~= nil and res.code == 0 and not res.timed_out
+        and not res.stdout_truncated and not res.stderr_truncated
+end
+
+-- Never let root delete a path supplied by a build running as another user.
+-- PKGDEST may legitimately be outside the checkout.
+function util.remove_artifact(config, path)
+    if type(path) ~= "string" or path:sub(1,1) ~= "/"
+            or path:find("[%c]") or not path:match("%.pkg%.tar[%w%.%-]*$") then
+        return nil, i18n.t("process.unexpected_output", {command="makepkg --packagelist", output=tostring(path)})
+    end
+    local user = config.build_user
+    if util.is_root() and not user then user = "yaourt" end
+    if user then
+        local res, err = util.run_as(user, {"rm", "-f", "--", path})
+        if not util.complete(res) then return nil, err or (res and res.stderr) or "rm", res and res.code or 1 end
+        return true
+    end
+    return babet.remove(path)
+end
+
 function util.vercmp(a, b)
     local res, err = util.run({ "vercmp", a, b })
-    if not res then return nil, err end
+    if not util.complete(res) then return nil, err or (res and res.stderr) or "vercmp" end
     local n = tonumber((res.stdout:gsub("%s+$", "")))
     if not n then
         return nil, i18n.t("process.unexpected_output", {

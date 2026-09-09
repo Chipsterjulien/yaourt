@@ -30,56 +30,17 @@ local install = {}
 -- téléchargement seul est conservé explicitement : il est sûr pour les
 -- dépôts, mais ne possède pas encore de sémantique AUR non ambiguë.
 function install.parse_opts(args)
-    local names = {}
-    local opts  = {
-        force = false,
-        needed = false,
-        noconfirm = false,
-        download_only = false,
-        passthrough = {},
-    }
-
-    local op   = args[1] or ""
-    local tail = op:match("^%-%a*S(%a*)$") or ""
-    for ch in tail:gmatch("%a") do
-        if ch == "f" then
-            opts.force = true
-        elseif ch == "w" then
-            opts.download_only = true
-        else
-            opts.passthrough[#opts.passthrough + 1] = "-" .. ch
-        end
-    end
-
-    for i = 2, #args do
-        local arg = args[i]
-        if arg:sub(1, 1) == "-" then
-            if arg == "--needed" then
-                opts.needed = true
-            elseif arg == "-f" or arg == "--force" then
-                opts.force = true
-            elseif arg == "-w" or arg == "--downloadonly" then
-                opts.download_only = true
-            elseif arg == "--noconfirm" then
-                -- Conservé aussi dans passthrough pour les cibles dépôt.
-                opts.noconfirm = true
-                opts.passthrough[#opts.passthrough + 1] = arg
-            else
-                opts.passthrough[#opts.passthrough + 1] = arg
-            end
-        else
-            names[#names + 1] = arg
-        end
-    end
-
-    return names, opts
+    local opts = require("lib.cli").parse(args)
+    local valid, option = require("lib.cli").validate(opts)
+    if not valid then opts.error = option end
+    return opts.names, opts
 end
 
 -- in_repos(name) -> bool : vrai si le paquet existe dans un dépôt officiel.
 -- Détection via `pacman -Si <name>` (capturé) : code 0 = trouvé.
 local function in_repos(name)
     local res = util.run({ "pacman", "-Si", name })
-    return res ~= nil and res.code == 0
+    return res ~= nil and res.code == 0, res and res.code
 end
 
 -- classify(names) -> (repos, auras) : répartit les paquets demandés entre
@@ -87,7 +48,9 @@ end
 local function classify(names)
     local repos, auras = {}, {}
     for _, name in ipairs(names) do
-        if in_repos(name) then
+        local found, code = in_repos(name)
+        if util.is_interrupted(code) then return nil, nil, code end
+        if found then
             repos[#repos + 1] = name
         else
             auras[#auras + 1] = name
@@ -109,12 +72,21 @@ function install.run(config, names, opts)
         passthrough = {},
     }
 
-    local repos, auras = classify(names)
+    if opts.error then
+        log.error(i18n.t("cli.unsupported", { option = opts.error }))
+        return 1
+    end
+    local repos, auras, classify_code = classify(names)
+    if not repos then return classify_code end
 
     -- `pacman -Sw` ne sait télécharger que les paquets des dépôts. Construire
     -- puis installer silencieusement une cible AUR ferait l'inverse de la
     -- demande. Une commande mixte est donc refusée en entier avant le moindre
     -- téléchargement, clone, build ou appel pacman modificateur.
+    if opts.print_only and #auras > 0 then
+        log.error(i18n.t("cli.unsupported", {option="-Sp AUR"}))
+        return 1
+    end
     if opts.download_only and #auras > 0 then
         log.error(i18n.t("install.download_only_aur_unsupported", {
             packages = table.concat(auras, ", "),
@@ -124,8 +96,10 @@ function install.run(config, names, opts)
 
     -- Dépôts uniquement : on rend la main à pacman avec sa sémantique native
     -- et sans produire un bilan d'installation mensonger.
-    if opts.download_only then
-        local argv = { "-S", "-w" }
+    if opts.download_only or opts.print_only then
+        local argv = { "-S" }
+        if opts.download_only then argv[#argv+1]="-w" end
+        if opts.print_only then argv[#argv+1]="-p" end
         if opts.needed then argv[#argv + 1] = "--needed" end
         for _, flag in ipairs(opts.passthrough or {}) do
             argv[#argv + 1] = flag
@@ -158,6 +132,7 @@ function install.run(config, names, opts)
             results[#results + 1] = build.result("install_failed", label,
                 i18n.t("result.install_failed", { package = label }))
         end
+        if code ~= 0 then return code end
     end
 
     -- 2) AUR : toutes les cibles sont planifiées ensemble. Le plan regroupe les

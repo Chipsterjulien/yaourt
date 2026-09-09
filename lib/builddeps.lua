@@ -62,12 +62,12 @@ function builddeps.start(config)
         { "pacman", "-Qq" },
         { env = { LC_ALL = "C" } }
     )
-    if not res or res.code ~= 0 then
+    if not util.complete(res) then
         log.warn(i18n.t("common.named_error", {
             name = "pacman -Qq",
             error = detail(res, err),
         }))
-        return { mode = "never", unavailable = true }
+        return { mode = "never", unavailable = true, interrupted = res and util.is_interrupted(res.code), code = res and res.code }
     end
 
     return {
@@ -93,10 +93,12 @@ local function removal_plan(state, roots)
     -- --print est incompatible avec --nosave (-n) dans pacman. Cette option
     -- ne modifie pas les paquets sélectionnés ; elle ne sert que pendant la
     -- transaction réelle pour éviter la création de fichiers .pacsave.
-    local argv = { "pacman", "-Rs", "--print-format", "%n" }
+    -- --print-format implique déjà --print ; garder l'option explicite rend
+    -- le caractère non destructif de cette requête immédiatement visible.
+    local argv = { "pacman", "-Rs", "--print", "--print-format", "%n" }
     argv = babet.mergeTables(argv, roots)
     local res, err = util.run(argv, { env = { LC_ALL = "C" } })
-    if not res or res.code ~= 0 then
+    if not util.complete(res) then
         log.warn(i18n.t("common.named_error", {
             name = "pacman -Rs --print",
             error = detail(res, err),
@@ -194,7 +196,7 @@ function builddeps.finish(config, state, opts)
     local code = pacman.passthrough(config, argv)
     if code ~= 0 then
         log.warn(i18n.t("common.named_error", {
-            name = "pacman -Rns",
+            name = "pacman -Rn --noconfirm",
             error = tostring(code),
         }))
         return { status = "failed", packages = packages, code = code }

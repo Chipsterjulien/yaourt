@@ -32,6 +32,9 @@ class AurHandler(BaseHTTPRequestHandler):
         return
 
     def send_chunked_json(self, payload: dict[str, object]) -> None:
+        payload["version"] = 5
+        for entry in payload.get("results", []):
+            entry.setdefault("PackageBase", entry["Name"])
         self.send_chunked(
             json.dumps(payload, separators=(",", ":")).encode("utf-8"),
             "application/json",

@@ -9,6 +9,8 @@
 
 # Éditeur pour la revue de PKGBUILD.
 # Par défaut : $EDITOR, sinon $VISUAL, sinon "vi".
+# En root, utiliser un éditeur de terminal : il tourne sous le compte de build,
+# sans les variables de la session graphique.
 # editor = "vim"
 
 # Couleur dans les affichages de yaourt.

@@ -18,6 +18,13 @@ local REQUEST_TIMEOUT  = 15
 local RETRY_DELAY_MS   = 250
 local MAX_QUERY_LENGTH = 6000
 
+-- Cache volontairement limité à la durée du processus. Il évite de demander
+-- plusieurs fois la même fiche /info pendant la résolution d'un gros graphe,
+-- sans créer d'état persistant à invalider entre deux exécutions de yaourt.
+-- Une absence confirmée par une réponse RPC réussie est mémorisée avec false ;
+-- les erreurs réseau et HTTP ne le sont jamais.
+local info_cache = {}
+
 local function rpc_base(config)
     return (config.aur_url or "https://aur.archlinux.org") .. "/rpc/v5"
 end
@@ -65,34 +72,112 @@ end
 -- démesurées lorsque beaucoup de paquets étrangers sont installés.
 local function info_queries(names)
     local out, parts, length = {}, {}, 0
+    local batch_names = {}
 
     for _, name in ipairs(names) do
         local part = "arg%5B%5D=" .. util.urlencode(name)
         local added = #part + (#parts > 0 and 1 or 0)
 
         if #parts > 0 and length + added > MAX_QUERY_LENGTH then
-            out[#out + 1] = table.concat(parts, "&")
-            parts, length = {}, 0
+            out[#out + 1] = {
+                query = table.concat(parts, "&"),
+                names = batch_names,
+            }
+            parts, batch_names, length = {}, {}, 0
             added = #part
         end
 
         parts[#parts + 1] = part
+        batch_names[#batch_names + 1] = name
         length = length + added
     end
 
-    if #parts > 0 then out[#out + 1] = table.concat(parts, "&") end
+    if #parts > 0 then
+        out[#out + 1] = {
+            query = table.concat(parts, "&"),
+            names = batch_names,
+        }
+    end
     return out
+end
+
+local function info_cache_for(config)
+    local key = rpc_base(config)
+    if not info_cache[key] then info_cache[key] = {} end
+    return info_cache[key]
+end
+
+-- Utilisé par les tests et utile à tout futur mode long-vivant. L'exécutable
+-- actuel ne traite qu'une opération puis quitte, donc aucun nettoyage manuel
+-- n'est nécessaire en usage normal.
+function aur.clear_cache()
+    info_cache = {}
+end
+
+-- A syntactically valid JSON value is not necessarily an AUR RPC response.
+local function rpc_results(data, kind)
+    if type(data) ~= "table" then return nil, "aur: invalid RPC envelope" end
+    if data.type == "error" then return nil, "aur: " .. tostring(data.error or i18n.t("aur.rpc_error")) end
+    if data.version ~= 5 or data.type ~= kind or type(data.results) ~= "table"
+            or type(data.resultcount) ~= "number" or data.resultcount ~= #data.results
+            or (#data.results == 0 and babet.json.encode(data.results) ~= "[]") then
+        return nil, "aur: invalid RPC envelope"
+    end
+    local count, seen = 0, {}
+    for index, entry in pairs(data.results) do
+        count=count+1
+        if type(index) ~= "number" or index%1~=0 or index<1 or index>#data.results
+                or type(entry) ~= "table" or type(entry.Name) ~= "string"
+                or not entry.Name:match("^[%w@_+][%w@._+%-]*$")
+                or seen[entry.Name] or type(entry.Version) ~= "string" or entry.Version==""
+                or type(entry.PackageBase) ~= "string"
+                or not entry.PackageBase:match("^[%w@_+][%w@._+%-]*$") then
+            return nil, "aur: invalid RPC package"
+        end
+        seen[entry.Name]=true
+        for _, field in ipairs({"Depends","MakeDepends","CheckDepends","Provides","Conflicts","Replaces"}) do
+            local items=entry[field]
+            if items~=nil and items~=babet.json.null then
+                if type(items)~="table" then return nil,"aur: invalid "..field end
+                local length=0
+                for k,v in pairs(items) do
+                    if type(k)~="number" or k%1~=0 or k<1 or k>#items or type(v)~="string" then return nil,"aur: invalid "..field end
+                    length=length+1
+                end
+                if length~=#items then return nil,"aur: invalid "..field end
+            end
+        end
+    end
+    if count~=data.resultcount then return nil,"aur: invalid RPC result count" end
+    return data.results
 end
 
 -- info(config, names) -> (map Name->entry, nil) | (nil, err)
 -- GET /rpc/v5/info?arg[]=a&arg[]=b… avec découpage des URL trop longues.
 function aur.info(config, names)
-    local result = {}
-    for _, query in ipairs(info_queries(names)) do
-        local res, err = get_with_retry(rpc_base(config) .. "/info?" .. query, {
-            headers = request_headers(),
-            timeout = REQUEST_TIMEOUT,
-        })
+    local cache = info_cache_for(config)
+    local result, pending, seen = {}, {}, {}
+
+    for _, name in ipairs(names or {}) do
+        if not seen[name] then
+            seen[name] = true
+            local cached = cache[name]
+            if cached == nil then
+                pending[#pending + 1] = name
+            elseif cached ~= false then
+                result[name] = cached
+            end
+        end
+    end
+
+    for _, batch in ipairs(info_queries(pending)) do
+        local res, err = get_with_retry(
+            rpc_base(config) .. "/info?" .. batch.query,
+            {
+                headers = request_headers(),
+                timeout = REQUEST_TIMEOUT,
+            }
+        )
         if not res then return nil, "aur: " .. tostring(err) end
         if res.status ~= 200 then
             return nil, "aur: HTTP " .. tostring(res.status)
@@ -100,11 +185,21 @@ function aur.info(config, names)
 
         local data, derr = babet.json.decode(res.body)
         if not data then return nil, "aur: json: " .. tostring(derr) end
-        if data.type == "error" then
-            return nil, "aur: " .. tostring(data.error or i18n.t("aur.rpc_error"))
+        local entries, validation_err = rpc_results(data, "multiinfo")
+        if not entries then return nil, validation_err end
+        local requested = {}
+        for _, name in ipairs(batch.names) do requested[name]=true end
+        for _, entry in ipairs(entries) do
+            if not requested[entry.Name] then return nil, "aur: unsolicited RPC package" end
         end
-        for _, entry in ipairs(data.results or {}) do
-            result[entry.Name] = entry
+        local returned = {}
+        for _, entry in ipairs(entries) do
+            cache[entry.Name]=entry
+            returned[entry.Name]=true
+        end
+        for _, name in ipairs(batch.names) do
+            if not returned[name] then cache[name] = false end
+            if cache[name] ~= false then result[name] = cache[name] end
         end
     end
     return result
@@ -125,10 +220,7 @@ function aur.search(config, term, by)
 
     local data, derr = babet.json.decode(res.body)
     if not data then return nil, "aur: json: " .. tostring(derr) end
-    if data.type == "error" then
-        return nil, "aur: " .. tostring(data.error or i18n.t("aur.rpc_error"))
-    end
-    return data.results or {}
+    return rpc_results(data, "search")
 end
 
 -- providers(config, capability) -> (entries[], nil) | (nil, err)

@@ -4,10 +4,9 @@
 -- update.lua — vue unifiée des mises à jour (dépôts + AUR).
 --
 -- Sources :
---   * dépôts : synchro réelle des bases (`pacman -Sy`, root, visible) puis
---     `pacman -Qu` pour lister les mises à jour disponibles. L'application se
---     fait ensuite avec `pacman -Su` (la synchro est déjà faite). Plus de
---     dépendance à `checkupdates`/pacman-contrib.
+--   * dépôts : synchro uniquement si demandée (-y), puis prévisualisation de
+--     la transaction pacman (-Sup) incluant les remplacements. L'application
+--     utilise -Su, sans seconde synchronisation.
 --   * AUR    : `pacman -Qm` (paquets étrangers) -> RPC info -> `vercmp`.
 --
 -- Affichage épuré façon yaourt : `dépôt/nom  ancienne -> nouvelle`, coloré
@@ -33,54 +32,49 @@ local update  = {}
 -- Collecte
 --------------------------------------------------------------------------
 
--- Mises à jour des dépôts via une vraie synchro puis `pacman -Qu`.
--- Approche « façon yaourt » : on rafraîchit réellement les bases (pacman -Sy,
--- en root, avec barres de progression visibles), PUIS on liste les paquets
--- pouvant être mis à jour (pacman -Qu). L'application se fera ensuite avec
--- `pacman -Su` seul (la synchro est déjà faite) — voir update.run.
--- Renvoie { {name, oldver, newver}, … }.
-local function repo_updates(config)
-    -- 1) Synchro réelle des bases (root, interactif pour voir la progression).
-    local sync = {}
-    local p = util.sudo_prefix(config)
-    if p then sync[#sync + 1] = p end
-    sync[#sync + 1] = "pacman"
-    sync[#sync + 1] = "-Sy"
-    local code = util.passthrough(sync)
-    if code ~= 0 then
-        log.error(i18n.t("update.sync_failed"))
-        return {}
+-- Ask pacman to prepare the actual upgrade transaction. -Qu omits
+-- replacements; its empty output must never suppress an upgrade.
+local function repo_updates(config, opts)
+    local refresh = opts.refresh
+    if refresh == nil then refresh = 1 end
+    if refresh > 0 then
+        local sync = {}
+        local prefix = util.sudo_prefix(config)
+        if prefix then sync[#sync+1] = prefix end
+        sync[#sync+1] = "pacman"
+        sync[#sync+1] = "-S" .. string.rep("y", refresh)
+        if opts.noconfirm then sync[#sync+1] = "--noconfirm" end
+        local code = util.passthrough(sync)
+        if code ~= 0 then return nil, i18n.t("update.sync_failed"), code end
     end
-
-    -- 2) Détection des MAJ disponibles (pacman -Qu, capturé).
-    -- Format : « nom ancienne -> nouvelle ». Code non nul si aucune MAJ.
-    local res = util.run({ "pacman", "-Qu" }, { env = { LC_ALL = "C" } })
-    if not res then
-        return {}
-    end
+    local argv = { "pacman", "-S" .. string.rep("u", math.max(1, opts.upgrade or 1)) .. "p",
+        "--print-format", "%r\t%n\t%v", "--noconfirm" }
+    if opts.needed then argv[#argv+1] = "--needed" end
+    local res, err = util.run(argv, { env = { LC_ALL = "C" } })
+    if not util.complete(res) then return nil, err or (res and res.stderr) or "pacman", res and res.code or 1 end
     local list = {}
-    for line in (res.stdout or ""):gmatch("[^\n]+") do
-        local name, oldv, newv = line:match("^(%S+)%s+(%S+)%s*%->%s*(%S+)")
-        if name then
-            list[#list + 1] = { name = name, oldver = oldv, newver = newv }
+    for line in res.stdout:gmatch("[^\n]+") do
+        local repo, name, newv = line:match("^(%S+)\t(%S+)\t(%S+)$")
+        if not name then
+            return nil, i18n.t("process.unexpected_output", {command="pacman -Sup", output=line}), 1
         end
+        list[#list+1] = {repo=repo, name=name, oldver="—", newver=newv}
+    end
+    if #list > 0 then
+        local installed, query_err = util.run({"pacman", "-Q"}, {env={LC_ALL="C"}})
+        if not util.complete(installed) then
+            return nil, query_err or (installed and installed.stderr) or "pacman -Q", installed and installed.code or 1
+        end
+        local versions = {}
+        for line in installed.stdout:gmatch("[^\n]+") do
+            local name, ver = line:match("^(%S+)%s+(%S+)$")
+            if not name then return nil, "pacman -Q: " .. line, 1 end
+            versions[name] = ver
+        end
+        for _, entry in ipairs(list) do entry.oldver=versions[entry.name] or "—" end
     end
     return list
 end
-
--- Carte nom -> dépôt (pour colorer core/extra/multilib…), via `pacman -Sl`.
-local function repo_map()
-    local res = util.run({ "pacman", "-Sl" }, { env = { LC_ALL = "C" } })
-    local m = {}
-    if res and res.code == 0 then
-        for line in (res.stdout or ""):gmatch("[^\n]+") do
-            local repo, name = line:match("^(%S+)%s+(%S+)")
-            if repo and name then m[name] = repo end
-        end
-    end
-    return m
-end
-
 
 -- Statut de TOUS les paquets AUR installés (pacman -Qm -> info RPC).
 -- Renvoie une liste triée d'entrées :
@@ -89,15 +83,16 @@ end
 -- dérivent (le client RPC découpe seulement si l'URL deviendrait trop longue).
 local function aur_status(config, check_devel)
     local res = util.run({ "pacman", "-Qm" }, { env = { LC_ALL = "C" } })
-    if not res or res.code ~= 0 then return {} end
+    if res and res.code == 1 and res.stdout == "" and res.stderr == ""
+            and not res.timed_out and not res.stdout_truncated then return {} end
+    if not util.complete(res) then return nil, (res and res.stderr) or "pacman -Qm" end
 
     local installed, names = {}, {}
     for line in (res.stdout or ""):gmatch("[^\n]+") do
         local name, ver = line:match("^(%S+)%s+(%S+)")
-        if name then
-            installed[name] = ver
-            names[#names + 1] = name
-        end
+        if not name then return nil, "pacman -Qm: " .. line end
+        installed[name] = ver
+        names[#names + 1] = name
     end
     if #names == 0 then return {} end
 
@@ -116,7 +111,9 @@ local function aur_status(config, check_devel)
             e.pkgbase    = entry.PackageBase or entry.Name
             e.orphan     = not util.isset(entry.Maintainer)
             e.outofdate  = util.isset(entry.OutOfDate)
-            e.has_update = util.vercmp(installed[name], entry.Version) == -1
+            local comparison, compare_err = util.vercmp(installed[name], entry.Version)
+            if comparison == nil then return nil, compare_err end
+            e.has_update = comparison == -1
         end
         local is_debug_subproduct = not e.in_aur and e.name:match("%-debug$") ~= nil
         if not is_debug_subproduct then
@@ -140,11 +137,8 @@ function update.check(config, opts)
     opts = opts or {}
     local check_devel = opts.devel
     if check_devel == nil then check_devel = config.devel == true end
-    local repos = repo_updates(config)
-    if #repos > 0 then
-        local rmap = repo_map()
-        for _, u in ipairs(repos) do u.repo = rmap[u.name] or "repo" end
-    end
+    local repos, repoerr, code = repo_updates(config, opts)
+    if not repos then return nil, nil, nil, repoerr, {}, code end
     table.sort(repos, function(a, b)
         if a.repo ~= b.repo then return a.repo < b.repo end
         return a.name < b.name
@@ -347,7 +341,7 @@ local function parse_selection(input, max)
         if a then
             a, b = tonumber(a), tonumber(b)
             if a > b then a, b = b, a end
-            for i = a, b do
+            for i = math.max(1,a), math.min(max,b) do
                 if i >= 1 and i <= max then set[i] = value end
             end
         else
@@ -416,31 +410,24 @@ local function select_auras(config, auras)
 end
 
 function update.parse_opts(args, config)
-    local opts = {
-        devel = config and config.devel == true or false,
-        noconfirm = false,
-    }
-    for i = 2, #(args or {}) do
-        if args[i] == "--devel" then
-            opts.devel = true
-        elseif args[i] == "--no-devel" then
-            opts.devel = false
-        elseif args[i] == "--noconfirm" then
-            opts.noconfirm = true
-        end
-    end
+    local opts = require("lib.cli").parse(args, config)
+    local valid, option = require("lib.cli").validate(opts)
+    if not valid then opts.error = option end
     return opts
 end
 
 function update.run(config, opts)
     opts = opts or { devel = config.devel == true }
-    local repos, auras, aurall, aurerr, vcs_errors = update.check(config, opts)
+    if opts.error then log.error(i18n.t("cli.unsupported", {option=opts.error})); return 1 end
+    local repos, auras, aurall, aurerr, vcs_errors, check_code = update.check(config, opts)
+    if not repos then log.error(aurerr); return check_code and check_code ~= 0 and check_code or 1 end
     if aurerr then
         log.warn(i18n.t("update.aur_check_skipped", { error = tostring(aurerr) }))
     end
     for _, err in ipairs(vcs_errors or {}) do
         log.warn(i18n.t("update.vcs_check_skipped", { error = tostring(err) }))
     end
+    if aurerr or #(vcs_errors or {}) > 0 then return 1 end
     -- Option : afficher les paquets AUR notables ou la liste complète.
     if aur_list_mode(config.list_aur) ~= "none" then
         update.list_aur(config, aurall)
@@ -457,7 +444,9 @@ function update.run(config, opts)
         or i18n.prompt("update.continue", false)
     io.write("\n" .. C.cyan("==> " .. prompt) .. " ")
     io.flush()
-    local ans = (io.read("l") or ""):lower()
+    local answer = opts.noconfirm and "" or io.read("l")
+    if answer == nil then return 1 end
+    local ans = answer:lower()
     if i18n.is_answer(ans, "no") then
         print(i18n.t("common.cancelled"))
         return 0
@@ -478,7 +467,9 @@ function update.run(config, opts)
         local p = util.sudo_prefix(config)
         if p then cmd[#cmd + 1] = p end
         cmd[#cmd + 1] = "pacman"
-        cmd[#cmd + 1] = "-Su"
+        cmd[#cmd + 1] = "-S" .. string.rep("u", math.max(1, opts.upgrade or 1))
+        if opts.noconfirm then cmd[#cmd+1] = "--noconfirm" end
+        if opts.needed then cmd[#cmd+1] = "--needed" end
 
         local code = util.passthrough(cmd)
         if code ~= 0 then return code end
@@ -496,6 +487,7 @@ function update.run(config, opts)
         local results = build.aur_many(config, names, {
             vcs_packages = vcs_packages,
             noconfirm = opts.noconfirm,
+            needed = opts.needed,
         })
         return display.build_summary(C, results, "updated")
     end

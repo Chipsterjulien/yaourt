@@ -34,7 +34,7 @@ end
 -- Le verbe d'action (« installé(s) » / « mis à jour ») est paramétrable.
 function display.build_summary(C, results, action)
     action = action or "installed"
-    local groups = { ok = {}, refused = {}, interrupted = {}, failed = {} }
+    local groups = { skipped = {}, ok = {}, refused = {}, interrupted = {}, failed = {} }
     for _, r in ipairs(results) do
         -- failed et install_failed sont regroupés sous « Échecs ».
         local key = r.status
@@ -52,6 +52,8 @@ function display.build_summary(C, results, action)
         for _, r in ipairs(groups.ok) do names[#names + 1] = r.name end
         print(C.green("    " .. table.concat(names, ", ")))
     end
+
+    for _, r in ipairs(groups.skipped) do print(C.dim("    " .. r.name .. " : " .. i18n.t("status.up_to_date"))) end
 
     if #groups.refused > 0 then
         print(C.cyan("\n==> " .. i18n.n("summary.refused", #groups.refused)))
@@ -76,7 +78,7 @@ function display.build_summary(C, results, action)
 
     -- Code de sortie : interruption prioritaire (130), puis échec (1), sinon 0.
     -- Un refus seul n'est pas une erreur.
-    if #groups.interrupted > 0 then return 130 end
+    if #groups.interrupted > 0 then return groups.interrupted[1].code or 130 end
     if #groups.failed > 0 then return 1 end
     return 0
 end

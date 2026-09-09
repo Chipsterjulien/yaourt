@@ -173,6 +173,8 @@ echo "=== Tests en mode embarqué ==="
 TEST_STAGE="$TMP/test-stage"
 mkdir -p "$TEST_STAGE"
 cp "$ROOT/tests/main.lua" "$TEST_STAGE/main.lua"
+mkdir -p "$TEST_STAGE/tests"
+cp "$ROOT/tests/regressions.lua" "$TEST_STAGE/tests/regressions.lua"
 cp -r "$ROOT/lib" "$TEST_STAGE/lib"
 "$BABET" --create-exe "$TEST_STAGE" "$TMP/yaourt-tests"
 "$TMP/yaourt-tests"
@@ -182,6 +184,12 @@ python3 "$ROOT/tests/test_aur_local.py" "$BABET" "$ROOT"
 
 echo "=== Intégration VCS locale ==="
 python3 "$ROOT/tests/test_vcs_local.py" "$BABET" "$ROOT"
+
+echo "=== Revue Git et privilèges de nettoyage ==="
+python3 "$ROOT/tests/test_review_local.py" "$BABET" "$ROOT"
+
+echo "=== Plan de nettoyage avec pacman réel ==="
+python3 "$ROOT/tests/test_pacman_local.py" "$BABET" "$ROOT"
 
 echo "=== Test interactif sous pseudo-terminal ==="
 python3 "$ROOT/tests/test_interactive_pty.py" "$BABET" "$ROOT"
@@ -220,6 +228,9 @@ grep -Fq "<--output>" "$PACDIFF_FOLDER_OUTPUT"
 grep -Fq "YAOURT_PACDIFF_STUB" "$PACDIFF_EMBEDDED_OUTPUT"
 grep -Fq "<--output>" "$PACDIFF_EMBEDDED_OUTPUT"
 echo "[PASS] pacdiff externe en modes dossier et embarqué"
+
+echo "=== Routage réel des options ==="
+python3 "$ROOT/tests/test_cli.py" "$BABET" "$ROOT" "$TMP/yaourt"
 
 echo "=== Résultat ==="
 if [[ "${YAOURT_NETWORK_TESTS:-0}" == "1" ]]; then

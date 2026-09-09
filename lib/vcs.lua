@@ -13,7 +13,7 @@ local util = require("lib.util")
 
 local vcs = {}
 
-local STATE_HEADER = "YAOURT-VCS-1"
+local STATE_HEADER = "YAOURT-VCS-2"
 local QUERY_TIMEOUT = 20
 local SUFFIXES = { "git", "hg", "svn", "bzr" }
 
@@ -170,10 +170,10 @@ function vcs.query(source)
         timeout = QUERY_TIMEOUT,
     })
     if not res then return nil, tostring(err) end
-    if res.code ~= 0 then
+    if not util.complete(res) then
         local detail = trim(res.stderr)
         if detail == "" then detail = "exit " .. tostring(res.code) end
-        return nil, argv[1] .. ": " .. detail
+        return nil, argv[1] .. ": " .. detail, res.code
     end
 
     local output = trim(res.stdout)
@@ -197,8 +197,8 @@ function vcs.snapshot_from_srcinfo(config, srcinfo)
 
     local rows = {}
     for _, source in ipairs(sources) do
-        local revision, err = vcs.query(source)
-        if not revision then return nil, err end
+        local revision, err, code = vcs.query(source)
+        if not revision then return nil, err, code end
         rows[#rows + 1] = source.identity .. "\t" .. revision
     end
     return table.concat(rows, "\n"), nil
@@ -226,6 +226,8 @@ function vcs.load(config)
     file:close()
 
     local first, rest = content:match("^([^\n]*)\n?(.*)$")
+    -- A pkgbase-wide v1 record cannot prove which siblings were installed.
+    if first == "YAOURT-VCS-1" then return {}, nil end
     if first ~= STATE_HEADER then
         return nil, "invalid VCS state header: " .. path
     end
@@ -276,11 +278,11 @@ local function save(config, state)
     return true, nil
 end
 
-function vcs.remember(config, pkgbase, snapshot)
+function vcs.remember(config, pkgbase, snapshot, packages)
     if not snapshot then return true, nil end
     local state, err = vcs.load(config)
     if not state then return nil, err end
-    state[pkgbase] = snapshot
+    for _, name in ipairs(packages or {pkgbase}) do state[name] = snapshot end
     return save(config, state)
 end
 
@@ -309,11 +311,13 @@ function vcs.mark_updates(config, entries)
         local snapshot, err = vcs.snapshot(config, base)
         if err then
             errors[#errors + 1] = base .. ": " .. tostring(err)
-        elseif snapshot and state[base] ~= snapshot then
+        elseif snapshot then
             for _, entry in ipairs(groups[base]) do
+                if state[entry.name] ~= snapshot then
                 entry.vcs_update = true
                 if not entry.has_update then entry.vcs_only = true end
                 entry.has_update = true
+                end
             end
         end
     end

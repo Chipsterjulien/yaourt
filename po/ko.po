@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.11.0\n"
+"Project-Id-Version: yaourt 0.12.0\n"
 "Language: ko\n"
 "Language-Team: 한국어\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -523,3 +523,7 @@ msgstr "{dependency}을(를) 충족하는 AUR 패키지나 제공자가 없습�
 msgctxt "update.up_to_date"
 msgid "The system is up to date."
 msgstr "시스템이 최신 상태입니다."
+
+msgctxt "cli.unsupported"
+msgid "Unsupported option or combination: {option}"
+msgstr "지원하지 않는 옵션 또는 조합: {option}"

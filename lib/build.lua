@@ -25,10 +25,11 @@ local build      = {}
 -- Résultat typé d'une construction de paquet. status ∈ {ok, refused, failed,
 -- install_failed, interrupted}. ok est un raccourci (status == "ok"). name est
 -- le paquet concerné, message un texte lisible pour le bilan.
-function build.result(status, name, message)
+function build.result(status, name, message, code)
     return {
-        ok      = (status == "ok"),
+        ok      = (status == "ok" or status == "skipped"),
         status  = status,
+        code    = code,
         name    = name,
         message = message,
     }
@@ -48,14 +49,16 @@ function build.clean_stale(config, dest)
         { "makepkg", "--packagelist" },
         { cwd = dest }
     )
-    if not res or res.code ~= 0 then
+    if not util.complete(res) then
+        if res and util.is_interrupted(res.code) then return false, res.code end
         -- Pas de liste exploitable (ex. PKGBUILD illisible) : on ne fait rien,
         -- makepkg signalera lui-même le vrai problème.
         return
     end
     for _, path in ipairs(babet.split(res.stdout, "\n")) do
         if path ~= "" and babet.fileExists(path) then
-            local ok, err = babet.remove(path)
+            local ok, err, code = util.remove_artifact(config, path)
+            if util.is_interrupted(code) then return false, code end
             if not ok then
                 log.warn(i18n.t("build.remove_stale_failed", {
                     path = path,
@@ -68,7 +71,8 @@ end
 
 function build.clean(config, dest, pkgs)
     for _, pkg in ipairs(pkgs) do
-        local ok, err = babet.remove(pkg)
+        local ok, err, code = util.remove_artifact(config, pkg)
+        if util.is_interrupted(code) then return false, code end
         if not ok then
             log.warn(i18n.t("build.remove_package_failed", {
                 path = pkg,
@@ -123,7 +127,8 @@ end
 -- tous les sous-paquets retenus sont installés ensemble avec --asdeps (ce qui
 -- préserve les dépendances internes au split package), puis les seules cibles
 -- explicites sont reclassées via `pacman -D --asexplicit`.
-function build.install(config, dest, selected, explicit)
+function build.install(config, dest, selected, explicit, opts)
+    opts = opts or {}
     local res, err = util.run_as(
         config.build_user,
         { "makepkg", "--packagelist" },
@@ -133,9 +138,9 @@ function build.install(config, dest, selected, explicit)
         log.error(err)
         return false, nil, 1
     end
-    if res.code ~= 0 then
+    if not util.complete(res) then
         log.error(res.stderr)
-        return false, nil, 1
+        return false, nil, res.code ~= 0 and res.code or 1
     end
 
     -- `makepkg --packagelist` liste TOUS les paquets que le PKGBUILD pourrait
@@ -165,6 +170,11 @@ function build.install(config, dest, selected, explicit)
         return false, nil, 1
     end
 
+    local was_explicit, previous_err, previous_code = pacman.explicit_packages()
+    if not was_explicit then
+        log.error(previous_err)
+        return false, produced, previous_code and previous_code ~= 0 and previous_code or 1
+    end
     local selected_paths = {}
     local explicit_names = {}
     local dependency_count = 0
@@ -173,7 +183,9 @@ function build.install(config, dest, selected, explicit)
         local path = by_name[name]
         if not path then return false, produced, 1 end
         selected_paths[#selected_paths + 1] = path
-        if explicit[name] then
+        local want_explicit = explicit[name] or was_explicit[name]
+        if explicit[name] and opts.reason then want_explicit = opts.reason=="asexplicit" end
+        if want_explicit then
             explicit_names[#explicit_names + 1] = name
         else
             dependency_count = dependency_count + 1
@@ -183,7 +195,9 @@ function build.install(config, dest, selected, explicit)
 
     local argv = { "-U" }
     local mixed_reasons = dependency_count > 0 and #explicit_names > 0
-    if dependency_count > 0 then argv[#argv + 1] = "--asdeps" end
+    argv[#argv+1] = dependency_count > 0 and "--asdeps" or "--asexplicit"
+    if opts.needed then argv[#argv+1]="--needed" end
+    if opts.noconfirm then argv[#argv+1]="--noconfirm" end
     argv = babet.mergeTables(argv, selected_paths)
     local code = pacman.passthrough(config, argv)
     if code ~= 0 then
@@ -201,26 +215,15 @@ end
 
 -- makepkg_flags(opts) -> liste des options makepkg issues de la commande.
 -- -c (clean) est toujours présent ; -f force la reconstruction même si le
--- paquet existe déjà ; --needed évite de reconstruire un paquet déjà installé
--- et à jour. Seuls force et needed sont repris (périmètre prudent côté AUR).
+-- paquet existe déjà. --needed est traité par le plan puis par pacman -U,
+-- pas par makepkg sans -i.
 local function makepkg_flags(opts)
     local flags = { "-c" }
     if opts and opts.force then flags[#flags + 1] = "-f" end
-    if opts and opts.needed then flags[#flags + 1] = "--needed" end
     return flags
 end
 
 function build.make_as_yaourt_user(config, dest, opts)
-    local res, err = util.run({ "chown", "-R", BUILD_USER .. ":", dest })
-    if not res then
-        log.error(err)
-        return false, 1
-    end
-    if res.code ~= 0 then
-        log.error(res.stderr)
-        return false, 1
-    end
-
     local argv = babet.mergeTables({ "runuser", "-u", BUILD_USER, "--", "makepkg" }, makepkg_flags(opts))
     local code = util.passthrough(argv, dest)
     if code ~= 0 then
@@ -249,10 +252,10 @@ function build.make(config, dest, is_root, opts)
     end
 end
 
-local function results_for(packages, status, key)
+local function results_for(packages, status, key, code)
     local out = {}
     for _, package in ipairs(packages) do
-        out[#out + 1] = result(status, package, i18n.t(key, { package = package }))
+        out[#out + 1] = result(status, package, i18n.t(key, { package = package }), code)
     end
     return out
 end
@@ -273,7 +276,8 @@ function build.one_group(config, group, opts)
     -- Annonce visible du paquet en cours de construction (façon yaourt) :
     -- « ==> Construction de <nom> (ancienne -> nouvelle) », ou
     -- « ==> Construction de <nom> (nouvelle installation <ver>) » si absent.
-    -- Version installée : pacman -Q (local). Version cible : RPC AUR.
+    -- Version installée : pacman -Q (local). Le RPC donne une version cible
+    -- pour les paquets ordinaires ; pour les VCS, pkgver() la calculera.
     local installed
     do
         local qres = util.run({ "pacman", "-Q", name })
@@ -289,23 +293,24 @@ function build.one_group(config, group, opts)
 
     local variables = { package = C.magenta(table.concat(packages, ", ")) }
     local heading = "build.heading"
-    if target then
+    local development = vcs.is_candidate(pkgbase) or vcs.is_candidate(name)
+    local vcs_changed = false
+    for _, package in ipairs(packages) do
+        development = development or vcs.is_candidate(package)
+        if opts.vcs_packages and opts.vcs_packages[package] then vcs_changed = true end
+    end
+    if development or vcs_changed then
+        -- Do not advertise an AUR version as the result of a VCS build,
+        -- nor a new upstream revision during a simple reinstallation.
         if installed then
-            local vcs_only = false
-            for _, package in ipairs(packages) do
-                if opts.vcs_packages and opts.vcs_packages[package] then
-                    vcs_only = true
-                    break
-                end
-            end
-            if vcs_only then
-                heading = "build.heading_vcs"
-                variables.version = C.dim(installed)
-            else
-                heading = "build.heading_update"
-                variables.old_version = C.dim(installed)
-                variables.new_version = C.green(target)
-            end
+            heading = vcs_changed and "build.heading_vcs" or "build.heading_installed"
+            variables.version = C.dim(installed)
+        end
+    elseif target then
+        if installed then
+            heading = "build.heading_update"
+            variables.old_version = C.dim(installed)
+            variables.new_version = C.green(target)
         else
             heading = "build.heading_new"
             variables.version = C.green(target)
@@ -334,8 +339,9 @@ function build.one_group(config, group, opts)
     end
     local bcfg = babet.mergeTables(config, overrides)
 
-    local meta, err = build.prepare(bcfg, name)
+    local meta, err, prepare_code = build.prepare(bcfg, name)
     if not meta then
+        if util.is_interrupted(prepare_code) then return results_for(packages, "interrupted", "result.build_interrupted", prepare_code) end
         local out = {}
         for _, package in ipairs(packages) do
             out[#out + 1] = result("failed", package,
@@ -345,11 +351,13 @@ function build.one_group(config, group, opts)
     end
     local dest = meta.path
 
-    local reviewed, why = build.review(bcfg, meta)
+    local reviewed, why, review_code = build.review(bcfg, meta)
     if not reviewed then
+        if util.is_interrupted(review_code) then return results_for(packages, "interrupted", "result.build_interrupted", review_code) end
         if why == "refused" then
             return results_for(packages, "refused", "result.review_refused")
         end
+        log.error(tostring(why))
         -- why == "review_error" (éditeur indisponible) ou autre : échec technique.
         return results_for(packages, "failed", "result.review_failed")
     end
@@ -359,10 +367,11 @@ function build.one_group(config, group, opts)
     -- L'état ne sera toutefois écrit qu'après une installation réussie.
     local vcs_snapshot
     if vcs.is_candidate(pkgbase) or vcs.is_candidate(name) then
-        local snapshot, snapshot_err = vcs.snapshot_file(
+        local snapshot, snapshot_err, snapshot_code = vcs.snapshot_file(
             bcfg,
             babet.joinPath(dest, ".SRCINFO")
         )
+        if util.is_interrupted(snapshot_code) then return results_for(packages, "interrupted", "result.build_interrupted", snapshot_code) end
         if snapshot_err then
             log.warn(i18n.t("common.named_error", {
                 name = pkgbase,
@@ -376,12 +385,13 @@ function build.one_group(config, group, opts)
     -- Repartir d'un terrain propre : supprimer un éventuel paquet déjà construit
     -- (résidu d'une compilation/installation précédente interrompue), sinon
     -- makepkg refuserait de réécrire.
-    build.clean_stale(bcfg, dest)
+    local _, stale_code = build.clean_stale(bcfg, dest)
+    if util.is_interrupted(stale_code) then return results_for(packages, "interrupted", "result.build_interrupted", stale_code) end
 
     local made, make_code = build.make(bcfg, dest, is_root, opts)
     if not made then
         if util.is_interrupted(make_code) then
-            return results_for(packages, "interrupted", "result.build_interrupted")
+            return results_for(packages, "interrupted", "result.build_interrupted", make_code)
         end
         return results_for(packages, "failed", "result.build_failed")
     end
@@ -390,11 +400,12 @@ function build.one_group(config, group, opts)
         bcfg,
         dest,
         packages,
-        group.explicit
+        group.explicit,
+        opts
     )
     if not ok then
         if util.is_interrupted(inst_code) then
-            return results_for(packages, "interrupted", "result.install_interrupted")
+            return results_for(packages, "interrupted", "result.install_interrupted", inst_code)
         end
         return results_for(packages, "install_failed", "result.install_failed")
     end
@@ -402,7 +413,8 @@ function build.one_group(config, group, opts)
         local remembered, remember_err = vcs.remember(
             bcfg,
             pkgbase,
-            vcs_snapshot
+            vcs_snapshot,
+            packages
         )
         if not remembered then
             log.warn(i18n.t("common.named_error", {
@@ -412,7 +424,8 @@ function build.one_group(config, group, opts)
         end
     end
 
-    build.clean(bcfg, dest, pkgs) -- On ne va pas vérifier le retour car on fait déjà une alerte lors du nettoyage
+    local _, clean_code = build.clean(bcfg, dest, pkgs)
+    if util.is_interrupted(clean_code) then return results_for(packages, "interrupted", "result.build_interrupted", clean_code) end
 
     return results_for(packages, "ok", "result.installed")
 end
@@ -431,8 +444,8 @@ end
 
 -- prepare(config, name) -> (dossier, nil) | (nil, message)
 function build.prepare(config, name)
-    local meta, err = fetch.one(config, name)
-    if err ~= nil then return nil, err end
+    local meta, err, code = fetch.one(config, name)
+    if not meta then return nil, err, code end
 
     -- Construire l'emplacement du PKGBUILD
     local pkgbuild_path = meta.path .. "/PKGBUILD"
@@ -461,88 +474,19 @@ function build.resolve_builddir(config, is_root)
     return babet.joinPath(u.home, ".cache", BUILD_USER)
 end
 
--- review(config, dest) -> bool : montre le PKGBUILD et demande validation.
--- build.review(config, meta) -> bool (true = on poursuit, false = refusé)
--- Selon le contexte de récupération (meta) :
---   * premier clone      -> review complète : on ouvre le PKGBUILD dans
---     l'éditeur (rien à comparer, l'utilisateur découvre le paquet) ;
---   * mise à jour modifiée -> diff git des fichiers entre l'ancien et le
---     nouveau commit (met en évidence ce qui a changé, .install et patches
---     compris — ce sont aussi du code exécuté) ;
---   * mise à jour sans changement -> rien à revoir, on poursuit directement.
--- Dans les deux premiers cas, on demande confirmation avant de continuer.
+-- Approval is tied to reviewed content, not the most recent pull.
 function build.review(config, meta)
-    local C = color.new(config.color)
-    local dest = meta.path
+    return require("lib.review").run(config, meta)
+end
 
-    if meta.first_clone then
-        -- Premier clone : review de TOUS les fichiers versionnés du dépôt
-        -- (PKGBUILD, .install, patches, scripts locaux…), pas seulement le
-        -- PKGBUILD. Un .install s'exécute en root à l'installation et un patch
-        -- modifie les sources : tout doit être visible avant de construire.
-        -- PKGBUILD est placé en tête ; s'il n'y a que lui, comportement inchangé.
-        local files = { "PKGBUILD" }
-        local listed = util.run_as(config.build_user,
-            { "git", "-C", dest, "ls-files" })
-        if listed and listed.code == 0 then
-            for _, f in ipairs(babet.split(listed.stdout, "\n")) do
-                if f ~= "" and f ~= "PKGBUILD" then
-                    files[#files + 1] = f
-                end
-            end
-        end
-
-        -- Ouverture SÉQUENTIELLE : un fichier à la fois, dans l'ordre. On évite
-        -- d'ouvrir tous les fichiers d'un coup (ex. « vim f1 … f6 »), qui
-        -- n'affiche que le premier et déroute l'utilisateur (E173 à la
-        -- fermeture). Chaque fichier est ainsi explicitement présenté à la
-        -- revue, quel que soit l'éditeur. Pour un paquet à un seul fichier, le
-        -- comportement est identique à avant.
-        if #files > 1 then
-            print("")
-            print(C.cyan("==> ") .. C.bold(i18n.n("review.files", #files)))
-        end
-        for i, f in ipairs(files) do
-            if #files > 1 then
-                print(C.cyan("  [" .. i .. "/" .. #files .. "] ") .. f)
-            end
-            local code = util.passthrough({ config.editor, dest .. "/" .. f })
-            if code ~= 0 then
-                print(i18n.t("review.open_failed", {
-                    file = f,
-                    editor = tostring(config.editor),
-                }))
-                return false, "review_error"
-            end
-        end
-    elseif meta.updated then
-        -- Mise à jour : diff git de TOUS les fichiers entre les deux commits.
-        print("")
-        print(C.cyan("==> ") .. C.bold(i18n.t("review.changes")))
-        local res = util.run_as(config.build_user, {
-            "git", "-C", dest, "diff", "--color=always",
-            meta.old_commit .. ".." .. meta.new_commit,
-        })
-        if res and res.code == 0 and (res.stdout or "") ~= "" then
-            io.write(res.stdout)
-            if not (res.stdout:match("\n$")) then io.write("\n") end
-        else
-            -- Diff vide ou indisponible (ex. changements hors fichiers suivis).
-            print(C.dim("  " .. i18n.t("review.no_changes")))
-        end
-    else
-        -- Dépôt inchangé depuis la dernière fois : rien à revoir.
-        print(C.dim("==> " .. i18n.t("review.unchanged")))
-        return true
-    end
-
-    io.write(i18n.t("review.continue") .. " ")
-    io.flush()
-    local ans = (io.read("l") or ""):lower()
-    if i18n.is_answer(ans, "no") then
-        return false, "refused"
-    end
-    return true
+-- Both build and cache cleanup use this environment.
+function build.environment(config)
+    local root = util.is_root()
+    local path, err = build.resolve_builddir(config, root)
+    if not path then return nil, err end
+    local overrides = {builddir=path}
+    if root then overrides.build_user=BUILD_USER end
+    return babet.mergeTables(config, overrides)
 end
 
 -- ensure_repo_deps(config, name) -> (true, nil) | (false, raison)
@@ -551,24 +495,23 @@ end
 -- tourne en tant que l'utilisateur de build (sans droits pacman) et est appelé
 -- sans -s ; les dépendances dépôt doivent donc déjà être présentes. --asdeps
 -- les marque comme dépendances, --needed évite de réinstaller l'existant.
-local function ensure_repo_deps(config, name)
-    local rdeps, err = deps.repo_deps_of(config, name)
+local function ensure_repo_deps(config, name, opts)
+    local rdeps, err, resolve_code = deps.repo_deps_of(config, name)
     if not rdeps then
         return false, i18n.t("deps.repo_resolution_failed", {
             package = name,
             error = tostring(err),
-        })
+        }), resolve_code
     end
     if #rdeps == 0 then
         return true, nil
     end
-    local argv = babet.mergeTables({ "-S", "--asdeps", "--needed" }, rdeps)
-    local code = pacman.passthrough(config, argv)
+    local code = pacman.install_dependencies(config, rdeps, opts)
     if code ~= 0 then
         return false, i18n.t("deps.repo_install_failed", {
             package = name,
             dependencies = table.concat(rdeps, ", "),
-        })
+        }), code
     end
     return true, nil
 end
@@ -580,8 +523,8 @@ end
 -- étape clone, revue et makepkg, sans perdre la liste précise des artefacts à
 -- installer.
 function build.plan(config, targets, opts)
-    local resolved, rerr = deps.resolve_many(config, targets, opts)
-    if not resolved then return nil, rerr end
+    local resolved, rerr, rcode = deps.resolve_many(config, targets, opts)
+    if not resolved then return nil, rerr, rcode end
     if #resolved.order == 0 then
         return { order = {}, bases = {}, missing = {} }, nil
     end
@@ -659,6 +602,27 @@ function build.plan(config, targets, opts)
     return { order = order, bases = bases, missing = missing }, nil
 end
 
+-- Skip ordinary up-to-date packages before installing build dependencies.
+-- VCS packages need their source revision checked; --needed is still passed
+-- to the final pacman -U transaction for those builds.
+function build.is_current(config, group)
+    if vcs.is_candidate(group.base) then return false end
+    local infos, err = aur.info(config, group.packages)
+    if not infos then return nil, err end
+    for _, name in ipairs(group.packages) do
+        if vcs.is_candidate(name) then return false end
+        local q, qerr = util.run({"pacman", "-Q", name}, {env={LC_ALL="C"}})
+        if q and q.code==1 then return false end
+        if not util.complete(q) then return nil, qerr or (q and q.stderr) or "pacman -Q", q and q.code end
+        local version=q.stdout:match("^%S+%s+(%S+)")
+        if not version or not infos[name] then return false end
+        local compared, cerr=util.vercmp(version, infos[name].Version)
+        if compared==nil then return nil,cerr end
+        if compared~=0 then return false end
+    end
+    return true
+end
+
 -- aur_many(config, targets, opts) -> liste de résultats typés.
 -- Toute la transaction AUR est planifiée avant le premier effet de bord. Un
 -- pkgbase est construit une seule fois, même si plusieurs cibles directes ou
@@ -667,8 +631,12 @@ function build.aur_many(config, targets, opts)
     opts = opts or {}
     local results = {}
     local cleanup_state = builddeps.start(config)
-    local plan, rerr = build.plan(config, targets, opts)
+    if cleanup_state.interrupted then
+        return results_for(targets, "interrupted", "result.build_interrupted", cleanup_state.code)
+    end
+    local plan, rerr, plan_code = build.plan(config, targets, opts)
     if not plan then
+        if util.is_interrupted(plan_code) then return results_for(targets, "interrupted", "result.build_interrupted", plan_code) end
         for _, name in ipairs(targets) do
             results[#results + 1] = result("failed", name,
                 i18n.t("deps.aur_resolution_failed", {
@@ -697,7 +665,21 @@ function build.aur_many(config, targets, opts)
             end
         end
 
-        if failed_dependency then
+        local current, current_err, current_code
+        if opts.needed and not opts.force and not opts.reason then current,current_err,current_code=build.is_current(config,group) end
+        if current then
+            for _, package in ipairs(group.packages) do
+                results[#results+1]=result("skipped",package,i18n.t("status.up_to_date"))
+            end
+            status[base]=true
+        elseif current_err and util.is_interrupted(current_code) then
+            for _, r in ipairs(results_for(group.packages, "interrupted", "result.build_interrupted", current_code)) do results[#results+1]=r end
+            interrupted=true
+            break
+        elseif current_err then
+            for _, package in ipairs(group.packages) do results[#results+1]=result("failed",package,current_err) end
+            status[base]=false
+        elseif failed_dependency then
             for _, package in ipairs(group.packages) do
                 results[#results + 1] = result("failed", package,
                     i18n.t("deps.abandoned", {
@@ -707,11 +689,11 @@ function build.aur_many(config, targets, opts)
             end
             status[base] = false
         else
-            local dependency_error
+            local dependency_error, dependency_code
             for _, package in ipairs(group.packages) do
-                local ok, derr = ensure_repo_deps(config, package)
+                local ok, derr, dcode = ensure_repo_deps(config, package, opts)
                 if not ok then
-                    dependency_error = derr
+                    dependency_error, dependency_code = derr, dcode
                     break
                 end
             end
@@ -720,18 +702,18 @@ function build.aur_many(config, targets, opts)
             if dependency_error then
                 group_results = {}
                 for _, package in ipairs(group.packages) do
-                    group_results[#group_results + 1] = result("failed", package,
+                    group_results[#group_results + 1] = result(util.is_interrupted(dependency_code) and "interrupted" or "failed", package,
                         i18n.t("common.named_error", {
                             name = package,
                             error = tostring(dependency_error),
-                        }))
+                        }), dependency_code)
                 end
             else
                 local has_explicit = next(group.explicit) ~= nil
                 group_results = build.one_group(
                     config,
                     group,
-                    has_explicit and opts or nil
+                    has_explicit and opts or {needed=opts.needed, noconfirm=opts.noconfirm}
                 )
             end
 

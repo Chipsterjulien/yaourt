@@ -5,7 +5,7 @@
 Un frontend [pacman](https://wiki.archlinux.org/title/Pacman) avec support de
 l'[AUR](https://wiki.archlinux.org/title/Arch_User_Repository), réécrit en Lua.
 
-> **Statut : jeune mais utilisable au quotidien (`0.11.0`).**
+> **Statut : jeune mais utilisable au quotidien (`0.12.0`).**
 > La recherche, l'installation (dépôts et AUR avec résolution récursive des
 > dépendances), la mise à jour unifiée et le nettoyage du cache fonctionnent.
 > Le projet reste en évolution.
@@ -47,6 +47,11 @@ profil de fonctionnalités particulier.
   fournisseur valide unique est sélectionné automatiquement et plusieurs
   fournisseurs imposent un choix numéroté explicite. Avec `--noconfirm`, toute
   ambiguïté est refusée avant le premier build.
+- **Cache de résolution limité à la transaction** : les fiches AUR `/info`
+  déjà obtenues, y compris les absences confirmées, sont réutilisées pendant
+  l'exécution. Les contrôles du système installé et des dépôts sont mémorisés
+  uniquement pendant la préparation d'un même graphe. Rien n'est écrit sur le
+  disque et aucun choix de fournisseur n'est repris silencieusement plus tard.
 - **Split packages** : les cibles qui partagent le même `PackageBase` AUR ne
   sont clonées, examinées et construites qu'une seule fois. yaourt installe
   uniquement les sous-paquets demandés ou requis — pas tous les artefacts du
@@ -81,45 +86,85 @@ profil de fonctionnalités particulier.
 - **Revue avant compilation** : au premier clone, tous les fichiers versionnés
   du dépôt (PKGBUILD, `.install`, patches, scripts…) sont présentés un par un
   dans l'éditeur ; lors d'une mise à jour, c'est le **diff** des modifications
-  depuis la version précédente qui est affiché. Rien n'est construit sans
-  validation.
+  depuis la dernière révision approuvée qui est affiché. Un contenu identique
+  déjà accepté ne demande pas une nouvelle confirmation.
 - Les dépendances AUR tirées automatiquement sont marquées comme dépendances
   (`--asdeps`) : un `pacman -Rcs` de la cible les retire si elles deviennent
   orphelines.
-- La compilation se fait toujours sous un utilisateur non privilégié dédié
-  (`yaourt`), y compris lorsque le programme est lancé en root — `makepkg`
-  n'étant jamais exécuté en root.
+- La compilation utilise l'utilisateur courant ou, si yaourt est lancé en
+  root, le compte non privilégié dédié `yaourt`. `makepkg` n'est jamais
+  exécuté en root.
 - **Interface internationalisée** : 43 locales intégrées, détection automatique
   de la locale POSIX, replis régionaux, pluriels sûrs et catalogues GNU gettext
   externes, sans branche propre à une langue dans le code métier.
 
 ### Revue de sécurité des fichiers AUR
 
-Avant chaque construction AUR, yaourt adapte la revue au contenu disponible
-dans son cache de build :
+Une approbation n'est enregistrée qu'après présentation des fichiers et accord
+de l'utilisateur. Elle est liée aux empreintes SHA-256 de tous les fichiers
+suivis, à leurs modes et à la révision Git examinée. L'existence d'un clone ou
+la réussite de `git pull` ne vaut jamais validation.
 
-1. **Premier clone dans le cache de yaourt** : il n'existe aucune ancienne
-   révision permettant de produire un diff. Tous les fichiers versionnés du
-   dépôt sont donc ouverts **un par un** dans l'éditeur configuré : `PKGBUILD`,
-   fichiers `.install`, patches, scripts locaux, etc. Ils sont présentés pour
-   examen et n'ont pas besoin d'être modifiés.
-2. **Dépôt déjà présent et modifié** : yaourt affiche dans le terminal le diff
-   complet entre l'ancien et le nouveau commit, pour tous les fichiers suivis.
-3. **Dépôt inchangé** : aucune nouvelle revue n'est nécessaire et la
-   construction peut continuer directement.
+1. **Aucune approbation correspondante** : tous les fichiers suivis sont ouverts
+   un par un dans l'éditeur. Cela concerne aussi un clone obtenu avec `-G` et
+   une revue précédemment refusée ou interrompue.
+2. **Dépôt propre mis à jour et déjà approuvé** : affichage du diff depuis la
+   dernière révision acceptée. Des modifications locales imposent une revue
+   complète des fichiers.
+3. **Contenu exactement identique à celui approuvé** : pas de nouvelle revue.
 
-Le « premier clone » concerne le cache de yaourt, pas l'état d'installation du
-paquet. Un paquet déjà installé peut donc déclencher une revue complète s'il a
-été installé avec un autre assistant AUR, si le cache utilise un nouvel
-emplacement ou si le dépôt cloné a été supprimé. En particulier, `-Scc`
-supprime tous les dépôts du cache : la prochaine construction de chacun d'eux
-sera de nouveau considérée comme un premier clone.
+Une fin d'entrée, une commande Git échouée ou tronquée, un éditeur indisponible,
+un index non fusionné ou des liens symboliques/sous-modules suivis empêchent
+la validation. Les fichiers doivent être des fichiers ordinaires lisibles.
+Une mise à jour refusée reste à revoir même si le prochain pull ne change rien.
 
-Cette revue porte volontairement sur tous les fichiers suivis : un fichier
-`.install` peut exécuter des commandes avec les droits root, tandis qu'un patch
-ou un script local peut modifier les sources construites. Après la présentation
-ou le diff, yaourt demande toujours confirmation avant de lancer la
-construction.
+Les approbations sont conservées hors du cache de build : dans
+`$XDG_STATE_HOME/yaourt/reviews` (par défaut `~/.local/state/yaourt/reviews`)
+pour un utilisateur normal, ou `/var/lib/yaourt-reviews` pour root. Ce dossier
+est privé à l'utilisateur qui lance yaourt. En root, l'éditeur et les
+suppressions d'artefacts tournent sous le compte `yaourt` ; aucun `chown`
+récursif root du dépôt n'est effectué. Un `PKGDEST` externe reste possible
+avec les permissions de ce compte.
+Pour les opérations lancées en root, choisir un éditeur de terminal
+(`vi`, `vim`, `nano`…) : les variables de la session graphique sont retirées
+de son environnement. L’environnement du terminal et la langue sont conservés.
+
+Les anciens caches n'ont pas encore d'approbation enregistrée : une nouvelle
+revue sera donc demandée. Effacer le cache de build n'efface pas les
+approbations ; un nouveau clone au contenu identique peut être reconnu.
+La revue reste une décision de l'utilisateur sur le code à construire : elle
+ne constitue pas un environnement isolé d'exécution des PKGBUILD.
+
+### Options de synchronisation prises en charge
+
+Les options courtes sont reconnues dans n'importe quel ordre (`-Sw`, `-wS`,
+`-S -w`), ainsi que les opérations longues correspondantes. Les valeurs des
+options ne deviennent plus des cibles. `-Su` ne rafraîchit pas les bases ;
+`-Syu` le fait, et les répétitions de `y`/`u` sont conservées. La prévisualisation
+consulte la transaction préparée par pacman, remplacements compris. Un contrôle
+échoué ou incomplet arrête l'opération avec un code non nul au lieu d'affirmer
+que le système est à jour.
+
+Les chemins unifiés prennent volontairement en charge un ensemble limité :
+
+- Installation : `--needed`, `--noconfirm`, `--asdeps`, `--asexplicit` et
+  `-f`/`--force` pour reconstruire l'AUR. `-Sw` et `-Sp` fonctionnent pour des
+  cibles exclusivement issues des dépôts ; une demande mixte ou AUR est
+  refusée avant toute transaction.
+- Mise à jour sans cible explicite : `-Su`/`-Syu`, `--needed`, `--noconfirm`,
+  `--devel` et `--no-devel`.
+- Les options comme `--root`, `--sysroot`, `--dbpath`, `--config`, `--ignore`
+  et `--overwrite`, ainsi que mise à jour + téléchargement seul, sont refusées
+  sur les chemins unifiés avant toute synchronisation ou installation. Utiliser
+  directement pacman pour ces opérations. Les autres opérations natives
+  continuent de lui être déléguées sans modification.
+
+Pour l'AUR classique, `--needed` évite le build d'un pkgbase lorsque tous les
+sous-paquets sélectionnés ont déjà la version AUR installée. L'option est aussi
+transmise au `pacman -U` final. Un paquet VCS peut encore être reconstruit pour
+calculer sa vraie version ; pacman évite alors de réinstaller une version
+identique. `--noconfirm` concerne pacman et le choix des fournisseurs, mais
+n'approuve pas des fichiers de build qui n'ont jamais été examinés.
 
 ### Mise à jour des paquets de développement
 
@@ -137,14 +182,18 @@ Le premier contrôle propose tous les paquets de développement installés pris
 en charge pour lesquels yaourt n'a encore enregistré aucune révision. Après
 une installation réussie, la révision observée est conservée dans le cache de
 l'utilisateur qui a lancé yaourt. Un build annulé ou en échec ne modifie pas
-cet état : la mise à jour sera donc reproposée. Les paquets qui partagent un
-même `PackageBase` ne sont contrôlés qu'une fois.
+cet état : la mise à jour sera donc reproposée. Les requêtes distantes sont
+regroupées par `PackageBase`, mais la révision enregistrée appartient à chaque
+paquet effectivement installé. Mettre à jour un sous-paquet ne masque donc pas
+un frère resté ancien. Les anciens enregistrements globaux par pkgbase sont
+considérés comme inconnus jusqu'à une nouvelle installation des paquets.
 
 Cette détection ne lance jamais `makepkg`, `pkgver()`, `prepare()` ni aucun
 autre code du `PKGBUILD`. La revue normale des fichiers reste placée avant la
 première exécution de code du paquet. Si un client VCS ou un service distant
-est indisponible, yaourt avertit pour ce candidat et poursuit les mises à jour
-des dépôts et de l'AUR classique.
+est indisponible, yaourt signale le contrôle incomplet et termine en échec
+avant l'installation. `--no-devel` permet de demander explicitement une mise
+à jour ordinaire sans contrôle VCS.
 
 ### Mise à jour des fichiers de configuration système
 
@@ -186,8 +235,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-0.11.0-x86_64
-sudo install -Dm755 yaourt-0.11.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.12.0-x86_64
+sudo install -Dm755 yaourt-0.12.0-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes

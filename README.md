@@ -6,7 +6,7 @@ A [pacman](https://wiki.archlinux.org/title/Pacman) frontend with
 [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) support, rewritten
 in Lua.
 
-> **Status: young, but suitable for daily use (`0.11.0`).**
+> **Status: young, but suitable for daily use (`0.12.0`).**
 > Search, installation (official repositories and AUR with recursive dependency
 > resolution), unified upgrades, and cache cleanup are functional. The project
 > is still evolving.
@@ -47,6 +47,11 @@ feature profile.
   `Provides` field. An exact package name has priority, a single valid provider
   is selected automatically, and several valid providers require an explicit
   numbered choice. With `--noconfirm`, ambiguity is rejected before any build.
+- **Transaction-local resolution cache:** repeated AUR `/info` lookups are
+  reused for the lifetime of the process, including confirmed missing package
+  names. Checks against the installed system and official repositories are
+  memoized only while one dependency graph is being planned. Nothing is stored
+  on disk, and provider choices are never silently reused in a later run.
 - **Split packages:** targets sharing the same AUR `PackageBase` are cloned,
   reviewed, and built only once. yaourt installs only the requested or required
   subpackages—not every artifact produced by the `PKGBUILD`—while preserving
@@ -80,42 +85,78 @@ feature profile.
 - **Pre-build review**: on the first clone, every version-controlled file in
   the repository (`PKGBUILD`, `.install` files, patches, scripts, etc.) is shown
   sequentially in the configured editor. On updates, yaourt displays the
-  complete diff since the previous revision. Nothing is built without user
-  confirmation.
+  complete diff since the last approved revision. Previously approved unchanged
+  content does not require another confirmation.
 - Automatically pulled AUR dependencies are marked with `--asdeps`, allowing
   `pacman -Rcs` on the requested package to remove them if they become orphaned.
-- AUR packages are always built as a dedicated, unprivileged `yaourt` user,
-  even when the program itself is started as root. `makepkg` is never run as
-  root.
+- AUR packages are built as the invoking user, or as the dedicated
+  unprivileged `yaourt` account when started as root. `makepkg` is never run
+  as root.
 - **Internationalized interface:** 43 built-in locales, automatic POSIX locale
   detection, regional fallback, safe plural rules, and external GNU gettext
   catalogues without language-specific branches in the business code.
 
 ### AUR file security review
 
-Before each AUR build, yaourt adapts the review to the state of its build cache:
+Approval is recorded only after the files have been displayed and the user has
+accepted them. It is bound to the SHA-256 fingerprints of all tracked files,
+their modes, and the reviewed Git revision. An existing checkout or a successful
+`git pull` alone never authorizes a build.
 
-1. **First clone in yaourt's cache:** there is no previous revision from which
-   to produce a diff. Every version-controlled file is therefore opened **one
-   at a time** in the configured editor: `PKGBUILD`, `.install` files, patches,
-   local scripts, and so on. The files are presented for inspection and do not
-   need to be modified.
-2. **Repository already cached and updated:** yaourt displays the complete diff
-   between the old and new commits for every tracked file.
-3. **Unchanged repository:** no new review is required and the build can proceed
-   directly.
+1. **No matching approval:** every tracked file is opened one at a time in the
+   configured editor. This includes a checkout obtained with `-G` and a review
+   that was previously refused or interrupted.
+2. **Updated clean checkout with an earlier approval:** show the diff from the
+   last approved revision. Local modifications require a full file review.
+3. **Exactly the approved content:** proceed without repeating the review.
 
-“First clone” refers to yaourt's cache, not to whether the package is already
-installed. An installed package may therefore trigger a full review if it was
-installed using another AUR helper, if yaourt now uses a different cache
-location, or if the cached clone was removed. In particular, `-Scc` deletes all
-cached repositories, so the next build of each package is treated as a first
-clone again.
+EOF, a failed or truncated Git command, an unavailable editor, unmerged index
+entries, and tracked symlinks/submodules stop approval. The files themselves
+must be readable regular files. A refused update remains pending at the next
+run, even if a subsequent pull does not change HEAD.
 
-The review intentionally covers every tracked file: an `.install` file can run
-commands as root, while a patch or local script can alter the sources being
-built. After the file presentation or diff, yaourt always asks for confirmation
-before starting the build.
+Approval records are stored outside the build cache: in
+`$XDG_STATE_HOME/yaourt/reviews` (default `~/.local/state/yaourt/reviews`) for a
+normal user, or `/var/lib/yaourt-reviews` for root. The directory is private to
+the invoking user. Root opens the editor and removes build artifacts under the
+`yaourt` build account; no recursive root `chown` is performed on the checkout.
+An external `PKGDEST` remains supported, subject to that account's permissions.
+For operations started as root, use a terminal editor (`vi`, `vim`, `nano`…):
+desktop session variables are removed from its environment. The terminal
+environment and locale are preserved.
+
+Existing caches have no approval records from older versions and therefore
+require a fresh review. Clearing the build cache does not erase approvals:
+identical previously approved content can be recognized after a new clone.
+This review is a user decision about build inputs, not a sandbox for PKGBUILDs.
+
+### Supported sync options
+
+Short flags are recognized in any order (`-Sw`, `-wS`, `-S -w`), as are the
+corresponding long operations. Values belonging to options are never treated as
+package targets. `-Su` does not refresh databases; `-Syu` does, and repeated
+`y`/`u` flags are retained. Upgrade previews use pacman's prepared transaction,
+including package replacements. Failed or incomplete checks stop the operation
+with a nonzero status instead of reporting that the system is up to date.
+
+The unified paths intentionally support a limited set of options:
+
+- Installation: `--needed`, `--noconfirm`, `--asdeps`, `--asexplicit`, and the
+  AUR rebuild flag `-f`/`--force`. `-Sw` and `-Sp` work for repository-only
+  targets; a mixed or AUR-only request is rejected before any transaction.
+- Upgrades without explicit targets: `-Su`/`-Syu`, `--needed`, `--noconfirm`,
+  `--devel`, and `--no-devel`.
+- Options such as `--root`, `--sysroot`, `--dbpath`, `--config`, `--ignore`,
+  and `--overwrite`, or upgrade/download-only combinations, are rejected on
+  unified paths before any refresh or installation. Use pacman directly for
+  these operations. Other native operations remain delegated unchanged.
+
+For ordinary AUR packages, `--needed` skips an entire pkgbase build when all
+selected packages already have the AUR version installed. It is also forwarded
+to the final `pacman -U`. VCS packages may still be rebuilt to calculate their
+actual version; pacman then avoids reinstalling an identical version.
+`--noconfirm` applies to pacman and provider selection, but does not approve
+previously unreviewed build files.
 
 ### Development package updates
 
@@ -132,13 +173,16 @@ The first check proposes every supported installed development package for
 which yaourt has no recorded revision yet. After a successful installation,
 the observed revision is saved in the invoking user's cache. A cancelled or
 failed build does not advance that state, so the update is proposed again next
-time. Packages sharing a `PackageBase` are checked only once.
+time. Remote queries are shared by `PackageBase`, but the saved revision belongs to
+each package actually installed. Updating one split package does not hide an
+outdated sibling. Legacy pkgbase-wide records are conservatively treated as
+unknown until the packages are installed again.
 
 This detection never runs `makepkg`, `pkgver()`, `prepare()`, or any other
 `PKGBUILD` code. The normal file review still happens before the first package
 code is executed. If a VCS client or remote service is unavailable, yaourt
-warns about that candidate and continues with repository and ordinary AUR
-updates.
+reports the incomplete check and exits unsuccessfully before installation.
+Use `--no-devel` to explicitly run an ordinary upgrade without the VCS check.
 
 ### System configuration updates
 
@@ -178,8 +222,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-0.11.0-x86_64
-sudo install -Dm755 yaourt-0.11.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-0.12.0-x86_64
+sudo install -Dm755 yaourt-0.12.0-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained

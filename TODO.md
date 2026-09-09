@@ -9,12 +9,12 @@
 - [x] Dépendances : gestion des `provides` et des contraintes de version via
       `pacman -T` (local), `pacman -Sp` (dépôts), puis le RPC AUR
       `by=provides` avec sélection déterministe ou explicite (0.9.0).
-- [x] `-Syu` approche « façon yaourt » : synchro réelle (`pacman -Sy` + `-Qu`),
+- [x] `-Syu` approche « façon yaourt » : synchro réelle (`pacman -Sy` si demandé + transaction `-Sup`),
       sans passer par `checkupdates` (`pacman-contrib` n’est utilisé que par
       `yaourt -C` depuis la version 0.8.0).
 - [x] Harmonisation `-S` / `-Syu` via `build.aur_many` (chemin de build unifié).
 - [x] Sélection manuelle `[M]` dans `-Syu` : inclusion (numéros + plages) et
-      exclusion (`^4` = tout sauf 4). Invite `[O/n/M]` seulement s'il y a de
+      exclusion (`^4` = tout sauf 4). Invite `[O/n/m]` seulement s'il y a de
       l'AUR ; saisie vide = rien.
 - [x] Diff des fichiers de build (PKGBUILD, .install, patches) à la mise à jour.
 - [x] Revue de TOUS les fichiers versionnés au premier clone, ouverts un par un
@@ -38,6 +38,10 @@
       dépôts ou l'AUR, et installation avant `makepkg` (0.7.0).
 - [x] Nettoyage optionnel des dépendances de build nouvellement installées et
       devenues orphelines, sans toucher aux paquets antérieurs (0.11.0).
+- [x] Cache de résolution strictement local à l'exécution : fiches AUR `/info`
+      positives ou absentes réutilisées pendant le processus et résultats de
+      `pacman -T` / `pacman -Sp` mémorisés uniquement pendant un même plan. Pas
+      de cache disque ni de choix de fournisseur persistant (0.12.0).
 - [x] `-C` / `--pacdiff` : gestion interactive des fichiers `.pacnew`,
       `.pacsave` et `.pacorig` via `pacdiff`, avec élévation limitée aux
       modifications et transmission de toutes ses options (0.8.0).
@@ -64,7 +68,64 @@
       replis déterministes, pluriels, variables nommées, catalogues externes
       sûrs et 43 langues intégrées.
 
-## Packaging (prioritaire — runtime babet en place)
+## Ligne directrice
+
+Yaourt reste un **frontend pacman avec support AUR**, pas une plateforme de
+construction générale. Une fonctionnalité entre dans la feuille de route si
+elle remplit au moins un de ces critères : elle corrige une sémantique pacman,
+elle sécurise une opération AUR ou elle simplifie un geste courant. La présence
+d'une option dans Yay, Paru, Pikaur ou aurutils ne suffit pas à la justifier.
+
+- Déléguer aux outils Arch officiels lorsqu'ils font déjà correctement le
+  travail (`pacman`, `makepkg`, `pacdiff`).
+- Préférer un comportement explicite à un état persistant difficile à invalider.
+- Ne pas ajouter de démon, base de données, ordonnanceur de builds ou profil
+  Babet propre à yaourt sans besoin mesuré.
+- Chaque nouvelle fonction doit avoir des tests hors ligne et, lorsqu'elle
+  modifie le système, un parcours réel sous Arch Linux.
+
+## 0.12.0 — Corrections de l'audit, avant publication
+
+- [x] Approbations liées au contenu, revues refusées persistantes, erreurs/EOF bloquants.
+- [x] Routage commun des options, refus des combinaisons non prises en charge.
+- [x] Suppressions d'artefacts sous le compte de build et cache root cohérent.
+- [x] Arrêt sur interruption ou contrôle incomplet ; remplacements pacman inclus.
+- [x] Raisons explicites antérieures et contraintes de dépendances préservées.
+- [x] Révisions VCS enregistrées par sous-paquet installé ; validation RPC avant cache.
+- [x] `--needed` traité dans le plan et dans la transaction d'installation.
+- [x] Tests de régression en modes dossier et embarqué, avec dépôts Git locaux.
+- [ ] Essais réels Arch des corrections, puis commit/tag de la 0.12.0.
+
+## 0.13.0 — Consultation unifiée
+
+- [ ] Étendre `-Si` aux paquets AUR tout en laissant les paquets des dépôts à
+      `pacman`, y compris pour une liste de cibles mélangées.
+- [ ] Étendre `-Qu` pour afficher les mises à jour dépôts + AUR sans rien
+      synchroniser ni installer ; accepter `--devel` pour les révisions VCS.
+- [ ] Préserver les formats sobres et les codes de sortie utiles aux scripts.
+
+Ces deux opérations complètent le cœur « pacman + AUR » sans introduire de
+nouveau sous-système.
+
+## 0.14.0 — Complétions shell
+
+- [ ] Fournir les complétions Bash, Zsh et Fish pour les opérations et options
+      propres à yaourt, en réutilisant les mécanismes pacman lorsqu'ils sont
+      disponibles.
+- [ ] Installer ces fichiers depuis le PKGBUILD et les inclure dans les
+      artefacts de source.
+- [ ] Ne pas télécharger la liste entière de l'AUR à chaque tabulation et ne
+      pas créer de cache global de noms de paquets dans cette première version.
+
+## 0.15.0 — PKGBUILD local
+
+- [ ] Construire et installer un `PKGBUILD` local avec ses dépendances dépôts
+      et AUR en réutilisant le solveur, l'utilisateur de build, la revue et le
+      nettoyage déjà existants.
+- [ ] Garder une commande explicite et limitée à un répertoire local ; ne pas
+      introduire de dépôt binaire local ni de chroot dans ce chantier.
+
+## Packaging et stabilisation avant 2.0.0
 
 - [ ] Deux paquets AUR : `yaourt` (compile tout depuis les sources, y compris
       le runtime) et `yaourt-bin` (récupère le binaire du runtime selon `$CARCH`
@@ -74,15 +135,41 @@
       `makepkg` car le runtime n'est pas un paquet installé : `--nodeps` requis).
 - [ ] Tester l'installation du paquet (sysusers/tmpfiles appliqués par les hooks
       pacman, création auto de l'utilisateur `yaourt`).
+- [ ] Établir une matrice de compatibilité des options pacman interceptées
+      (`--needed`, `--ignore`, `--asdeps`, `--asexplicit`, `--noconfirm`,
+      interruptions et échecs partiels) et ajouter les tests manquants.
+- [ ] Rejouer les parcours réels `-S`, `-Syu`, `--devel`, split packages,
+      fournisseurs, `-C`, nettoyage des dépendances et commandes de
+      consultation avec le paquet installé, en x86_64 puis aarch64.
+- [ ] Utiliser le jalon 2.0.0 seulement lorsque ce socle est stabilisé ; le
+      numéro marquera alors clairement la nouvelle génération après le yaourt
+      historique 1.9.x, pas l'ajout d'une fonction isolée.
 
-## Robustesse
+## Idées conditionnelles — seulement sur besoin réel
 
-- [ ] Cache des résolutions (aur.info / pacman répétés) pour les gros graphes.
+- Actualités Arch avant `-Syu` : utile pour les mises à jour manuelles, mais à
+  ajouter uniquement si l'intégration reste facultative et ne bloque pas la
+  mise à jour lorsque le flux est indisponible.
+- Diagnostic assisté des clés PGP inconnues : expliquer la clé et la commande
+  à employer peut être utile ; l'import automatique n'est pas souhaité.
+- Dépôt binaire local ou builds en chroot : à reconsidérer uniquement si des
+  utilisateurs en ont réellement besoin. Paru et aurutils couvrent déjà très
+  bien ce cas avancé.
 
-## Finitions
+## Explicitement hors feuille de route
 
-- [ ] Mode de revue avancé optionnel (ex. onglets vim `-p`) via la config, en
-      gardant l'ouverture séquentielle par défaut pour les néophytes.
+- Cache disque du graphe de dépendances ou mémorisation implicite des choix de
+  fournisseurs : invalidation fragile pour un gain faible.
+- Menus propres à un éditeur, gestionnaire de fichiers ou interface graphique :
+  la revue séquentielle et le diff actuels restent portables et prévisibles.
+- Vote, dévote et commentaires AUR : impliquent des identifiants et n'améliorent
+  ni l'installation ni la sécurité.
+- Builds parallèles et ordonnanceur maison : complexité, sorties entremêlées et
+  risques de concurrence disproportionnés pour l'usage visé.
+- Import automatique de clés PGP ou contournement automatique des contrôles de
+  signature.
+- `-Sw` AUR tant qu'une sémantique non ambiguë entre clone, sources et paquet
+  construit n'apporte pas un besoin utilisateur démontré.
 
 ## Commandes internes (non documentées dans -h)
 

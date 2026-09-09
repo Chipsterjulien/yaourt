@@ -216,9 +216,14 @@ end
 -- satisfaite par l'état INSTALLÉ du système ? `pacman -T <dep>` (deptest) ne
 -- consulte QUE la base locale installée (provides et version compris), pas les
 -- dépôts. Code 0 = déjà satisfaite localement.
-local function satisfied_locally(dep)
+local function satisfied_locally(dep, state)
+    local cache = state and state.satisfied
+    if cache and cache[dep] ~= nil then return cache[dep] end
     local res = util.run({ "pacman", "-T", dep })
-    return res ~= nil and res.code == 0
+    if res and util.is_interrupted(res.code) then return nil, i18n.t("common.cancelled"), res.code end
+    local value = res ~= nil and res.code == 0
+    if cache then cache[dep] = value end
+    return value
 end
 
 -- available_in_repos(dep) -> bool : un paquet des DÉPÔTS satisfait-il la
@@ -226,9 +231,14 @@ end
 -- tenant compte des provides ET de la version, et renvoie 0 (avec l'URL du
 -- paquet) si trouvé. Indispensable en complément de -T, qui ignore les dépôts :
 -- une dépendance repo disponible mais non installée n'est PAS une candidate AUR.
-local function available_in_repos(dep)
+local function available_in_repos(dep, state)
+    local cache = state and state.repositories
+    if cache and cache[dep] ~= nil then return cache[dep] end
     local res = util.run({ "pacman", "-Sp", dep })
-    return res ~= nil and res.code == 0
+    if res and util.is_interrupted(res.code) then return nil, i18n.t("common.cancelled"), res.code end
+    local value = res ~= nil and res.code == 0
+    if cache then cache[dep] = value end
+    return value
 end
 
 -- raw_deps(entry) -> liste des dépendances brutes nécessaires au build.
@@ -267,13 +277,20 @@ function deps.aur_deps_of(config, name, opts, state)
     -- Candidates AUR : dépendances ni satisfaites localement, ni disponibles
     -- dans les dépôts (provides + version testés sur la dépendance brute). On
     -- retient le nom nettoyé pour interroger l'AUR. Déduplication au passage.
-    state = state or { providers = {} }
+    state = state or {}
     state.providers = state.providers or {}
+    state.satisfied = state.satisfied or {}
+    state.repositories = state.repositories or {}
 
     local seen = {}
     local candidates = {}
     for _, d in ipairs(raw_deps(entry)) do
-        if not satisfied_locally(d) and not available_in_repos(d) then
+        local satisfied, serr, scode = satisfied_locally(d, state)
+        if satisfied == nil then return nil, serr, scode end
+        local available, aerr, acode = false
+        if not satisfied then available, aerr, acode = available_in_repos(d, state) end
+        if available == nil then return nil, aerr, acode end
+        if not satisfied and not available then
             local requirement = parse_requirement(d)
             if requirement.name ~= "" and not seen[requirement.raw] then
                 seen[requirement.raw] = true
@@ -315,7 +332,7 @@ end
 -- Dépendances de `name` à installer en root AVANT compilation : celles qui
 -- sont disponibles dans les dépôts (provides/version compris) mais PAS déjà
 -- satisfaites localement. On les passe ensuite à `pacman -S --asdeps --needed`
--- (le --needed est une sécurité supplémentaire). On renvoie le nom NETTOYÉ ;
+-- (le --needed est une sécurité supplémentaire). On conserve la contrainte complète ;
 -- pacman résout provides et version au moment de l'installation.
 --
 -- Nécessaire car makepkg tourne en tant qu'utilisateur de build (sans droits
@@ -331,11 +348,16 @@ function deps.repo_deps_of(config, name)
     local result = {}
     for _, d in ipairs(raw_deps(entry)) do
         -- À installer : disponible en dépôt et pas déjà satisfaite localement.
-        if not satisfied_locally(d) and available_in_repos(d) then
+        local satisfied, serr, scode = satisfied_locally(d)
+        if satisfied == nil then return nil, serr, scode end
+        local available, aerr, acode = false
+        if not satisfied then available, aerr, acode = available_in_repos(d) end
+        if available == nil then return nil, aerr, acode end
+        if not satisfied and available then
             local n = strip_version(d)
-            if n and n ~= "" and not seen[n] then
-                seen[n] = true
-                result[#result + 1] = n
+            if n and n ~= "" and not seen[d] then
+                seen[d] = true
+                result[#result + 1] = d
             end
         end
     end
@@ -371,8 +393,15 @@ function deps.resolve_many(config, targets, opts)
     local direct   = {}
     local visited  = {}
     local visiting = {}
-    local state    = { providers = {} }
-    local rerr
+    -- Ces caches vivent uniquement pendant ce plan. Contrairement à un cache
+    -- global, ils ne peuvent donc pas devenir faux après l'installation d'une
+    -- dépendance plus loin dans la même exécution.
+    local state    = {
+        providers = {},
+        satisfied = {},
+        repositories = {},
+    }
+    local rerr, rcode
 
     local function visit(pkg)
         if visited[pkg] then return true end
@@ -381,9 +410,9 @@ function deps.resolve_many(config, targets, opts)
         if visiting[pkg] then return true end
         visiting[pkg] = true
 
-        local pkg_deps, err = deps.aur_deps_of(config, pkg, opts, state)
+        local pkg_deps, err, code = deps.aur_deps_of(config, pkg, opts, state)
         if not pkg_deps then
-            rerr = err
+            rerr, rcode = err, code
             return false
         end
         direct[pkg] = pkg_deps
@@ -398,7 +427,7 @@ function deps.resolve_many(config, targets, opts)
     end
 
     for _, target in ipairs(targets or {}) do
-        if not visit(target) then return nil, rerr end
+        if not visit(target) then return nil, rerr, rcode end
     end
 
     return { order = order, direct = direct }, nil

@@ -11,7 +11,7 @@ local pacdiff = {}
 
 local function has_option(args, short, long)
     for _, value in ipairs(args or {}) do
-        if value == short or value == long then return true end
+        if (short and value == short) or value == long then return true end
     end
     return false
 end
@@ -32,7 +32,7 @@ function pacdiff.run(config, args)
         argv[#argv + 1] = "--sudo"
     end
     if config and config.color == false
-            and not has_option(args, "", "--nocolor") then
+            and not has_option(args, nil, "--nocolor") then
         argv[#argv + 1] = "--nocolor"
     end
     for _, value in ipairs(args) do argv[#argv + 1] = value end

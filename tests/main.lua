@@ -97,7 +97,7 @@ test("dépendances de build : seuls les nouveaux orphelins sont supprimés", fun
                 }
             end
             assert_equal(table.concat(argv, " "), table.concat({
-                "pacman -Rs --print-format %n",
+                "pacman -Rs --print --print-format %n",
                 "nouveau-cadre nouveau-outil",
             }, " "))
             return {
@@ -156,7 +156,7 @@ test("dépendances de build : confirmation prudente et mode non interactif", fun
                 return { code = 0, stdout = "nouveau-outil\n", stderr = "" }
             end
             assert_equal(table.concat(argv, " "),
-                "pacman -Rs --print-format %n nouveau-outil")
+                "pacman -Rs --print --print-format %n nouveau-outil")
             return { code = 0, stdout = "nouveau-outil\n", stderr = "" }
         end
         io.read = function()
@@ -864,8 +864,8 @@ test("VCS : contrôle activé dans la collecte des mises à jour", function()
             local command = table.concat(argv, " ")
             if command == "id -u" then
                 return { code = 0, stdout = "0\n", stderr = "" }
-            elseif command == "pacman -Qu" then
-                return { code = 1, stdout = "", stderr = "" }
+            elseif argv[2] == "-Sup" then
+                return { code = 0, stdout = "", stderr = "" }
             elseif command == "pacman -Qm" then
                 return { code = 0, stdout = "outil-git 1-1\n", stderr = "" }
             elseif command == "vercmp 1-1 1-1" then
@@ -1092,6 +1092,88 @@ test("dépendances : CheckDepends AUR participe au graphe", function()
         assert_equal(table.concat(plan.direct["cadre-test"], ","), "")
         assert_equal(table.concat(requests, ";"),
             "application;cadre-test;cadre-test")
+    end)
+
+    aur.info = original_info
+    util.run = original_run
+    assert(ok, err)
+end)
+
+test("dépendances : classification pacman mémorisée par plan", function()
+    local deps = require("lib.deps")
+    local aur = require("lib.aur")
+    local original_info = aur.info
+    local original_run = util.run
+    local calls = {}
+
+    local ok, err = pcall(function()
+        local entries = {
+            application = {
+                Name = "application",
+                Depends = { "locale", "bibliotheque", "extension-aur" },
+            },
+            documentation = {
+                Name = "documentation",
+                Depends = { "locale", "bibliotheque", "extension-aur" },
+            },
+            ["extension-aur"] = {
+                Name = "extension-aur",
+                Version = "1.0",
+            },
+        }
+        aur.info = function(_, names)
+            local out = {}
+            for _, name in ipairs(names) do out[name] = entries[name] end
+            return out
+        end
+        util.run = function(argv)
+            local command = table.concat(argv, " ")
+            calls[command] = (calls[command] or 0) + 1
+            if command == "pacman -T locale" then
+                return { code = 0, stdout = "", stderr = "" }
+            end
+            if command == "pacman -T bibliotheque"
+                    or command == "pacman -T extension-aur" then
+                return { code = 1, stdout = "", stderr = "" }
+            end
+            if command == "pacman -Sp bibliotheque" then
+                return { code = 0, stdout = "url\n", stderr = "" }
+            end
+            if command == "pacman -Sp extension-aur" then
+                return { code = 1, stdout = "", stderr = "" }
+            end
+            error("commande inattendue : " .. command)
+        end
+
+        local first = assert(deps.resolve_many(
+            {}, { "application", "documentation" }
+        ))
+        assert_equal(
+            table.concat(first.order, ","),
+            "extension-aur,application,documentation"
+        )
+        for _, command in ipairs({
+            "pacman -T locale",
+            "pacman -T bibliotheque",
+            "pacman -Sp bibliotheque",
+            "pacman -T extension-aur",
+            "pacman -Sp extension-aur",
+        }) do
+            assert_equal(calls[command], 1)
+        end
+
+        -- Un second plan relit l'état de pacman : aucune donnée système n'est
+        -- conservée globalement entre deux transactions de résolution.
+        assert(deps.resolve_many({}, { "application", "documentation" }))
+        for _, command in ipairs({
+            "pacman -T locale",
+            "pacman -T bibliotheque",
+            "pacman -Sp bibliotheque",
+            "pacman -T extension-aur",
+            "pacman -Sp extension-aur",
+        }) do
+            assert_equal(calls[command], 2)
+        end
     end)
 
     aur.info = original_info
@@ -1428,7 +1510,7 @@ test("dépendances : CheckDepends dépôt est détecté", function()
         end
 
         local found = assert(deps.repo_deps_of({}, "application"))
-        assert_equal(table.concat(found, ","), "cadre-test")
+        assert_equal(table.concat(found, ","), "cadre-test>=2")
     end)
 
     aur.info = original_info
@@ -1445,8 +1527,10 @@ test("dépendances : CheckDepends dépôt installé avant makepkg", function()
     local original_repo_deps = deps.repo_deps_of
     local original_passthrough = pacman.passthrough
     local events = {}
+    local original_explicit = pacman.explicit_packages
 
     local ok, err = pcall(function()
+        pacman.explicit_packages = function() return {} end
         build.plan = function()
             return {
                 order = { "application" },
@@ -1488,6 +1572,7 @@ test("dépendances : CheckDepends dépôt installé avant makepkg", function()
     build.one_group = original_one_group
     deps.repo_deps_of = original_repo_deps
     pacman.passthrough = original_passthrough
+    pacman.explicit_packages = original_explicit
     assert(ok, err)
 end)
 
@@ -1554,6 +1639,7 @@ test("split packages : seuls les sous-paquets requis sont installés", function(
     local ok, err = pcall(function()
         babet.fileExists = function(path) return paths[path] ~= nil end
         util.run = function(argv, opts)
+            if argv[2] == "-Qqe" then return {code=0,stdout="",stderr=""} end
             if argv[#argv] == "--packagelist" then
                 return {
                     code = 0,
@@ -1581,7 +1667,7 @@ test("split packages : seuls les sous-paquets requis sont installés", function(
         assert(installed)
         assert_equal(#produced, 3)
         assert_equal(#calls, 1)
-        assert_equal(calls[1], "-U /tmp/out/outil-1-1-x86_64.pkg.tar.zst")
+        assert_equal(calls[1], "-U --asexplicit /tmp/out/outil-1-1-x86_64.pkg.tar.zst")
         assert(not calls[1]:find("outils-doc", 1, true))
         assert(not calls[1]:find("outil-debug", 1, true))
 
@@ -1613,6 +1699,7 @@ test("split packages : raisons explicite et dépendance préservées", function(
     local ok, err = pcall(function()
         babet.fileExists = function(path) return paths[path] ~= nil end
         util.run = function(argv, opts)
+            if argv[2] == "-Qqe" then return {code=0,stdout="",stderr=""} end
             if argv[#argv] == "--packagelist" then
                 return {
                     code = 0,
@@ -1669,6 +1756,7 @@ test("split packages : erreur d’identification d’un artefact visible", funct
     local ok, err = pcall(function()
         babet.fileExists = function(candidate) return candidate == path end
         util.run = function(argv, opts)
+            if argv[2] == "-Qqe" then return {code=0,stdout="",stderr=""} end
             if argv[#argv] == "--packagelist" then
                 return { code = 0, stdout = path .. "\n", stderr = "" }
             end
@@ -1723,7 +1811,7 @@ test("split packages : makepkg ne préinstalle aucun artefact", function()
         })
         assert(made)
         assert_equal(code, 0)
-        assert_equal(command, "makepkg -c -f --needed")
+        assert_equal(command, "makepkg -c -f")
         assert(not command:find(" -i", 1, true))
     end)
 
@@ -2098,9 +2186,11 @@ test("client AUR : contrats HTTP et JSON", function()
     local original_sleep = babet.sleep
     local info_calls, sleep_calls = 0, 0
 
+    aur.clear_cache()
+
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/0.11.0")
+        assert_equal(opts.headers["User-Agent"], "yaourt/0.12.0")
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then
@@ -2113,10 +2203,7 @@ test("client AUR : contrats HTTP et JSON", function()
             end
             return {
                 status = 200,
-                body = [[
-                    {"type":"multiinfo","resultcount":1,
-                     "results":[{"Name":"yay","Version":"12.0.0"}]}
-                ]],
+                body = [[{"type":"multiinfo","resultcount":1,"results":[{"Name":"yay","Version":"12.0.0","PackageBase":"yay"}],"version":5}]],
             }
         end
 
@@ -2124,10 +2211,7 @@ test("client AUR : contrats HTTP et JSON", function()
         assert_equal(opts.query.by, "name")
         return {
             status = 200,
-            body = [[
-                {"type":"search","resultcount":1,
-                 "results":[{"Name":"yay","Version":"12.0.0"}]}
-            ]],
+            body = [[{"type":"search","resultcount":1,"results":[{"Name":"yay","Version":"12.0.0","PackageBase":"yay"}],"version":5}]],
         }
     end
 
@@ -2157,6 +2241,98 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = original_get
     babet.sleep = original_sleep
+    aur.clear_cache()
+end)
+
+test("client AUR : cache /info local au processus", function()
+    local aur = require("lib.aur")
+    local original_get = babet.http.get
+    local calls = {}
+
+    local ok, err = pcall(function()
+        aur.clear_cache()
+        babet.http.get = function(url)
+            calls[#calls + 1] = url
+
+            if url == table.concat({
+                "https://aur.example/rpc/v5/info?",
+                "arg%5B%5D=yay&arg%5B%5D=missing",
+            }) then
+                return {
+                    status = 200,
+                    body = [[{"type":"multiinfo","results":[{"Name":"yay","Version":"12.0.0","PackageBase":"yay"}],"version":5,"resultcount":1}]],
+                }
+            end
+            if url == "https://aur.example/rpc/v5/info?arg%5B%5D=paru" then
+                return {
+                    status = 200,
+                    body = [[{"type":"multiinfo","results":[{"Name":"paru","Version":"2.1.0","PackageBase":"paru"}],"version":5,"resultcount":1}]],
+                }
+            end
+            if url == "https://other.example/rpc/v5/info?arg%5B%5D=yay" then
+                return {
+                    status = 200,
+                    body = [[{"type":"multiinfo","results":[{"Name":"yay","Version":"13.0.0","PackageBase":"yay"}],"version":5,"resultcount":1}]],
+                }
+            end
+            if url == "https://aur.example/rpc/v5/info?arg%5B%5D=volatile" then
+                local volatile_calls = 0
+                for _, called in ipairs(calls) do
+                    if called == url then volatile_calls = volatile_calls + 1 end
+                end
+                if volatile_calls == 1 then
+                    return { status = 404, body = "" }
+                end
+                return {
+                    status = 200,
+                    body = [[{"type":"multiinfo","results":[{"Name":"volatile","Version":"1.0","PackageBase":"volatile"}],"version":5,"resultcount":1}]],
+                }
+            end
+            error("URL AUR inattendue : " .. tostring(url))
+        end
+
+        local first = assert(aur.info(
+            { aur_url = "https://aur.example" },
+            { "yay", "missing", "yay" }
+        ))
+        assert_equal(first.yay.Version, "12.0.0")
+        assert_equal(first.missing, nil)
+        assert_equal(#calls, 1)
+
+        local second = assert(aur.info(
+            { aur_url = "https://aur.example" },
+            { "missing", "paru", "yay" }
+        ))
+        assert_equal(second.yay.Version, "12.0.0")
+        assert_equal(second.paru.Version, "2.1.0")
+        assert_equal(second.missing, nil)
+        assert_equal(#calls, 2)
+
+        -- Le cache est séparé par endpoint AUR.
+        local other = assert(aur.info(
+            { aur_url = "https://other.example" },
+            { "yay" }
+        ))
+        assert_equal(other.yay.Version, "13.0.0")
+        assert_equal(#calls, 3)
+
+        -- Une erreur n'est jamais transformée en résultat négatif persistant.
+        local failed = aur.info(
+            { aur_url = "https://aur.example" },
+            { "volatile" }
+        )
+        assert_equal(failed, nil)
+        local recovered = assert(aur.info(
+            { aur_url = "https://aur.example" },
+            { "volatile" }
+        ))
+        assert_equal(recovered.volatile.Version, "1.0")
+        assert_equal(#calls, 5)
+    end)
+
+    babet.http.get = original_get
+    aur.clear_cache()
+    assert(ok, err)
 end)
 
 test("échec AUR : aucun faux paquet non géré", function()
@@ -2176,8 +2352,8 @@ test("échec AUR : aucun faux paquet non géré", function()
         if command == "id -u" then
             return { code = 0, stdout = "0\n", stderr = "" }
         end
-        if command == "pacman -Qu" then
-            return { code = 1, stdout = "", stderr = "" }
+        if argv[2] == "-Sup" then
+            return { code = 0, stdout = "", stderr = "" }
         end
         if command == "pacman -Qm" then
             return {
@@ -2286,7 +2462,7 @@ test("spawn interactif : convention des signaux", function()
     assert_equal(err, nil)
     assert_equal(code, 130)
     assert(util.is_interrupted(code))
-    assert(not util.is_interrupted(143))
+    assert(util.is_interrupted(143))
 end)
 
 test("spawn interactif : échec de lancement", function()
@@ -2296,5 +2472,7 @@ test("spawn interactif : échec de lancement", function()
     assert_equal(code, 1)
     assert(type(err) == "string" and err ~= "")
 end)
+
+require("tests.regressions")(test, assert_equal)
 
 print(string.format("=== %d test(s) PASS / 0 FAIL ===", passed))

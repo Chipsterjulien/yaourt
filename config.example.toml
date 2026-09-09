@@ -9,6 +9,8 @@
 
 # Editor used to review PKGBUILD files and other tracked build files.
 # Default: $EDITOR, then $VISUAL, then "vi".
+# When running as root, use a terminal editor: it runs as the build user
+# without desktop session environment variables.
 # editor = "vim"
 
 # Enable colors in yaourt output.

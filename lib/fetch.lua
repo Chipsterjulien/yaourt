@@ -37,7 +37,7 @@ local function prepare_builddir(config)
 
     local res, err = util.run_as(config.build_user, { "mkdir", "-p", config.builddir })
     if not res then return nil, err end
-    if res.code ~= 0 then return nil, "mkdir: " .. res.stderr end
+    if res.code ~= 0 then return nil, "mkdir: " .. res.stderr, res.code end
     return true
 end
 
@@ -60,8 +60,8 @@ end
 local function clone_or_update(config, pkgbase)
     local dest = config.builddir .. "/" .. pkgbase
 
-    local ok, err = prepare_builddir(config)
-    if not ok then return nil, err end
+    local ok, err, prepare_code = prepare_builddir(config)
+    if not ok then return nil, err, prepare_code end
 
     -- Lit le HEAD courant du dépôt (nil si indéterminé).
     local function head_commit()
@@ -69,7 +69,7 @@ local function clone_or_update(config, pkgbase)
         if res and res.code == 0 then
             return (res.stdout or ""):gsub("%s+$", "")
         end
-        return nil
+        return nil, res and res.stderr or "git rev-parse", res and res.code or 1
     end
 
     local is_repo, derr = babet.isDir(dest .. "/.git")
@@ -77,11 +77,13 @@ local function clone_or_update(config, pkgbase)
 
     if is_repo then
         log.info(i18n.t("fetch.updating", { package = pkgbase }))
-        local old_commit = head_commit()
+        local old_commit, head_err, head_code = head_commit()
+        if util.is_interrupted(head_code) then return nil, head_err, head_code end
         local res, rerr = util.run_as(config.build_user, { "git", "-C", dest, "pull", "--ff-only" })
         if not res then return nil, rerr end
-        if res.code ~= 0 then return nil, "git pull: " .. res.stderr end
-        local new_commit = head_commit()
+        if res.code ~= 0 then return nil, "git pull: " .. res.stderr, res.code end
+        local new_commit, head_err, head_code = head_commit()
+        if util.is_interrupted(head_code) then return nil, head_err, head_code end
         return {
             path        = dest,
             first_clone = false,
@@ -94,7 +96,7 @@ local function clone_or_update(config, pkgbase)
         local url = (config.aur_url or "https://aur.archlinux.org") .. "/" .. pkgbase .. ".git"
         local res, rerr = util.run_as(config.build_user, { "git", "clone", url, dest })
         if not res then return nil, rerr end
-        if res.code ~= 0 then return nil, "git clone: " .. res.stderr end
+        if res.code ~= 0 then return nil, "git clone: " .. res.stderr, res.code end
         return {
             path        = dest,
             first_clone = true,
@@ -121,9 +123,9 @@ function fetch.one(config, name)
         return nil, i18n.t("aur.package_not_found", { package = name })
     end
 
-    local meta, cerr = clone_or_update(config, entry.PackageBase)
+    local meta, cerr, code = clone_or_update(config, entry.PackageBase)
     if not meta then
-        return nil, i18n.t("common.named_error", { name = name, error = tostring(cerr) })
+        return nil, i18n.t("common.named_error", { name = name, error = tostring(cerr) }), code
     end
 
     return meta, nil
@@ -152,8 +154,9 @@ function fetch.get(config, pkgs)
             log.warn(i18n.t("aur.package_not_found", { package = name }))
             failed = failed + 1
         else
-            local meta, cerr = clone_or_update(config, entry.PackageBase)
+            local meta, cerr, code = clone_or_update(config, entry.PackageBase)
             if not meta then
+                if util.is_interrupted(code) then return code end
                 log.error(i18n.t("common.named_error", { name = name, error = tostring(cerr) }))
                 failed = failed + 1
             else

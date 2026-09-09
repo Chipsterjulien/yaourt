@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.11.0\n"
+"Project-Id-Version: yaourt 0.12.0\n"
 "Language: fa\n"
 "Language-Team: فارسی\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -544,3 +544,7 @@ msgstr "هیچ بسته یا ارائه‌دهنده AUR وابستگی {depende
 msgctxt "update.up_to_date"
 msgid "The system is up to date."
 msgstr "سیستم به روز شده"
+
+msgctxt "cli.unsupported"
+msgid "Unsupported option or combination: {option}"
+msgstr "گزینه یا ترکیب پشتیبانی‌نشده: {option}"

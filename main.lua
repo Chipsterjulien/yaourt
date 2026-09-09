@@ -6,6 +6,8 @@
 -- Stratégie « figuier étrangleur » : ce binaire est la porte d'entrée et,
 -- pour tout ce qui n'est pas encore porté nativement, il délègue à pacman.
 
+local cli = require("lib.cli")
+local build = require("lib.build")
 local i18n = require("lib.i18n")
 local help = require("lib.help")
 local runtime = require("lib.runtime")
@@ -30,46 +32,6 @@ for i = 1, #arg do args[i] = arg[i] end
 
 local function usage()
     io.write(help.render(version.name, version.version))
-end
-
--- Recherche (-Ss, -Ssq…) -> notre recherche unifiée dépôts + AUR.
--- Opération S contenant 's' (search) mais pas 'y'/'u' (refresh/upgrade).
-local function is_search(op)
-    if not op:match("^%-%a*S%a*$") then return false end -- opération courte avec un S
-    if not op:find("s") then return false end            -- doit contenir 's' (search)
-    if op:find("[yu]") then return false end             -- mais ni refresh ni upgrade
-    return true
-end
-
--- Sysupgrade sans cible (-Syu, -Su, -Syyu…) -> vue unifiée des MAJ.
-local function is_sysupgrade(a)
-    local op = a[1] or ""
-    if not op:match("^%-%a*S%a*$") then return false end
-    if not op:find("u") then return false end
-    for i = 2, #a do
-        if not a[i]:match("^%-") then return false end
-    end
-    return true
-end
-
--- Nettoyage du cache (-Sc doux, -Scc total). Opération S contenant 'c',
--- sans 's'/'y'/'u'/'i'/'l'. Renvoie nil (pas un nettoyage), "soft" ou "full".
-local function clean_kind(op)
-    if not op:match("^%-%a*S%a*$") then return nil end
-    if op:find("[syuil]") then return nil end
-    local _, n = op:gsub("c", "") -- nombre de 'c'
-    if n >= 2 then return "full" end
-    if n == 1 then return "soft" end
-    return nil
-end
-
--- Installation directe (-S nu) -> routage dépôts/AUR.
--- Opération S sans 's' (search), 'y'/'u' (upgrade), 'i' (info) ni 'l' (list),
--- qui ont chacun leur propre sémantique.
-local function is_install(op)
-    if not op:match("^%-%a*S%a*$") then return false end
-    if op:find("[syuilc]") then return false end
-    return true
 end
 
 local function main()
@@ -101,15 +63,6 @@ local function main()
         local opts = {}
         for i = 2, #args do opts[#opts + 1] = args[i] end
         return pacdiff.run(config, opts)
-    end
-
-    if not babet.user.exists("yaourt") then
-        local C = color.new(config.color)
-        print(C.red(i18n.t("app.system_user_missing")))
-        print(i18n.t("app.system_user_create"))
-        print(C.cyan(
-            [[useradd --system --home-dir /var/cache/yaourt --create-home --shell /usr/sbin/nologin --comment "yaourt AUR build user" yaourt]]))
-        return 1
     end
 
     -- Récupération des fichiers de build AUR (équivalent -G / --getpkgbuild)
@@ -146,38 +99,30 @@ local function main()
     end
 
 
-    -- Recherche unifiée dépôts + AUR (-Ss)
-    if is_search(first) then
-        if not args[2] then
+    local parsed = cli.parse(args, config)
+    local valid, option = cli.validate(parsed)
+    if not valid then
+        log.error(i18n.t("cli.unsupported", { option = option }))
+        return 1
+    end
+    if parsed.action == "search" then
+        if #parsed.names == 0 then
             log.error(i18n.t("cli.search_term_required", { option = "-Ss" }))
             return 1
         end
-        return search.run(config, args[2])
-    end
-
-    -- Mise à jour système unifiée (dépôts + AUR).
-    if is_sysupgrade(args) then
-        return update.run(config, update.parse_opts(args, config))
-    end
-
-    -- Installation directe (-S <paquet>...) : route chaque paquet vers les
-    -- dépôts (pacman) ou l'AUR (build).
-    -- Nettoyage du cache (-Sc doux, -Scc total) : à intercepter AVANT
-    -- is_install (sinon -Sc serait pris pour une installation).
-    local ck = clean_kind(first)
-    if ck == "soft" then
-        return clean.soft(config)
-    elseif ck == "full" then
-        return clean.full(config)
-    end
-
-    if is_install(first) then
-        local names, opts = install.parse_opts(args)
-        if #names == 0 then
+        return search.run(config, table.concat(parsed.names, " "))
+    elseif parsed.action == "update" then
+        return update.run(config, parsed)
+    elseif parsed.action == "soft" or parsed.action == "full" then
+        local cache_config, err = build.environment(config)
+        if not cache_config then log.error(err); return 1 end
+        return clean[parsed.action](cache_config)
+    elseif parsed.action == "install" then
+        if #parsed.names == 0 then
             log.error(i18n.t("cli.package_required", { option = "-S" }))
             return 1
         end
-        return install.run(config, names, opts)
+        return install.run(config, parsed.names, parsed)
     end
 
     -- Tout le reste : on délègue à pacman tel quel (avec sudo si nécessaire).

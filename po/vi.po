@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: yaourt 0.11.0\n"
+"Project-Id-Version: yaourt 0.12.0\n"
 "Language: vi\n"
 "Language-Team: Tiếng Việt\n"
 "PO-Revision-Date: 2026-08-21\n"
@@ -523,3 +523,7 @@ msgstr "không có gói hoặc nhà cung cấp AUR nào đáp ứng {dependency}
 msgctxt "update.up_to_date"
 msgid "The system is up to date."
 msgstr "Hệ thống đang cập nhật."
+
+msgctxt "cli.unsupported"
+msgid "Unsupported option or combination: {option}"
+msgstr "Tùy chọn hoặc tổ hợp không được hỗ trợ: {option}"
