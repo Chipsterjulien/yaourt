@@ -1,12 +1,16 @@
-# Runtime Babet local (spécifique à l'architecture, à déposer par chacun dans
-# bin/ ; récupéré selon l'architecture au packaging).
+# Runtime Babet local
 /bin
 
-# Binaire compilé du projet.
+# Binaire compilé
 /yaourt
 
-# Config de développement (locale à chaque dev, ne part pas en production).
+# Configuration de développement
 /cfg/
+
+# Répertoire de travail et justificatifs de livraison
+/work/
+/CORRECTIONS-*.fr.md
+/CORRECTIONS-*.sha256
 
 dist/
 tmp/
@@ -17,6 +21,6 @@ manual-fr.pdf
 __pycache__/
 *.py[cod]
 
-# Artefacts de build éventuels
+# Artefacts de build
 *.pkg.tar.zst
 *.log
