@@ -36,6 +36,26 @@ build officiel de production avec OpenSSL 3.5.8 et les validations de release
 ajoutées dans Babet 2.24. yaourt utilise le runtime Babet officiel complet, sans
 profil de fonctionnalités particulier.
 
+## Différences avec yaourt 1.9
+
+La version 2.0 marque la génération Lua/Babet ; la compatibilité avec les
+commandes et la configuration de yaourt 1.9 est partielle. Vérifier les scripts
+existants à l'aide de `yaourt --help` et des
+[options de synchronisation prises en charge](#options-de-synchronisation-prises-en-charge).
+
+- **Recherche** : utiliser `yaourt -Ss <terme>` pour interroger les dépôts et
+  l'AUR. Lancer `yaourt` sans argument affiche l'aide.
+- **Consultation** : `yaourt -Si <paquet>` et `yaourt -Qu` sont actuellement
+  délégués à pacman, sans interrogation supplémentaire de l'AUR. La consultation
+  unifiée des fiches et des mises à jour reste dans la [feuille de route](TODO.md).
+- **Configuration** : cette génération utilise TOML, normalement dans
+  `~/.config/yaourt/config.toml` (ou sous `$XDG_CONFIG_HOME`). Les anciens
+  fichiers `/etc/yaourtrc` et `~/.yaourtrc` ne sont pas importés. Partir de
+  [config.example.fr.toml](config.example.fr.toml) ; le fichier `cfg/config.toml`
+  du répertoire courant est prioritaire pour le développement.
+- **Fonctions liées au compte AUR** : le vote et la publication de commentaires
+  ne sont pas implémentés ; utiliser le site de l'AUR pour ces actions.
+
 ## Fonctionnalités
 
 - Délégation transparente à `pacman` pour les opérations standard (`-Q`, `-R`,
