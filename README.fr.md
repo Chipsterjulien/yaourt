@@ -260,8 +260,8 @@ Téléchargez le binaire de votre architecture depuis la
 rendez-le exécutable et installez-le :
 
 ```sh
-chmod +x yaourt-2.0.0-x86_64
-sudo install -Dm755 yaourt-2.0.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-2.0.2-x86_64
+sudo install -Dm755 yaourt-2.0.2-x86_64 /usr/bin/yaourt
 ```
 
 Architectures fournies : `x86_64`, `aarch64`. Les binaires sont autonomes

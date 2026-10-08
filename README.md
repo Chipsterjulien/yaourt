@@ -245,8 +245,8 @@ Download the binary for your architecture from the
 executable, and install it:
 
 ```sh
-chmod +x yaourt-2.0.0-x86_64
-sudo install -Dm755 yaourt-2.0.0-x86_64 /usr/bin/yaourt
+chmod +x yaourt-2.0.2-x86_64
+sudo install -Dm755 yaourt-2.0.2-x86_64 /usr/bin/yaourt
 ```
 
 Provided architectures: `x86_64` and `aarch64`. The binaries are self-contained
