@@ -124,7 +124,7 @@ scenario("interruption : dépendance dépôt arrête le plan et interdit le nett
     patch(deps,"repo_deps_of",function() return {"tool>=2"} end)
     patch(pacman,"passthrough",function(_,argv) equal(argv[#argv],"tool>=2");return 130 end)
     patch(build,"one_group",function() error("build after SIGINT") end)
-    local results=build.aur_many({},{"a","b"},{})
+    local results=build.aur_many({}, {"a","b"},{})
     equal(#results,1);equal(results[1].status,"interrupted");assert(interrupted)
 end)
 scenario("AUR : réponse invalide ne pollue pas le cache négatif",function(patch)
@@ -175,7 +175,7 @@ scenario("installation : --needed ignore le build d'un paquet ordinaire à jour"
     patch(util,"vercmp",function() return 0 end)
     patch(deps,"repo_deps_of",function() error("unnecessary build dependencies") end)
     patch(build,"one_group",function() error("unnecessary build") end)
-    local result=build.aur_many({},{"demo"},{needed=true})
+    local result=build.aur_many({}, {"demo"},{needed=true})
     equal(result[1].status,"skipped");assert(result[1].ok)
 end)
 scenario("nettoyage : PKGDEST extérieur supprimé uniquement sous le compte de build",function(patch)
@@ -207,6 +207,56 @@ scenario("VCS : mise à jour d'un sous-paquet ne valide pas son frère",function
     local file=assert(io.open(path,"w"));file:write("YAOURT-VCS-1\nsuite-git\told\n");file:close()
     equal(next(assert(vcs.load(cfg))),nil)
     assert(babet.remove(path))
+end)
+scenario("VCS : publication atomique, format stable et erreur propagée",function(patch)
+    local cfg={vcs_state_file="/tmp/yaourt-atomic-vcs-fixture"}
+    patch(util,"mkdirp",function(dir) equal(dir,"/tmp");return true end)
+    local called=0
+    patch(babet,"writeFileAtomic",function(path,body,opts)
+        called=called+1
+        equal(path,cfg.vcs_state_file)
+        equal(body,"YAOURT-VCS-2\na%20git\trev%2Fa\nz-git\trev%3Az\n")
+        assert(opts.overwrite);equal(opts.permissions,tonumber("600",8))
+        if called==2 then return nil,"simulated disk failure" end
+        return true
+    end)
+    assert(vcs._save(cfg,{["z-git"]="rev:z",["a git"]="rev/a"}))
+    local saved,err=vcs._save(cfg,{["z-git"]="rev:z",["a git"]="rev/a"})
+    equal(saved,nil);equal(err,"simulated disk failure");equal(called,2)
+end)
+scenario("AUR : approbation atomique seulement après confirmation",function(patch)
+    local review=require("lib.review")
+    local hash=string.rep("a",64)
+    local head=string.rep("b",40)
+    patch(util,"is_root",function() return false end)
+    patch(util,"run",function(argv)
+        if argv[1]=="mkdir" then return res(0) end
+        if argv[1]=="stat" then return res(0,"1000 700 directory\n") end
+        if argv[1]=="id" then return res(0,"1000\n") end
+        if argv[1]=="sha256sum" then return res(0,hash.."  -\n") end
+        error("unexpected subprocess: "..tostring(argv[1]))
+    end)
+    patch(review,"snapshot",function() return {files={"PKGBUILD"},head=head,hash=hash,clean=true} end)
+    patch(util,"passthrough",function() return 0 end)
+    local answer="n"
+    patch(io,"read",function() return answer end)
+    local writes=0
+    patch(babet,"writeFileAtomic",function(path,body,opts)
+        writes=writes+1
+        assert(path:match("/yaourt%-atomic%-review%-fixture/"))
+        equal(body,"YAOURT-REVIEW-1\n"..head.."\n"..hash.."\n1\n")
+        assert(opts.overwrite);equal(opts.permissions,tonumber("600",8))
+        if writes==2 then return nil,"simulated disk failure" end
+        return true
+    end)
+    local cfg={color=false,editor="true",_review_state_dir="/tmp/yaourt-atomic-review-fixture"}
+    local meta={path="/tmp/yaourt-atomic-review-nonexistent-checkout"}
+    local ok,err=review.run(cfg,meta)
+    equal(ok,false);equal(err,"refused");equal(writes,0)
+    answer="" -- An empty response is the explicit confirmation accepted by Yaourt.
+    assert(review.run(cfg,meta));equal(writes,1)
+    ok,err=review.run(cfg,meta)
+    equal(ok,false);equal(err,"simulated disk failure");equal(writes,2)
 end)
 scenario("installation : une dépendance dépôt auparavant explicite le reste",function(patch)
     patch(util,"run",function(argv)
@@ -247,7 +297,6 @@ scenario("interruption : récupération Git conserve le code 130",function(patch
     local value,_,code=require("lib.fetch").one({builddir="/tmp"},"demo")
     equal(value,nil);equal(code,130)
 end)
-
 scenario("interruption : requête de dépendances arrête la résolution",function(patch)
     patch(aur,"info",function() return {demo={Name="demo",PackageBase="demo",Depends={"tool"}}} end)
     local calls=0
@@ -263,7 +312,6 @@ scenario("interruption : SIGTERM conservé dans le bilan",function()
     equal(require("lib.display").build_summary(require("lib.color").new(false),
         {build.result("interrupted","demo","SIGTERM",143)}),143)
 end)
-
 scenario("pacdiff : argument vide distinct de --nocolor",function(patch)
     patch(babet,"which",function() return "/usr/bin/pacdiff" end)
     patch(util,"is_root",function() return true end)
@@ -290,7 +338,6 @@ scenario("nettoyage : erreur nomme la transaction réellement lancée",function(
     assert(warning:find("pacman -Rn --noconfirm",1,true))
     assert(not warning:find("pacman -Rns",1,true))
 end)
-
 for _, case in ipairs({
     {name="pfetch-git", installed="r432.a906ff8-1", target="r340.e18a095-1", key="build.heading_installed"},
     {name="pfetch-git", target="r340.e18a095-1", key="build.heading"},
@@ -316,5 +363,4 @@ for _, case in ipairs({
         if case.name=="pfetch-git" then assert(not lines[2]:find(case.target,1,true)) end
     end)
 end
-
 end

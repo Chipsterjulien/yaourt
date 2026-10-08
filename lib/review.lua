@@ -6,7 +6,6 @@ local util = require("lib.util")
 local i18n = require("lib.i18n")
 local color = require("lib.color")
 local review = {}
-
 local function digest(data)
     local res, err = util.run({"sha256sum", "-"}, {stdin=data})
     if not util.complete(res) then return nil, err or (res and res.stderr), res and res.code end
@@ -134,18 +133,15 @@ function review.run(config, meta)
     io.write(i18n.t("review.continue").." "); io.flush()
     local answer=io.read("l")
     if answer==nil or (answer~="" and not i18n.is_answer(answer:lower(),"yes")) then return false,"refused",1 end
-    -- mktemp in the private directory prevents symlink clobbering; rename
-    -- replaces the previous record only after successful explicit approval.
-    local tmp, terr=util.run({"mktemp", "--", path..".XXXXXX"})
-    if not util.complete(tmp) then return false,terr or "mktemp",1 end
-    local temp=tmp.stdout:gsub("\n$", "")
-    local out,oerr=io.open(temp,"wb")
-    if not out then babet.remove(temp); return false,oerr,1 end
-    local written,werr=out:write("YAOURT-REVIEW-1\n",after.head,"\n",after.hash,"\n",after.clean and "1\n" or "0\n")
-    local closed,cerr=out:close()
-    if not written or not closed then babet.remove(temp);return false,werr or cerr,1 end
-    local saved,serr=os.rename(temp,path)
-    if not saved then babet.remove(temp);return false,serr,1 end
+    -- L'approbation n'est publiée qu'après la seconde vérification des
+    -- fichiers et l'accord explicite de l'utilisateur. Le fichier reste privé.
+    local body="YAOURT-REVIEW-1\n"..after.head.."\n"..after.hash.."\n"
+        ..(after.clean and "1\n" or "0\n")
+    local saved,serr=babet.writeFileAtomic(path,body,{
+        overwrite=true,
+        permissions=tonumber("600",8),
+    })
+    if not saved then return false,serr,1 end
     return true
 end
 return review

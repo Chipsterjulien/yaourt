@@ -12,7 +12,6 @@ local aur  = require("lib.aur")
 local util = require("lib.util")
 
 local vcs = {}
-
 local STATE_HEADER = "YAOURT-VCS-2"
 local QUERY_TIMEOUT = 20
 local SUFFIXES = { "git", "hg", "svn", "bzr" }
@@ -31,7 +30,6 @@ local function decode(value)
         return string.char(tonumber(hex, 16))
     end))
 end
-
 local function parent(path)
     return path:match("^(.*)/[^/]+$") or "."
 end
@@ -43,7 +41,6 @@ function vcs.is_candidate(name)
     end
     return false
 end
-
 local function architecture(config)
     if config.vcs_arch then return config.vcs_arch end
     local res = util.run({ "uname", "-m" }, { env = { LC_ALL = "C" } })
@@ -52,7 +49,6 @@ local function architecture(config)
     if arch == "armv7l" then return "armv7h" end
     return arch
 end
-
 local function fragment_map(fragment)
     local result = {}
     for item in tostring(fragment or ""):gmatch("[^&]+") do
@@ -61,7 +57,6 @@ local function fragment_map(fragment)
     end
     return result
 end
-
 local function parse_source(value)
     value = trim(value)
     value = value:match("^[^:]+::(.+)$") or value
@@ -69,7 +64,6 @@ local function parse_source(value)
     if kind ~= "git" and kind ~= "hg" and kind ~= "svn" and kind ~= "bzr" then
         return nil
     end
-
     local url, fragment = rest:match("^([^#]+)#?(.*)$")
     -- makepkg accepte le marqueur de vérification Git aussi bien avant
     -- qu'après le fragment : url?signed#branch=main ou
@@ -81,7 +75,6 @@ local function parse_source(value)
     end
     local params = fragment_map(fragment)
     local ref = "HEAD"
-
     if kind == "git" then
         if params.commit or params.tag then return nil end
         if params.branch and params.branch ~= "" then
@@ -95,10 +88,8 @@ local function parse_source(value)
     elseif kind == "bzr" then
         if params.revision then return nil end
     end
-
     return { kind = kind, url = url, ref = ref }
 end
-
 -- Extrait uniquement les sources globales et celles de l'architecture active.
 -- Les valeurs fixes (#commit, #tag, #revision) ne sont volontairement pas
 -- suivies : elles ne représentent pas une branche de développement mouvante.
@@ -123,7 +114,6 @@ function vcs.sources(srcinfo, arch)
     table.sort(result, function(a, b) return a.identity < b.identity end)
     return result
 end
-
 local function safe_url(source)
     local url = tostring(source.url or "")
     if url:find("[%z\1-\32\127]") then return false end
@@ -134,7 +124,6 @@ local function safe_url(source)
     if source.kind == "bzr" and url:match("^bzr://") then return true end
     return false
 end
-
 local function command_for(source)
     if not safe_url(source) then
         return nil, "unsafe or unsupported VCS URL: " .. tostring(source.url)
@@ -158,7 +147,6 @@ local function command_for(source)
         return { "bzr", "revno", "--", source.url }
     end
 end
-
 function vcs.query(source)
     local argv, command_err = command_for(source)
     if not argv then return nil, command_err or "unsupported VCS" end
@@ -175,7 +163,6 @@ function vcs.query(source)
         if detail == "" then detail = "exit " .. tostring(res.code) end
         return nil, argv[1] .. ": " .. detail, res.code
     end
-
     local output = trim(res.stdout)
     local revision
     if source.kind == "git" then
@@ -190,7 +177,6 @@ function vcs.query(source)
     end
     return revision, nil
 end
-
 function vcs.snapshot_from_srcinfo(config, srcinfo)
     local sources = vcs.sources(srcinfo, architecture(config))
     if #sources == 0 then return nil, nil end
@@ -203,7 +189,6 @@ function vcs.snapshot_from_srcinfo(config, srcinfo)
     end
     return table.concat(rows, "\n"), nil
 end
-
 function vcs.snapshot(config, pkgbase)
     local content, err = aur.srcinfo(config, pkgbase)
     if not content then return nil, err end
@@ -217,7 +202,6 @@ function vcs.snapshot_file(config, path)
     file:close()
     return vcs.snapshot_from_srcinfo(config, content)
 end
-
 function vcs.load(config)
     local path = state_path(config)
     local file = io.open(path, "rb")
@@ -231,7 +215,6 @@ function vcs.load(config)
     if first ~= STATE_HEADER then
         return nil, "invalid VCS state header: " .. path
     end
-
     local state = {}
     for line in rest:gmatch("[^\r\n]+") do
         local name, snapshot = line:match("^([^\t]+)\t(.*)$")
@@ -245,37 +228,20 @@ local function save(config, state)
     local path = state_path(config)
     local ok, err = util.mkdirp(parent(path))
     if not ok then return nil, tostring(err) end
-
     local names = {}
     for name in pairs(state) do names[#names + 1] = name end
     table.sort(names)
-
-    local temporary = path .. ".tmp." .. tostring(babet.pid())
-    local file, ferr = io.open(temporary, "wb")
-    if not file then return nil, tostring(ferr) end
     local lines = { STATE_HEADER }
     for _, name in ipairs(names) do
         lines[#lines + 1] = util.urlencode(name)
             .. "\t" .. util.urlencode(state[name])
     end
-    local written, werr = file:write(table.concat(lines, "\n"), "\n")
-    if not written then
-        file:close()
-        babet.remove(temporary)
-        return nil, tostring(werr)
-    end
-    local closed, cerr = file:close()
-    if not closed then
-        babet.remove(temporary)
-        return nil, tostring(cerr)
-    end
-
-    local renamed, rerr = os.rename(temporary, path)
-    if not renamed then
-        babet.remove(temporary)
-        return nil, tostring(rerr)
-    end
-    return true, nil
+    -- Publication atomique native : pas de nom temporaire prévisible,
+    -- et l'ancien état reste intact en cas d'échec d'écriture.
+    return babet.writeFileAtomic(path, table.concat(lines, "\n") .. "\n", {
+        overwrite = true,
+        permissions = tonumber("600", 8),
+    })
 end
 
 function vcs.remember(config, pkgbase, snapshot, packages)
@@ -285,14 +251,12 @@ function vcs.remember(config, pkgbase, snapshot, packages)
     for _, name in ipairs(packages or {pkgbase}) do state[name] = snapshot end
     return save(config, state)
 end
-
 -- Marque les entrées installées dont la branche VCS distante a changé. Une
 -- base encore inconnue est proposée une première fois : l'ignorer en silence
 -- risquerait de conserver indéfiniment un paquet déjà obsolète.
 function vcs.mark_updates(config, entries)
     local state, state_err = vcs.load(config)
     if not state then return { state_err } end
-
     local groups = {}
     for _, entry in ipairs(entries) do
         local base = entry.pkgbase or entry.name
@@ -303,7 +267,6 @@ function vcs.mark_updates(config, entries)
             groups[base][#groups[base] + 1] = entry
         end
     end
-
     local errors, bases = {}, {}
     for base in pairs(groups) do bases[#bases + 1] = base end
     table.sort(bases)
@@ -323,7 +286,6 @@ function vcs.mark_updates(config, entries)
     end
     return errors
 end
-
 vcs._state_path = state_path
 vcs._parse_source = parse_source
 vcs._save = save
