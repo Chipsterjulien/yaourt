@@ -118,7 +118,9 @@ function review.run(config, meta)
                     "-u","XAUTHORITY","-u","DBUS_SESSION_BUS_ADDRESS",
                     "-u","SESSION_MANAGER","-u","XDG_RUNTIME_DIR","--"},argv)
             end
-            local editor_code=util.passthrough(argv)
+            -- A root caller may be in a directory inaccessible to the build
+            -- account. The editor runs from the reviewed checkout instead.
+            local editor_code=util.passthrough(argv,config.build_user and dest or nil)
             if editor_code~=0 then
                 return false,i18n.t("review.open_failed",{file=name,editor=config.editor}),editor_code
             end

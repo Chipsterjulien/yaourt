@@ -224,6 +224,31 @@ scenario("VCS : publication atomique, format stable et erreur propagée",functio
     local saved,err=vcs._save(cfg,{["z-git"]="rev:z",["a git"]="rev/a"})
     equal(saved,nil);equal(err,"simulated disk failure");equal(called,2)
 end)
+scenario("compte de build : cwd sûr depuis un répertoire root privé",function(patch)
+    local called
+    patch(util,"run",function(argv,opts)
+        called={argv=argv,opts=opts}
+        return res(0)
+    end)
+    local supplied={env={LC_ALL="C"},timeout=20}
+    assert(util.run_as("yaourt",{"git","clone","https://aur.archlinux.org/demo.git",
+        "/var/cache/yaourt/.cache/yaourt/demo"},supplied))
+    equal(called.argv[1],"runuser")
+    equal(called.argv[2],"-u")
+    equal(called.argv[3],"yaourt")
+    equal(called.argv[4],"--")
+    equal(called.argv[5],"git")
+    equal(called.opts.cwd,"/")
+    equal(called.opts.env.LC_ALL,"C")
+    equal(called.opts.timeout,20)
+    equal(supplied.cwd,nil) -- Ne jamais modifier les options de l'appelant.
+    assert(util.run_as("yaourt",{"makepkg","--packagelist"},
+        {cwd="/var/cache/yaourt/.cache/yaourt/demo"}))
+    equal(called.opts.cwd,"/var/cache/yaourt/.cache/yaourt/demo")
+    assert(util.run_as(nil,{"git","--version"}))
+    equal(called.argv[1],"git")
+    equal(called.opts,nil) -- Sans changement d'utilisateur, conserver le cwd.
+end)
 scenario("AUR : approbation atomique seulement après confirmation",function(patch)
     local review=require("lib.review")
     local hash=string.rep("a",64)
@@ -257,6 +282,15 @@ scenario("AUR : approbation atomique seulement après confirmation",function(pat
     assert(review.run(cfg,meta));equal(writes,1)
     ok,err=review.run(cfg,meta)
     equal(ok,false);equal(err,"simulated disk failure");equal(writes,2)
+    -- L'éditeur exécuté via runuser doit démarrer dans le checkout,
+    -- jamais dans un répertoire privé hérité de root.
+    cfg.build_user="yaourt"
+    patch(util,"passthrough",function(argv,cwd)
+        equal(argv[1],"runuser")
+        equal(cwd,meta.path)
+        return 0
+    end)
+    assert(review.run(cfg,meta));equal(writes,3)
 end)
 scenario("installation : une dépendance dépôt auparavant explicite le reste",function(patch)
     patch(util,"run",function(argv)

@@ -122,14 +122,18 @@ function util.run(argv, opts)
 end
 
 function util.run_as(user, argv, opts)
-    local cmd
-    if not user then
-        cmd = argv
-    else
-        cmd = babet.mergeTables({ "runuser", "-u", user, "--" }, argv)
-    end
+    if not user then return util.run(argv, opts) end
 
-    return util.run(cmd, opts)
+    -- runuser preserves the caller's working directory. If root invoked
+    -- yaourt from a private directory, the build account cannot traverse it:
+    -- git clone then fails even though its destination is writable.
+    -- Use a universally accessible directory unless the caller explicitly
+    -- supplied a working directory (e.g. makepkg inside the checkout).
+    local run_opts = {}
+    for key, value in pairs(opts or {}) do run_opts[key] = value end
+    if run_opts.cwd == nil then run_opts.cwd = "/" end
+
+    return util.run(babet.mergeTables({ "runuser", "-u", user, "--" }, argv), run_opts)
 end
 
 function util.sudo_prefix(config)
