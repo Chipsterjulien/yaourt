@@ -2182,6 +2182,7 @@ end)
 
 test("client AUR : contrats HTTP et JSON", function()
     local aur = require("lib.aur")
+    local version = require("lib.version")
     local original_get = babet.http.get
     local original_sleep = babet.sleep
     local info_calls, sleep_calls = 0, 0
@@ -2190,7 +2191,7 @@ test("client AUR : contrats HTTP et JSON", function()
 
     babet.http.get = function(url, opts)
         assert_equal(opts.headers.Accept, "application/json")
-        assert_equal(opts.headers["User-Agent"], "yaourt/2.0.2")
+        assert_equal(opts.headers["User-Agent"], version.name .. "/" .. version.version)
         assert_equal(opts.timeout, 15)
 
         if url:find("/info?", 1, true) then
